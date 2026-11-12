@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Purdue Dining Meal Optimizer</title>
+  <style>
+    :root {
+      --gold: #CFB991;
+      --gold-hover: #DECBA8;
+      --black: #121212;
+      --card: #1E1E1E;
+      --input-bg: #141414;
+      --border: #333333;
+      --text: #F4F4F4;
+      --muted: #A8A8A8;
+      --green: #7EE787;
+      --red: #FF7B72;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      margin: 0;
+      background: var(--black);
+      color: var(--text);
+      padding: 20px 16px 48px;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    header {
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.55rem;
+      color: var(--gold);
+      letter-spacing: 0.4px;
+    }
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 12px;
+    }
+    label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .checkbox-row input {
+      width: auto;
+      accent-color: var(--gold);
+    }
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 13px;
+      border: none;
+      border-radius: 8px;
+      background: var(--gold);
+      color: #111111;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: var(--gold-hover);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+    .dri-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+    .dri-pill {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 6px;
+      flex: 1 1 130px;
+    }
+    .dri-pill span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+    .rank-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: #111111;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .court-title {
+      margin: 0 0 4px;
+      font-size: 1.25rem;
+    }
+    .hours {
+      color: var(--green);
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+    .item-row {
+      border-top: 1px solid var(--border);
+      padding: 10px 0;
+    }
+    .item-role {
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .item-name {
+      font-weight: 600;
+      margin: 2px 0;
+    }
+    .item-macros {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .fallback-tag {
+      font-size: 0.72rem;
+      background: #2D2A22;
+      color: var(--gold);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+    .totals-box {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    .reason {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+    .status-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: 12px 0;
+    }
+    .error-box {
+      color: var(--red);
+      border-color: var(--red);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Purdue Dining Meal Optimizer</h1>
+      <p class="subtitle">Live HFS Menus &bull; USDA DRI Macro Targets &bull; Seed-Oil &amp; Whole-Food Filtering</p>
+    </header>
+
+    <form id="optForm" class="card">
+      <div class="grid">
+        <div>
+          <label for="sex">Sex</label>
+          <select id="sex">
+            <option value="M" selected>Male (M)</option>
+            <option value="F">Female (F)</option>
+          </select>
+        </div>
+        <div>
+          <label for="age">Age (yrs)</label>
+          <input type="number" id="age" value="18" min="14" max="90" required />
+        </div>
+        <div>
+          <label for="weight_lbs">Weight (lbs)</label>
+          <input type="number" id="weight_lbs" value="155" min="70" max="450" step="0.5" required />
+        </div>
+        <div>
+          <label for="height_in">Height (in)</label>
+          <input type="number" id="height_in" value="72" min="48" max="90" step="0.5" required />
+        </div>
+        <div>
+          <label for="activity_level">Activity Level</label>
+          <select id="activity_level">
+            <option value="Sedentary">Sedentary</option>
+            <option value="Moderate" selected>Moderate</option>
+            <option value="Active">Active</option>
+          </select>
+        </div>
+        <div>
+          <label for="meals_per_day">Meals / Day</label>
+          <input type="number" id="meals_per_day" value="2" min="1" max="6" required />
+        </div>
+        <div>
+          <label for="meal_goal">Meal Goal</label>
+          <select id="meal_goal">
+            <option value="High Protein" selected>High Protein</option>
+            <option value="Balanced">Balanced</option>
+          </select>
+        </div>
+        <div>
+          <label for="health_intensity">Health Intensity</label>
+          <select id="health_intensity">
+            <option value="High" selected>High (Zero Seed Oils)</option>
+            <option value="Mid">Mid (Whole Meats/Oils OK)</option>
+            <option value="Low">Low (Max Protein/Flavor)</option>
+          </select>
+        </div>
+        <div>
+          <label for="sim_time">Time (Optional)</label>
+          <input type="text" id="sim_time" placeholder="NOW (or 12:30 / 18:00)" />
+        </div>
+      </div>
+
+      <label class="checkbox-row" for="include_quick_bites">
+        <input type="checkbox" id="include_quick_bites" />
+        Include Quick Bites (1bowl, Pete's Za, Sushi Boss)
+      </label>
+
+      <button type="submit" id="submitBtn">Find Optimal Dining Court</button>
+    </form>
+
+    <div id="statusMsg" class="status-note"></div>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const SAVED_FIELDS = [
+      'sex', 'age', 'weight_lbs', 'height_in',
+      'activity_level', 'meals_per_day', 'meal_goal', 'health_intensity'
+    ];
+
+    // Restore saved biometrics automatically on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      SAVED_FIELDS.forEach(id => {
+        const saved = localStorage.getItem('purdue_opt_' + id);
+        if (saved !== null) {
+          document.getElementById(id).value = saved;
+        }
+      });
+    });
+
+    const form = document.getElementById('optForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const resultsDiv = document.getElementById('results');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Analyzing Purdue Dining Menus...';
+      statusMsg.textContent = 'Checking live dining court hours...';
+      resultsDiv.innerHTML = '';
+
+      SAVED_FIELDS.forEach(id => {
+        localStorage.setItem('purdue_opt_' + id, document.getElementById(id).value);
+      });
+
+      const payload = {
+        sex: document.getElementById('sex').value,
+        age: Number(document.getElementById('age').value),
+        weight_lbs: Number(document.getElementById('weight_lbs').value),
+        height_in: Number(document.getElementById('height_in').value),
+        activity_level: document.getElementById('activity_level').value,
+        meals_per_day: Number(document.getElementById('meals_per_day').value),
+        meal_goal: document.getElementById('meal_goal').value,
+        health_intensity: document.getElementById('health_intensity').value,
+        include_quick_bites: document.getElementById('include_quick_bites').checked,
+        sim_time: document.getElementById('sim_time').value
+      };
+
+      try {
+        const res = await fetch('/api/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          statusMsg.textContent = '';
+          resultsDiv.innerHTML = `<div class="card error-box">Error: ${data.error || 'Request failed'}</div>`;
+          return;
+        }
+
+        renderResults(data);
+      } catch (err) {
+        statusMsg.textContent = '';
+        resultsDiv.innerHTML = `<div class="card error-box">Could not reach Flask server. Make sure app.py is running.</div>`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Find Optimal Dining Court';
+      }
+    });
+
+    function renderResults(data) {
+      const pm = data.targets.per_meal;
+      statusMsg.textContent = data.loaded_from_cache
+        ? `Loaded from today's local JSON cache (${data.timestamp})`
+        : `Fetched live from Purdue HFS API (${data.timestamp})`;
+
+      let html = `
+        <div class="card">
+          <label>Per-Meal USDA DRI Target</label>
+          <div class="dri-bar">
+            <div class="dri-pill"><span>Calories</span><strong>~${pm.calories} kcal</strong></div>
+            <div class="dri-pill"><span>Protein</span><strong>${pm.protein_target}g</strong> (min ${pm.protein_min}g)</div>
+            <div class="dri-pill"><span>Carbs Range</span><strong>${pm.carbs_min}–${pm.carbs_max}g</strong></div>
+            <div class="dri-pill"><span>Fat Range</span><strong>${pm.fat_min}–${pm.fat_max}g</strong></div>
+            <div class="dri-pill"><span>Sugar Cap</span><strong>&le; ${pm.sugar_max}g</strong></div>
+          </div>
+        </div>
+      `;
+
+      if (!data.recommendations || data.recommendations.length === 0) {
+        html += `
+          <div class="card">
+            No dining courts matched your current time window and health filter.
+            Try switching Health Intensity to <strong>Mid</strong> or entering a meal time like <code>12:30</code> or <code>18:00</code>.
+          </div>
+        `;
+        resultsDiv.innerHTML = html;
+        return;
+      }
+
+      data.recommendations.forEach((rec, idx) => {
+        const badge = idx === 0 ? '#1 BEST DINING COURT' : '#2 RUNNER-UP DINING COURT';
+        const itemsHtml = rec.items.map(it => `
+          <div class="item-row">
+            <div class="item-role">${it.role} &bull; ${it.station}</div>
+            <div class="item-name">
+              ${it.name}${it.used_fallback ? '<span class="fallback-tag">USDA Estimate</span>' : ''}
+            </div>
+            <div class="item-macros">
+              ${it.calories} kcal &bull; ${it.protein}g Protein &bull; ${it.carbs}g Carbs &bull; ${it.fat}g Fat
+            </div>
+          </div>
+        `).join('');
+
+        const t = rec.totals;
+        html += `
+          <div class="card">
+            <div class="rank-badge">${badge}</div>
+            <h2 class="court-title">${rec.location}</h2>
+            <div class="hours">${rec.hours_status}</div>
+            ${itemsHtml}
+            <div class="totals-box">
+              <strong>Combined Plate:</strong> ${t.calories} kcal &bull; ${t.protein}g Protein &bull; ${t.carbs}g Carbs &bull; ${t.fat}g Fat
+            </div>
+            <div class="reason">${rec.filter_summary}</div>
+          </div>
+        `;
+      });
+
+      resultsDiv.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
