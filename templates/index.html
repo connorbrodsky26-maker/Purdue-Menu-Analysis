@@ -4,11 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
-  <title>Purdue Dining Optimizer</title>
+  <title>Feast</title>
   <style>
     :root {
+      --feast-red: #EF4444;
+      --feast-red-dark: #DC2626;
+      --leaf-green: #22C55E;
+      --leaf-vein: #15803D;
       --gold: #CFB991;
-      --gold-deep: #9A7F4E;
       --gold-soft: #FAF6EE;
       --obsidian: #111111;
       --obsidian-2: #1E1E1E;
@@ -28,7 +31,7 @@
       --side-fg: #166534;
       --radius: 18px;
       --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-      --bottom-bar-h: 74px;
+      --float-shadow: 0 10px 30px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
     * {
@@ -43,7 +46,7 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.4;
-      padding-bottom: calc(var(--bottom-bar-h) + env(safe-area-inset-bottom) + 1.25rem);
+      padding-bottom: calc(92px + env(safe-area-inset-bottom));
     }
 
     /* Ultra-Slim Top App Bar */
@@ -53,8 +56,8 @@
       z-index: 30;
       background: var(--obsidian);
       color: #FFFFFF;
-      padding: 0.65rem 1rem;
-      border-bottom: 2px solid var(--gold);
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid #262624;
     }
 
     .topbar-inner {
@@ -66,15 +69,27 @@
       gap: 0.5rem;
     }
 
-    .brand-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-      color: var(--gold);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
+    /* "Feast" Red Wordmark with Green Leaf at the '-' of the 't' */
+    .brand-logo {
+      display: inline-flex;
+      align-items: baseline;
+      user-select: none;
+      line-height: 1;
+    }
+
+    .brand-text {
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      color: var(--feast-red);
+    }
+
+    .brand-t {
+      width: 19px;
+      height: 24px;
+      margin-left: -1px;
+      transform: translateY(3px);
+      overflow: visible;
     }
 
     .status-chip {
@@ -85,23 +100,23 @@
       border: 1px solid #33322E;
       color: #E7E5E4;
       border-radius: 999px;
-      padding: 0.28rem 0.65rem;
+      padding: 0.3rem 0.7rem;
       font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
     }
 
     .status-chip strong {
-      color: var(--gold);
+      color: #FFFFFF;
     }
 
     main {
       max-width: 600px;
-      margin: 0.75rem auto 0;
+      margin: 0.8rem auto 0;
       padding: 0 0.85rem;
     }
 
-    /* Active Filter Summary Strip (only visible when filters or DRI are active) */
+    /* Active Filter Summary Strip */
     .active-pills-row {
       display: none;
       flex-wrap: wrap;
@@ -115,7 +130,7 @@
 
     .mini-badge {
       background: var(--obsidian);
-      color: var(--gold);
+      color: #FFFFFF;
       font-size: 0.72rem;
       font-weight: 700;
       padding: 0.22rem 0.6rem;
@@ -123,9 +138,9 @@
     }
 
     .mini-badge.light {
-      background: var(--gold-soft);
+      background: var(--surface);
       color: var(--obsidian);
-      border: 1px solid var(--gold);
+      border: 1px solid var(--border);
     }
 
     /* Alert Banner */
@@ -155,11 +170,10 @@
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
     }
 
-    /* High-Impact Hero Header for #1 Pick */
     .hero-head {
       background: var(--obsidian);
       color: #FFFFFF;
-      padding: 1rem 1.05rem 0.95rem;
+      padding: 0.95rem 1.05rem;
     }
 
     .rec-card:not(.rank-1) .hero-head {
@@ -201,7 +215,7 @@
       font-weight: 700;
       padding: 0.2rem 0.58rem;
       border-radius: 999px;
-      background: rgba(22, 163, 74, 0.2);
+      background: rgba(22, 163, 74, 0.22);
       color: #86EFAC;
     }
 
@@ -223,24 +237,10 @@
       font-weight: 900;
       letter-spacing: -0.03em;
       line-height: 1.1;
-      margin-bottom: 0.3rem;
     }
 
     .rec-card:not(.rank-1) .court-name {
       font-size: 1.35rem;
-    }
-
-    .why-line {
-      font-size: 0.84rem;
-      color: #D6D3D1;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .rec-card:not(.rank-1) .why-line {
-      color: var(--muted);
     }
 
     /* Menu-Board Plate List */
@@ -436,103 +436,113 @@
       background: var(--green);
     }
 
-    /* Sticky Bottom Thumb Navigation Bar */
-    .thumb-dock {
+    /* Floating Gemini-Style Bottom Pill + Side Filter Button */
+    .floating-dock {
       position: fixed;
       left: 0;
       right: 0;
-      bottom: 0;
+      bottom: calc(14px + env(safe-area-inset-bottom));
       z-index: 40;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid var(--border);
-      padding: 0.55rem 0.85rem calc(0.55rem + env(safe-area-inset-bottom));
-      box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.06);
+      padding: 0 0.85rem;
+      pointer-events: none;
     }
 
     .dock-inner {
-      max-width: 600px;
+      max-width: 560px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       gap: 0.55rem;
+      pointer-events: auto;
     }
 
-    .segmented-pill {
+    .floating-pill {
       flex: 1;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      background: #EAE9E4;
-      padding: 0.22rem;
-      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 0.3rem;
+      border-radius: 999px;
       gap: 0.2rem;
+      box-shadow: var(--float-shadow);
     }
 
     .seg-btn {
       border: none;
       background: transparent;
       color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       font-weight: 700;
       min-height: 42px;
-      border-radius: 11px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.16s ease;
     }
 
     .seg-btn.active {
       background: var(--obsidian);
-      color: var(--gold);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
     }
 
-    .filter-trigger {
+    .side-filter-btn {
       position: relative;
+      width: 50px;
+      height: 50px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      color: var(--obsidian);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.35rem;
-      min-height: 46px;
-      padding: 0 0.9rem;
-      border-radius: 14px;
-      border: 1.5px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 0.82rem;
-      font-weight: 800;
       cursor: pointer;
       flex-shrink: 0;
+      box-shadow: var(--float-shadow);
+      transition: transform 0.15s ease, background 0.15s ease;
     }
 
-    .filter-trigger.has-filters {
-      border-color: var(--obsidian);
-      background: var(--gold-soft);
+    .side-filter-btn:active {
+      transform: scale(0.95);
+    }
+
+    .side-filter-btn.has-filters {
+      background: var(--obsidian);
+      color: #FFFFFF;
     }
 
     .badge-dot {
-      background: var(--obsidian);
-      color: var(--gold);
-      font-size: 0.7rem;
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--feast-red);
+      color: #FFFFFF;
+      font-size: 0.68rem;
       font-weight: 800;
-      min-width: 18px;
-      height: 18px;
+      min-width: 19px;
+      height: 19px;
       padding: 0 4px;
       border-radius: 999px;
+      border: 2px solid #FFFFFF;
       display: inline-flex;
       align-items: center;
       justify-content: center;
     }
 
-    /* Bottom Sheet Overlay & Drawer */
+    /* Right-Side Filter Drawer */
     .sheet-backdrop {
       position: fixed;
       inset: 0;
       z-index: 50;
-      background: rgba(0, 0, 0, 0.48);
+      background: rgba(0, 0, 0, 0.45);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.22s ease;
     }
 
     .sheet-backdrop.open {
@@ -540,34 +550,24 @@
       pointer-events: auto;
     }
 
-    .bottom-sheet {
+    .side-drawer {
       position: fixed;
-      left: 0;
+      top: 0;
       right: 0;
       bottom: 0;
       z-index: 60;
-      max-width: 600px;
-      margin: 0 auto;
-      max-height: 86vh;
+      width: min(370px, 88vw);
       overflow-y: auto;
       background: var(--surface);
-      border-radius: 22px 22px 0 0;
-      padding: 0.65rem 1.05rem calc(1.35rem + env(safe-area-inset-bottom));
-      transform: translateY(105%);
-      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-      box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.22);
+      border-radius: 22px 0 0 22px;
+      padding: calc(1rem + env(safe-area-inset-top)) 1.05rem calc(1.5rem + env(safe-area-inset-bottom));
+      transform: translateX(105%);
+      transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.22);
     }
 
-    .bottom-sheet.open {
-      transform: translateY(0);
-    }
-
-    .sheet-handle {
-      width: 38px;
-      height: 4px;
-      border-radius: 999px;
-      background: #D6D3D1;
-      margin: 0 auto 0.75rem;
+    .side-drawer.open {
+      transform: translateX(0);
     }
 
     .sheet-header {
@@ -586,7 +586,7 @@
 
     .done-btn {
       background: var(--obsidian);
-      color: var(--gold);
+      color: #FFFFFF;
       border: none;
       border-radius: 999px;
       padding: 0.45rem 1rem;
@@ -607,7 +607,7 @@
     }
 
     .sec-title {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -617,7 +617,7 @@
     .clear-link {
       background: none;
       border: none;
-      color: var(--gold-deep);
+      color: var(--feast-red-dark);
       font-size: 0.78rem;
       font-weight: 700;
       text-decoration: underline;
@@ -627,14 +627,14 @@
     /* Tactile Filter Chips */
     .filter-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
+      grid-template-columns: 1fr;
+      gap: 0.45rem;
     }
 
     .pill-check {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.55rem;
       min-height: 44px;
       padding: 0.5rem 0.75rem;
       border: 1.5px solid var(--border);
@@ -646,13 +646,13 @@
     }
 
     .pill-check:has(input:checked) {
-      background: var(--gold-soft);
-      border-color: var(--obsidian);
+      background: #FEF2F2;
+      border-color: var(--feast-red);
       font-weight: 800;
     }
 
     .pill-check input {
-      accent-color: var(--obsidian);
+      accent-color: var(--feast-red);
       width: 17px;
       height: 17px;
     }
@@ -668,11 +668,11 @@
       border: 1.5px solid var(--border);
       border-radius: 14px;
       cursor: pointer;
-      min-height: 52px;
+      min-height: 50px;
     }
 
     .switch-card span {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 700;
     }
 
@@ -682,7 +682,7 @@
       height: 20px;
     }
 
-    /* Biometrics Grid inside Sheet */
+    /* Biometrics Grid inside Drawer */
     .bio-box {
       display: none;
       margin-top: 0.75rem;
@@ -699,7 +699,7 @@
     .bio-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 0.65rem;
+      gap: 0.6rem;
     }
 
     .field {
@@ -713,7 +713,7 @@
     }
 
     .field label {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 800;
       text-transform: uppercase;
       color: var(--muted);
@@ -721,11 +721,11 @@
 
     .field input,
     .field select {
-      min-height: 44px;
-      padding: 0.5rem 0.65rem;
+      min-height: 42px;
+      padding: 0.45rem 0.6rem;
       border: 1.5px solid var(--border);
       border-radius: 10px;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       background: #FFFFFF;
       color: var(--text);
     }
@@ -733,43 +733,43 @@
     .height-split {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
 
     .apply-btn {
       width: 100%;
-      min-height: 46px;
+      min-height: 44px;
       margin-top: 0.8rem;
       background: var(--obsidian);
-      color: var(--gold);
+      color: #FFFFFF;
       border: none;
       border-radius: 12px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 800;
       cursor: pointer;
     }
 
     .time-row {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.45rem;
     }
 
     .time-row input {
       flex: 1;
       min-height: 44px;
-      padding: 0.5rem 0.75rem;
+      padding: 0.5rem 0.7rem;
       border: 1.5px solid var(--border);
       border-radius: 12px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
 
     .time-row button {
       min-height: 44px;
-      padding: 0 1rem;
+      padding: 0 0.95rem;
       border-radius: 12px;
-      border: 1.5px solid var(--obsidian);
+      border: none;
       background: var(--obsidian);
-      color: var(--gold);
+      color: #FFFFFF;
       font-weight: 800;
       font-size: 0.85rem;
       cursor: pointer;
@@ -802,7 +802,16 @@
   <!-- Ultra-Slim Top Header -->
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand-title">Purdue Dining</div>
+      <div class="brand-logo" aria-label="Feast">
+        <span class="brand-text">Feas</span><svg class="brand-t" viewBox="0 0 22 28" aria-hidden="true">
+          <!-- Red vertical stem of the 't' -->
+          <path d="M9.2 3.2 V20.2 C9.2 22.6 10.6 23.8 13.0 23.8 C14.3 23.8 15.4 23.5 16.2 23.1" fill="none" stroke="#EF4444" stroke-width="3.7" stroke-linecap="round"/>
+          <!-- Little green leaf forming the '-' crossbar of the 't' -->
+          <path d="M3.2 11.2 C6.4 7.4 13.6 7.2 19.0 10.5 C14.7 14.3 7.6 14.4 3.2 11.2 Z" fill="#22C55E"/>
+          <path d="M5.0 11.1 Q11.2 10.3 17.3 10.6" fill="none" stroke="#15803D" stroke-width="1.15" stroke-linecap="round"/>
+        </svg>
+      </div>
+
       <button type="button" class="status-chip" id="open_time_sheet" title="Tap to change meal time">
         <span id="status_text">Loading live...</span>
       </button>
@@ -816,29 +825,28 @@
     <!-- Validation / Error Banner -->
     <div id="validation_banner" class="alert-box" style="display:none;"></div>
 
-    <!-- Main Recommendation Feed (#1 Best Court appears immediately at top) -->
+    <!-- Main Recommendation Feed -->
     <div id="results_container">
       <div class="skeleton-card">
         <div class="skel-line" style="width:35%;"></div>
         <div class="skel-line" style="width:65%; height:28px;"></div>
-        <div class="skel-line" style="width:90%;"></div>
         <div class="skel-line" style="width:100%; height:48px; margin-top:1rem;"></div>
         <div class="skel-line" style="width:100%; height:48px;"></div>
       </div>
     </div>
   </main>
 
-  <!-- Sticky Bottom Thumb Navigation Bar -->
-  <nav class="thumb-dock" aria-label="Meal Mode and Filters">
+  <!-- Floating Gemini-Style Bottom Pill + Side Filter Button -->
+  <nav class="floating-dock" aria-label="Meal Mode and Filters">
     <div class="dock-inner">
-      <div class="segmented-pill" role="radiogroup" aria-label="Meal Style Mode">
+      <div class="floating-pill" role="radiogroup" aria-label="Meal Style Mode">
         <button type="button" class="seg-btn active" data-mode="High">Healthiest</button>
         <button type="button" class="seg-btn" data-mode="Mid">Balanced</button>
         <button type="button" class="seg-btn" data-mode="Low">Yummiest</button>
       </div>
 
-      <button type="button" class="filter-trigger" id="open_sheet_btn" aria-label="Open Filters and Settings">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="side-filter-btn" id="open_sheet_btn" aria-label="Open Filters and Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <line x1="4" y1="21" x2="4" y2="14"></line>
           <line x1="4" y1="10" x2="4" y2="3"></line>
           <line x1="12" y1="21" x2="12" y2="12"></line>
@@ -849,16 +857,14 @@
           <line x1="9" y1="8" x2="15" y2="8"></line>
           <line x1="17" y1="16" x2="23" y2="16"></line>
         </svg>
-        <span>Filters</span>
         <span class="badge-dot" id="filter_badge" style="display:none;">0</span>
       </button>
     </div>
   </nav>
 
-  <!-- Slide-Up Bottom Sheet for Allergies, DRI Biometrics & Time -->
+  <!-- Slide-In Side Drawer for Allergies, DRI Biometrics & Time -->
   <div class="sheet-backdrop" id="sheet_backdrop"></div>
-  <section class="bottom-sheet" id="control_sheet" aria-modal="true" role="dialog" aria-label="Filters and Preferences">
-    <div class="sheet-handle"></div>
+  <aside class="side-drawer" id="control_sheet" aria-modal="true" role="dialog" aria-label="Filters and Preferences">
     <div class="sheet-header">
       <h2>Filters &amp; Portions</h2>
       <button type="button" class="done-btn" id="close_sheet_btn">Done</button>
@@ -887,7 +893,7 @@
     <!-- 2. Quick Bites Locations -->
     <div class="sheet-section">
       <label class="switch-card">
-        <span>Include Quick Bites (1bowl, Pete's Za, Sushi Boss)</span>
+        <span>Include Quick Bites</span>
         <input type="checkbox" id="include_quick_bites" />
       </label>
     </div>
@@ -895,13 +901,13 @@
     <!-- 3. USDA DRI Biometric Portion Sizing -->
     <div class="sheet-section">
       <label class="switch-card">
-        <span>Personalize Portions (USDA DRI)</span>
+        <span>Personalize Portions (DRI)</span>
         <input type="checkbox" id="dri_toggle" />
       </label>
 
       <div class="bio-box" id="dri_drawer">
         <div class="sec-head">
-          <span class="sec-title">Your Body &amp; Meal Targets</span>
+          <span class="sec-title">Your Body &amp; Targets</span>
           <button type="button" class="clear-link" id="clear_biometrics_btn">Reset</button>
         </div>
 
@@ -987,22 +993,22 @@
           </div>
         </div>
 
-        <button type="button" class="apply-btn" id="calculate_dri_btn">Apply Personalized Portions</button>
+        <button type="button" class="apply-btn" id="calculate_dri_btn">Apply Portions</button>
       </div>
     </div>
 
     <!-- 4. Campus Clock Override -->
     <div class="sheet-section" style="margin-bottom:0;">
       <div class="sec-head">
-        <span class="sec-title">Check Another Meal Time</span>
+        <span class="sec-title">Check Another Time</span>
         <button type="button" class="clear-link" id="reset_time_btn">Use NOW</button>
       </div>
       <div class="time-row">
-        <input type="text" id="sim_time" placeholder="e.g. 12:30 PM or 18:00 (blank = NOW)" />
+        <input type="text" id="sim_time" placeholder="e.g. 12:30 PM or 18:00" />
         <button type="button" id="apply_time_btn">Set</button>
       </div>
     </div>
-  </section>
+  </aside>
 
   <script>
     const STORAGE_KEY = 'purdue_dining_optimizer_prefs_v2';
@@ -1055,22 +1061,18 @@
     }
 
     function syncUIToState() {
-      // Bottom segmented mode buttons
       document.querySelectorAll('.seg-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === state.health_intensity);
       });
 
-      // Dietary checkboxes
       document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]').forEach(cb => {
         cb.checked = state.dietary_filters.includes(cb.value);
       });
 
-      // Quick bites & DRI toggle
       document.getElementById('include_quick_bites').checked = !!state.include_quick_bites;
       document.getElementById('dri_toggle').checked = !!state.dri_enabled;
       document.getElementById('dri_drawer').classList.toggle('open', !!state.dri_enabled);
 
-      // Filter button badge count
       const extraCount =
         state.dietary_filters.length +
         (state.dri_enabled ? 1 : 0) +
@@ -1087,11 +1089,10 @@
         trigger.classList.remove('has-filters');
       }
 
-      // Active pills summary strip above #1 card
       const pillsRow = document.getElementById('active_pills_row');
       const pills = [];
       if (state.dri_enabled) {
-        pills.push(`<span class="mini-badge">DRI Portions: ${escapeHtml(state.meal_goal)}</span>`);
+        pills.push(`<span class="mini-badge">DRI: ${escapeHtml(state.meal_goal)}</span>`);
       }
       if (state.include_quick_bites) {
         pills.push(`<span class="mini-badge light">+ Quick Bites</span>`);
@@ -1109,7 +1110,6 @@
         pillsRow.classList.remove('visible');
       }
 
-      // Biometrics form values
       document.getElementById('meal_goal').value = state.meal_goal || 'Balanced Maintenance';
       document.getElementById('sex').value = state.sex || '';
       document.getElementById('age').value = state.age || '';
@@ -1203,7 +1203,6 @@
       const resultsEl = document.getElementById('results_container');
       const statusEl = document.getElementById('status_text');
 
-      // Show crisp time + open count in top bar
       const timePart = (data.timestamp || '').split(' ').slice(1).join(' ') || 'NOW';
       statusEl.innerHTML = `<strong>${escapeHtml(timePart)}</strong> &bull; ${data.open_locations_count} Open`;
 
@@ -1213,7 +1212,6 @@
           <article class="rec-card">
             <div class="hero-head">
               <h2 class="court-name" style="font-size:1.3rem;">No Matching Plates Open</h2>
-              <p class="why-line">Try switching to <strong>Balanced</strong> below or relaxing a filter.</p>
             </div>
           </article>
         `;
@@ -1273,7 +1271,6 @@
                 <span class="live-hours"><span class="pulse-dot"></span>${escapeHtml(rec.hours_status)}</span>
               </div>
               <h2 class="court-name">${escapeHtml(rec.location)}</h2>
-              <p class="why-line">${escapeHtml(rec.why_top_pick)}</p>
             </div>
 
             <div class="plate-board">${itemsHtml}</div>
@@ -1308,7 +1305,7 @@
         if (missing.length > 0) {
           openSheet();
           document.getElementById('dri_drawer').classList.add('open');
-          showValidation(`Enter ${missing.join(', ')} and tap "Apply Personalized Portions".`, true);
+          showValidation(`Enter ${missing.join(', ')} and tap "Apply Portions".`, true);
           return;
         }
         const totalInches = (parseInt(state.height_ft, 10) * 12) + parseInt(state.height_in, 10);
@@ -1344,7 +1341,6 @@
       loadPreferences();
       syncUIToState();
 
-      // Bottom Segmented Mode Switcher
       document.querySelectorAll('.seg-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           state.health_intensity = btn.dataset.mode;
@@ -1353,13 +1349,11 @@
         });
       });
 
-      // Bottom Sheet Open/Close
       document.getElementById('open_sheet_btn').addEventListener('click', openSheet);
       document.getElementById('open_time_sheet').addEventListener('click', openSheet);
       document.getElementById('close_sheet_btn').addEventListener('click', closeSheet);
       document.getElementById('sheet_backdrop').addEventListener('click', closeSheet);
 
-      // Dietary Checkboxes -> Live Update
       document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
           state.dietary_filters = Array.from(
@@ -1376,14 +1370,12 @@
         fetchRecommendations();
       });
 
-      // Quick Bites Toggle -> Live Update
       document.getElementById('include_quick_bites').addEventListener('change', (e) => {
         state.include_quick_bites = e.target.checked;
         syncUIToState();
         fetchRecommendations();
       });
 
-      // DRI Toggle
       document.getElementById('dri_toggle').addEventListener('change', (e) => {
         state.dri_enabled = e.target.checked;
         syncUIToState();
@@ -1430,7 +1422,6 @@
         });
       });
 
-      // Time Override Controls
       document.getElementById('apply_time_btn').addEventListener('click', () => {
         closeSheet();
         fetchRecommendations();
@@ -1442,7 +1433,6 @@
         fetchRecommendations();
       });
 
-      // Instant Load
       fetchRecommendations();
     });
   </script>
