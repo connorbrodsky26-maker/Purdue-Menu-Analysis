@@ -3,10 +3,18 @@ import re
 import json
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timedelta
 from itertools import product
 from typing import Optional
 import requests as rq
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+PURDUE_TZ = ZoneInfo("America/Indiana/Indianapolis")
+
+
+def get_purdue_now():
+    return datetime.now(PURDUE_TZ)
+
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -260,6 +268,45 @@ VERIFIED_NA_WHOLE_FOODS = [
     'grilled chicken breast'
 ]
 
+# Stations and item markers requiring special orders, custom tickets, or made-to-order prep
+SPECIAL_ORDER_STATION_MARKERS = [
+    'by request',
+    'upon request',
+    'special order',
+    'custom order',
+    'made to order',
+    'made-to-order',
+    'omelet bar',
+    'omelette bar',
+    'stir fry bar',
+    'stir-fry bar',
+    'pasta bar',
+]
+
+SPECIAL_ORDER_ITEM_MARKERS = [
+    'by request',
+    'upon request',
+    'made to order',
+    'made-to-order',
+    'custom omelet',
+    'custom omelette',
+    'custom stir fry',
+    'custom stir-fry',
+    'custom pasta',
+    'special request',
+]
+
+# Non-meat keywords used for vegetarian fallback detection
+MEAT_SEAFOOD_KEYWORDS = [
+    'chicken', 'beef', 'pork', 'turkey', 'ham', 'bacon', 'sausage', 'steak',
+    'lamb', 'veal', 'duck', 'venison', 'bison', 'meatball', 'pepperoni',
+    'salami', 'prosciutto', 'chorizo', 'bratwurst', 'hot dog', 'gyro',
+    'barbacoa', 'carnitas', 'brisket', 'rib', 'wings', 'drumstick',
+    'salmon', 'tuna', 'cod', 'tilapia', 'shrimp', 'crab', 'lobster',
+    'clam', 'mussel', 'oyster', 'scallop', 'anchovy', 'fish', 'seafood',
+    'gelatin', 'lard', 'tallow', 'chicken broth', 'beef broth', 'fish sauce'
+]
+
 
 # ==============================================================================
 # MODULE 1: API FETCHING, NORMALIZATION, CACHING & EXTERNAL MENU HOOK
@@ -275,6 +322,42 @@ def _parse_numeric_value(raw_val) -> float:
     return float(match.group()) if match else 0.0
 
 
+def _extract_allergens_and_diet(detail_data: Optional[dict]) -> tuple[list[str], Optional[bool]]:
+    """
+    Extracts normalized allergen names and vegetarian status from a Purdue HFS
+    item detail payload.
+    """
+    if not detail_data:
+        return [], None
+
+    allergens: list[str] = []
+    is_vegetarian: Optional[bool] = None
+
+    raw_allergens = detail_data.get('Allergens') or []
+    for entry in raw_allergens:
+        if isinstance(entry, str):
+            val = entry.strip().lower()
+            if val:
+                allergens.append(val)
+        elif isinstance(entry, dict):
+            name = str(entry.get('Name') or '').strip().lower()
+            has_flag = entry.get('Value', True)
+            if not name:
+                continue
+            if name == 'vegetarian':
+                is_vegetarian = bool(has_flag)
+            elif name == 'vegan' and has_flag:
+                is_vegetarian = True
+            elif has_flag:
+                allergens.append(name)
+
+    if is_vegetarian is None and 'IsVegetarian' in detail_data:
+        is_vegetarian = bool(detail_data.get('IsVegetarian'))
+
+    # Deduplicate while preserving order
+    return list(dict.fromkeys(allergens)), is_vegetarian
+
+
 def _match_fallback_macro(item_name: str) -> Optional[dict]:
     """Matches an item name against the hardcoded USDA whole-food fallback dictionary."""
     lower_name = item_name.lower().strip()
@@ -288,8 +371,8 @@ def _match_fallback_macro(item_name: str) -> Optional[dict]:
 
 def _unpack_composite_items(base_item: dict) -> list[dict]:
     """
-    Unpacks nested/composite stations (such as 'Salad Bar') into individual
-    selectable whole-food toppings so staples like Hard-Boiled Eggs, Garbanzo Beans,
+    Unpacks self-serve composite stations (such as 'Salad Bar') into individual
+    ready-to-grab whole-food staples so items like Hard-Boiled Eggs, Garbanzo Beans,
     Fresh Spinach, and Extra Virgin Olive Oil can be combined independently.
     """
     station_lower = base_item['station'].lower()
@@ -298,7 +381,7 @@ def _unpack_composite_items(base_item: dict) -> list[dict]:
 
     is_composite = any(
         kw in station_lower or kw in name_lower
-        for kw in ['salad bar', 'build your own', 'toppings', 'condiments']
+        for kw in ['salad bar', 'toppings', 'condiments']
     )
 
     if not is_composite:
@@ -319,23 +402,21 @@ def _unpack_composite_items(base_item: dict) -> list[dict]:
         return [item_copy]
 
     staple_aliases = [
-        ('Fresh Spinach', 'fresh spinach'),
-        ('Hard-Boiled Eggs', 'hard-boiled eggs'),
-        ('Garbanzo Beans', 'garbanzo beans'),
-        ('Extra Virgin Olive Oil', 'extra virgin olive oil'),
-        ('Plain Grilled Chicken Breast', 'plain grilled chicken breast'),
-        ('Plain Brown Rice', 'plain brown rice'),
+        ('Fresh Spinach', 'fresh spinach', [], True),
+        ('Hard-Boiled Eggs', 'hard-boiled eggs', ['eggs'], True),
+        ('Garbanzo Beans', 'garbanzo beans', [], True),
+        ('Extra Virgin Olive Oil', 'extra virgin olive oil', [], True),
+        ('Plain Grilled Chicken Breast', 'plain grilled chicken breast', [], False),
+        ('Plain Brown Rice', 'plain brown rice', [], True),
     ]
 
     unpacked = []
-    # If the API lists ingredients for the bar, unpack matching staples;
-    # if the station/item is 'Salad Bar' with N/A ingredients, expose core whole-food staples.
     expose_default_bar = (
         ingredients_lower in ('', 'n/a')
         and ('salad bar' in name_lower or 'salad bar' in station_lower)
     )
 
-    for display_name, fallback_key in staple_aliases:
+    for display_name, fallback_key, staple_allergens, staple_veg in staple_aliases:
         matched_in_ing = (
             fallback_key in ingredients_lower or display_name.lower() in ingredients_lower
         )
@@ -353,6 +434,8 @@ def _unpack_composite_items(base_item: dict) -> list[dict]:
                 'fat': macros['fat'],
                 'sugar': macros['sugar'],
                 'ingredients': macros['ingredients'],
+                'allergens': list(staple_allergens),
+                'is_vegetarian': staple_veg,
                 'used_fallback': True,
             })
             unpacked.append(sub_item)
@@ -363,12 +446,13 @@ def _unpack_composite_items(base_item: dict) -> list[dict]:
 def hydrate_missing_macros(items: list[dict]) -> list[dict]:
     """
     Fills in ordered USDA macro estimates when Purdue's API returns an empty
-    Nutrients array (calories == 0 and protein == 0). Specific composite terms
-    are evaluated before single-ingredient keywords.
+    Nutrients array (calories == 0 and protein == 0).
     """
     hydrated = []
     for item in items:
         copy_item = dict(item)
+        copy_item.setdefault('allergens', [])
+        copy_item.setdefault('is_vegetarian', None)
         if copy_item['calories'] == 0.0 and copy_item['protein'] == 0.0:
             name_lower = copy_item['name'].lower().strip()
             if name_lower not in STATION_HEADER_NAMES:
@@ -413,9 +497,9 @@ def _fetch_single_item_detail(item_id: str) -> tuple[str, Optional[dict]]:
 def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None) -> list[dict]:
     """
     Queries Purdue HFS v2 API for a single location and fetches all unique item
-    details concurrently via ThreadPoolExecutor (~2s cold start).
+    details (including Nutrients, Ingredients, and Allergens) concurrently.
     """
-    date_str = target_date or datetime.now().strftime('%Y-%m-%d')
+    date_str = target_date or get_purdue_now().strftime('%Y-%m-%d')
     url = f'https://api.hfs.purdue.edu/menus/v2/locations/{location}/{date_str}'
     session = _get_thread_session()
 
@@ -429,7 +513,6 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
     if 'Meals' not in data or not data['Meals']:
         return []
 
-    # 1. Collect all unique item IDs across meals and stations at this location
     unique_item_ids = set()
     for meal in data['Meals']:
         for station in meal.get('Stations', []):
@@ -438,7 +521,6 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                 if item_id:
                     unique_item_ids.add(item_id)
 
-    # 2. Fetch all unique item detail payloads concurrently
     details_by_id: dict[str, dict] = {}
     if unique_item_ids:
         with ThreadPoolExecutor(max_workers=12) as executor:
@@ -451,7 +533,6 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                 if detail_data is not None:
                     details_by_id[iid] = detail_data
 
-    # 3. Normalize items using the pre-fetched detail dictionary
     normalized_items = []
 
     for meal in data['Meals']:
@@ -473,6 +554,8 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                 has_api_nutrients = False
 
                 detail_data = details_by_id.get(item_id) if item_id else None
+                allergens, is_vegetarian = _extract_allergens_and_diet(detail_data)
+
                 if detail_data:
                     serving_size = (detail_data.get('ServingSize') or '').strip() or 'N/A'
                     ingredients = (detail_data.get('Ingredients') or '').strip() or 'N/A'
@@ -522,6 +605,8 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                     'fat': round(fat, 1),
                     'sugar': round(sugar, 1),
                     'ingredients': ingredients,
+                    'allergens': allergens,
+                    'is_vegetarian': is_vegetarian,
                     'used_fallback': used_fallback,
                 }
 
@@ -533,10 +618,7 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
 def merge_external_menus(
     menu_items: list[dict], static_menu_path: Optional[str] = None
 ) -> list[dict]:
-    """
-    Hook to merge off-API venues (such as PMU restaurants) or custom static JSON
-    menus into the standardized menu item list.
-    """
+    """Hook to merge off-API venues or custom static JSON menus."""
     if not static_menu_path or not os.path.exists(static_menu_path):
         return menu_items
 
@@ -545,12 +627,6 @@ def merge_external_menus(
             external_data = json.load(f)
     except (OSError, ValueError):
         return menu_items
-
-    required_keys = {
-        'location', 'meal_period', 'hours_status', 'closing_time',
-        'station', 'name', 'calories', 'protein', 'carbs', 'fat',
-        'sugar', 'ingredients', 'used_fallback'
-    }
 
     for entry in external_data:
         normalized = {
@@ -568,10 +644,11 @@ def merge_external_menus(
             'fat': float(entry.get('fat', 0.0)),
             'sugar': float(entry.get('sugar', 0.0)),
             'ingredients': entry.get('ingredients', 'N/A'),
+            'allergens': [str(a).lower() for a in entry.get('allergens', [])],
+            'is_vegetarian': entry.get('is_vegetarian'),
             'used_fallback': bool(entry.get('used_fallback', False)),
         }
-        if required_keys.issubset(normalized.keys()):
-            menu_items.append(normalized)
+        menu_items.append(normalized)
 
     return menu_items
 
@@ -585,9 +662,8 @@ def get_daily_menus(
     """
     Loads today's compiled menu items from local JSON cache if available and non-empty;
     otherwise fetches live data from Purdue's API concurrently and writes the cache file.
-    Returns (items, loaded_from_cache).
     """
-    today_str = datetime.now().strftime('%Y-%m-%d')
+    today_str = get_purdue_now().strftime('%Y-%m-%d')
     cache_path = os.path.join(BASE_DIR, f'purdue_menu_cache_{today_str}.json')
 
     if not force_refresh and os.path.exists(cache_path):
@@ -624,8 +700,9 @@ def get_daily_menus(
     all_items = merge_external_menus(all_items, static_menu_path)
     return hydrate_missing_macros(all_items), False
 
+
 # ==============================================================================
-# MODULE 2: CALIBRATED USDA DRI & SINGLE-MEAL MACRO CALCULATOR
+# MODULE 2: EXPANDED USDA DRI & SINGLE-MEAL MACRO CALCULATOR
 # ==============================================================================
 
 def calculate_meal_targets(
@@ -635,13 +712,12 @@ def calculate_meal_targets(
     height_in: float,
     activity_level: str,
     meals_per_day: int,
-    meal_goal: str = 'Balanced',
+    meal_goal: str = 'Balanced Maintenance',
     health_intensity: str = 'High',
 ) -> dict:
     """
-    Computes daily Calories via Mifflin-St Jeor with calibrated campus activity
-    multipliers, anchors Protein to USDA DRI body-weight guidelines (g/kg),
-    uses the 130g/day USDA RDA floor for Carbohydrates, and applies AHA added-sugar caps.
+    Computes daily Calories via Mifflin-St Jeor and derives per-meal macro ranges
+    across five tailored student nutrition goals.
     """
     weight_kg = weight_lbs * 0.45359237
     height_cm = height_in * 2.54
@@ -660,34 +736,71 @@ def calculate_meal_targets(
         'active': 1.55,
     }
     multiplier = activity_multipliers.get(activity_level.strip().lower(), 1.375)
-    daily_calories = bmr * multiplier
+    maintenance_calories = bmr * multiplier
 
     goal_norm = meal_goal.strip().lower()
-    if 'high protein' in goal_norm:
-        daily_protein_min = weight_kg * 1.2
+
+    if 'high protein' in goal_norm or 'muscle' in goal_norm:
+        daily_calories = maintenance_calories * 1.08
+        daily_protein_min = weight_kg * 1.35
+        daily_protein_target = weight_kg * 1.65
+        daily_protein_max = weight_kg * 1.85
+        daily_carbs_min = max((daily_calories * 0.32) / 4.0, 130.0)
+        daily_carbs_target = max((daily_calories * 0.40) / 4.0, 150.0)
+        daily_carbs_max = (daily_calories * 0.50) / 4.0
+        daily_fat_min = (daily_calories * 0.20) / 9.0
+        daily_fat_target = (daily_calories * 0.25) / 9.0
+        daily_fat_max = (daily_calories * 0.32) / 9.0
+
+    elif 'lean cut' in goal_norm or 'fat loss' in goal_norm:
+        daily_calories = maintenance_calories * 0.825  # ~17.5% moderate deficit
+        daily_protein_min = weight_kg * 1.4
+        daily_protein_target = weight_kg * 1.55
+        daily_protein_max = weight_kg * 1.75
+        daily_carbs_min = max((daily_calories * 0.25) / 4.0, 130.0)
+        daily_carbs_target = max((daily_calories * 0.33) / 4.0, 135.0)
+        daily_carbs_max = (daily_calories * 0.42) / 4.0
+        daily_fat_min = (daily_calories * 0.20) / 9.0
+        daily_fat_target = (daily_calories * 0.25) / 9.0
+        daily_fat_max = (daily_calories * 0.32) / 9.0
+
+    elif 'athletic' in goal_norm or 'endurance' in goal_norm:
+        daily_calories = maintenance_calories * 1.05
+        daily_protein_min = weight_kg * 1.15
+        daily_protein_target = weight_kg * 1.35
+        daily_protein_max = weight_kg * 1.55
+        daily_carbs_min = max((daily_calories * 0.43) / 4.0, 160.0)
+        daily_carbs_target = max((daily_calories * 0.48) / 4.0, 180.0)
+        daily_carbs_max = (daily_calories * 0.55) / 4.0
+        daily_fat_min = (daily_calories * 0.20) / 9.0
+        daily_fat_target = (daily_calories * 0.24) / 9.0
+        daily_fat_max = (daily_calories * 0.30) / 9.0
+
+    elif 'low-carb' in goal_norm or 'low carb' in goal_norm or 'blood sugar' in goal_norm:
+        daily_calories = maintenance_calories
+        daily_protein_min = weight_kg * 1.3
         daily_protein_target = weight_kg * 1.5
-        daily_protein_max = weight_kg * 1.8
-        carb_share = 0.35
-        fat_share = 0.25
+        daily_protein_max = weight_kg * 1.75
+        daily_carbs_min = 60.0
+        daily_carbs_target = (daily_calories * 0.20) / 4.0
+        daily_carbs_max = (daily_calories * 0.26) / 4.0
+        daily_fat_min = (daily_calories * 0.32) / 9.0
+        daily_fat_target = (daily_calories * 0.38) / 9.0
+        daily_fat_max = (daily_calories * 0.46) / 9.0
+
     else:
-        # USDA DRI baseline (RDA = 0.8 g/kg; balanced target = 1.1 g/kg)
+        # Balanced Maintenance (USDA DRI baseline)
+        daily_calories = maintenance_calories
         daily_protein_min = weight_kg * 0.8
         daily_protein_target = weight_kg * 1.1
         daily_protein_max = weight_kg * 1.4
-        carb_share = 0.38
-        fat_share = 0.25
+        daily_carbs_min = 130.0
+        daily_carbs_target = max((daily_calories * 0.40) / 4.0, 145.0)
+        daily_carbs_max = (daily_calories * 0.50) / 4.0
+        daily_fat_min = (daily_calories * 0.20) / 9.0
+        daily_fat_target = (daily_calories * 0.26) / 9.0
+        daily_fat_max = (daily_calories * 0.33) / 9.0
 
-    # USDA RDA minimum for carbs is 130g/day up to 50% of daily calories
-    daily_carbs_min = 130.0
-    daily_carbs_target = max((daily_calories * carb_share) / 4.0, 140.0)
-    daily_carbs_max = (daily_calories * 0.50) / 4.0
-
-    # Healthy fat range (20% - 32% of daily calories)
-    daily_fat_min = (daily_calories * 0.20) / 9.0
-    daily_fat_target = (daily_calories * fat_share) / 9.0
-    daily_fat_max = (daily_calories * 0.32) / 9.0
-
-    # AHA added-sugar cap tightened to 20g/day when High health intensity is selected
     if health_intensity.strip().lower() == 'high':
         daily_sugar_max = min(daily_aha_sugar_cap, 20.0)
     else:
@@ -696,6 +809,7 @@ def calculate_meal_targets(
     meals = max(1, int(meals_per_day))
 
     return {
+        'goal_label': meal_goal,
         'daily': {
             'calories': round(daily_calories, 1),
             'protein_target': round(daily_protein_target, 1),
@@ -724,23 +838,18 @@ def calculate_meal_targets(
 # ==============================================================================
 
 def _parse_api_time(time_str: str, base_date) -> Optional[datetime]:
-    """
-    Extracts HH:MM(:SS) from Purdue HFS timestamps after stripping any ISO 'T'
-    date prefix, fractional seconds, or timezone offset.
-    """
+    """Extracts HH:MM(:SS) from Purdue HFS timestamps in PURDUE_TZ."""
     if not time_str:
         return None
     clean = str(time_str).strip()
 
-    # Handle 12-hour strings like '12:30 PM'
     for fmt in ('%I:%M %p', '%I:%M:%S %p'):
         try:
             parsed_t = datetime.strptime(clean, fmt).time()
-            return datetime.combine(base_date, parsed_t)
+            return datetime.combine(base_date, parsed_t, tzinfo=PURDUE_TZ)
         except ValueError:
             continue
 
-    # Strip ISO date prefix ('YYYY-MM-DDT') and match HH:MM(:SS) before fractional/TZ suffix
     after_t = clean.split('T')[-1]
     match = re.search(r'(\d{1,2}:\d{2}(?::\d{2})?)', after_t)
     if match:
@@ -748,14 +857,13 @@ def _parse_api_time(time_str: str, base_date) -> Optional[datetime]:
         fmt = '%H:%M:%S' if time_part.count(':') == 2 else '%H:%M'
         try:
             parsed_t = datetime.strptime(time_part, fmt).time()
-            return datetime.combine(base_date, parsed_t)
+            return datetime.combine(base_date, parsed_t, tzinfo=PURDUE_TZ)
         except ValueError:
             return None
     return None
 
 
 def _format_display_time(dt_obj: datetime) -> str:
-    """Formats a datetime into '2:00 pm' style matching the Purdue Dining portal."""
     return dt_obj.strftime('%I:%M %p').lstrip('0').lower()
 
 
@@ -764,9 +872,11 @@ def filter_open_locations(
 ) -> list[dict]:
     """
     Filters items to dining locations currently open or opening within 30 minutes.
-    If run between meal periods, automatically falls back to the next upcoming meal today.
+    If run between meal periods, falls back to the next upcoming meal today.
     """
-    now = current_time or datetime.now()
+    now = current_time or get_purdue_now()
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=PURDUE_TZ)
     today = now.date()
     open_items = []
     upcoming_items = []
@@ -820,26 +930,114 @@ def filter_open_locations(
 
 
 # ==============================================================================
-# MODULE 4: STRICT THREE-TIER HEALTH SCORING & 'INGREDIENTS: N/A' GUARDRAIL
+# MODULE 4: EASY-LINE FILTER, ALLERGEN/DIETARY FILTER & 3-TIER HEALTH SCORING
 # ==============================================================================
 
+def _is_special_order_item(item: dict) -> bool:
+    """
+    Returns True if the item or station requires placing a special request,
+    custom ticket, or made-to-order preparation (e.g., 'By Request' station,
+    custom omelets, made-to-order stir-fry/pasta).
+    """
+    station_lower = (item.get('station') or '').lower().strip()
+    name_lower = (item.get('name') or '').lower().strip()
+
+    if any(marker in station_lower for marker in SPECIAL_ORDER_STATION_MARKERS):
+        return True
+    if any(marker in name_lower for marker in SPECIAL_ORDER_ITEM_MARKERS):
+        return True
+    return False
+
+
+def _passes_dietary_filters(item: dict, dietary_filters: list[str]) -> bool:
+    """
+    Checks an item against selected allergen and dietary filters using both the
+    Purdue HFS API Allergens array and ingredient/name text fallbacks.
+    Supported filters:
+      gluten-free, dairy-free, egg-free, soy-free, peanut-free,
+      tree-nut-free, shellfish-free, vegetarian
+    """
+    if not dietary_filters:
+        return True
+
+    active = {f.strip().lower() for f in dietary_filters if f}
+    allergens = {str(a).strip().lower() for a in (item.get('allergens') or [])}
+    name_lower = (item.get('name') or '').lower()
+    ing_lower = (item.get('ingredients') or '').lower()
+    combined = f'{name_lower} {ing_lower}'
+
+    allergen_rules = {
+        'gluten-free': {
+            'api_tags': {'gluten', 'wheat'},
+            'keywords': ['wheat', 'barley', 'rye', 'semolina', 'flour', 'bread', 'pasta', 'tortilla', 'crouton', 'panko', 'bagel', 'muffin', 'pancake', 'pita'],
+            'safe_override': ['gluten-free', 'gluten free', 'gf '],
+        },
+        'dairy-free': {
+            'api_tags': {'milk', 'dairy'},
+            'keywords': ['milk', 'cheese', 'butter', 'cream', 'whey', 'casein', 'yogurt', 'mozzarella', 'cheddar', 'parmesan', 'feta', 'ricotta', 'queso'],
+            'safe_override': ['dairy-free', 'dairy free', 'vegan', 'violife'],
+        },
+        'egg-free': {
+            'api_tags': {'eggs', 'egg'},
+            'keywords': ['egg', 'mayonnaise', 'aioli'],
+            'safe_override': ['egg-free', 'egg free', 'vegan'],
+        },
+        'soy-free': {
+            'api_tags': {'soy', 'soybeans'},
+            'keywords': ['soy', 'soybean', 'tofu', 'edamame', 'tamari', 'teriyaki', 'miso'],
+            'safe_override': ['soy-free', 'soy free'],
+        },
+        'peanut-free': {
+            'api_tags': {'peanuts', 'peanut'},
+            'keywords': ['peanut', 'kung pao', 'reese'],
+            'safe_override': ['peanut-free', 'peanut free'],
+        },
+        'tree-nut-free': {
+            'api_tags': {'tree nuts', 'tree nut', 'nuts'},
+            'keywords': ['almond', 'walnut', 'pecan', 'cashew', 'pistachio', 'hazelnut', 'macadamia', 'pine nut', 'coconut'],
+            'safe_override': ['nut-free', 'nut free'],
+        },
+        'shellfish-free': {
+            'api_tags': {'shellfish', 'crustacean shellfish'},
+            'keywords': ['shrimp', 'crab', 'lobster', 'clam', 'mussel', 'oyster', 'scallop', 'crawfish'],
+            'safe_override': [],
+        },
+    }
+
+    for filter_key, rule in allergen_rules.items():
+        if filter_key not in active:
+            continue
+
+        # 1. Explicit API allergen match
+        if allergens & rule['api_tags']:
+            return False
+
+        # 2. Text fallback check unless item explicitly declares itself safe
+        if not any(safe in name_lower for safe in rule['safe_override']):
+            if any(re.search(rf'\b{re.escape(kw)}s?\b', combined) for kw in rule['keywords']):
+                return False
+
+    if 'vegetarian' in active:
+        is_veg = item.get('is_vegetarian')
+        if is_veg is False:
+            return False
+        if is_veg is None:
+            if any(re.search(rf'\b{re.escape(m)}s?\b', combined) for m in MEAT_SEAFOOD_KEYWORDS):
+                return False
+
+    return True
+
+
 def _is_whole_fruit(name_lower: str) -> bool:
-    """True if item is a whole/fresh fruit and not a pie, cobbler, or sugary pastry."""
     if any(d in name_lower for d in DESSERT_KEYWORDS + ['sauce', 'syrup', 'juice']):
         return False
     return any(fr in name_lower for fr in WHOLE_FRUIT_KEYWORDS)
 
 
 def _is_verified_na_whole_food(item: dict) -> bool:
-    """
-    Returns True only if an item with 'Ingredients: N/A' is an unpacked Salad Bar
-    staple or a verified single-ingredient whole food (plain rice, plain potatoes,
-    hard-boiled eggs, whole fruit, steamed vegetables, or plain grilled chicken breast).
-    """
     name_lower = item['name'].lower().strip()
     station_lower = item['station'].lower().strip()
 
-    # Unpacked Salad Bar whole-food staples
     if 'salad bar' in station_lower or '(salad bar)' in name_lower:
         if any(
             st in name_lower
@@ -850,7 +1048,6 @@ def _is_verified_na_whole_food(item: dict) -> bool:
     if _is_whole_fruit(name_lower):
         return True
 
-    # Reject composite/saucy/pre-mixed items even if they contain a whole-food word
     unverified_risk_words = [
         'salad', 'bowl', 'stir fry', 'moo shu', 'teriyaki', 'sauce', 'glaze',
         'fried', 'crispy', 'breaded', 'dip', 'queso', 'cheese', 'creamy', 'casserole'
@@ -863,9 +1060,9 @@ def _is_verified_na_whole_food(item: dict) -> bool:
 
 def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float, str]:
     """
-    Evaluates an item against the selected Health Intensity ('High', 'Mid', 'Low').
-    Enforces the strict 'Ingredients: N/A' guardrail in 'High' mode and filters
-    out non-food station headers.
+    Evaluates an item against the selected mode ('High' = Healthiest,
+    'Mid' = Balanced, 'Low' = Yummiest), enforcing easy-line self-serve rules
+    and the strict 'Ingredients: N/A' guardrail in Healthiest mode.
     """
     tier = health_intensity.strip().lower()
     name_lower = item['name'].lower().strip()
@@ -873,7 +1070,9 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
     ing_lower = ing_raw.lower()
     combined_text = f'{name_lower} {ing_lower}'
 
-    # Always exclude non-food station headers (e.g., 'Pasta Bar', 'Salad Bar')
+    # Exclude special-order / custom-ticket items and station headers
+    if _is_special_order_item(item):
+        return False, -100.0, 'Excluded: requires custom or special-request order'
     if name_lower in STATION_HEADER_NAMES:
         return False, -100.0, 'Excluded: station header rather than food item'
 
@@ -891,12 +1090,10 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
     whole_fruit = _is_whole_fruit(name_lower)
 
     if tier == 'high':
-        # Crucial guardrail: reject unverified N/A items in High mode
         if ing_raw.upper() == 'N/A' and not _is_verified_na_whole_food(item):
-            return False, -100.0, 'Excluded from High mode: unverified ingredients (N/A) — routed to Mid'
-
+            return False, -100.0, 'Excluded from Healthiest mode: unverified ingredients (N/A)'
         if has_seed_oil:
-            return False, -100.0, 'Excluded: contains industrial seed oils'
+            return False, -100.0, 'Excluded: contains seed oils'
         if is_deep_fried:
             return False, -100.0, 'Excluded: deep-fried or battered'
         if has_artificial:
@@ -906,12 +1103,12 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
         if has_high_sugar or (item['sugar'] > 10.0 and not whole_fruit):
             return False, -100.0, 'Excluded: high added/refined sugar'
 
-        bonus = 15.0
+        bonus = 18.0 + min(item['protein'] * 0.35, 12.0)
         if 'salad bar' in item['station'].lower() or '(salad bar)' in name_lower:
-            bonus += 10.0
+            bonus += 6.0
         if 'olive oil' in combined_text or 'butter' in combined_text:
-            bonus += 5.0
-        return True, bonus, 'Verified whole-food ingredient profile with zero seed oils'
+            bonus += 4.0
+        return True, round(bonus, 1), 'Zero seed oils & verified whole-food ingredients'
 
     elif tier == 'mid':
         if is_deep_fried:
@@ -923,23 +1120,26 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
         if (has_high_sugar and item['protein'] < 10.0) or (item['sugar'] > 18.0 and not whole_fruit):
             return False, -100.0, 'Excluded: sugary glaze or high-sugar item'
 
-        bonus = 10.0 if (not has_seed_oil and ing_raw.upper() != 'N/A') else 3.0
+        clean_bonus = 12.0 if (not has_seed_oil and ing_raw.upper() != 'N/A') else 5.0
+        protein_bonus = min(item['protein'] * 0.3, 10.0)
         reason = (
-            'Whole-food protein/base without seed oils'
+            'Clean whole-food protein/base without seed oils'
             if (not has_seed_oil and ing_raw.upper() != 'N/A')
-            else 'Allowed protein/entree in Mid mode to meet protein target'
+            else 'Balanced everyday entree & lean protein pick'
         )
-        return True, bonus, reason
+        return True, round(clean_bonus + protein_bonus, 1), reason
 
-    else:  # 'low'
-        bonus = min(item['protein'] * 0.5, 20.0)
-        return True, bonus, 'Selected for maximum protein yield and flavor'
+    else:  # 'low' -> Yummiest
+        if is_dip_or_sauce and item['protein'] < 5.0:
+            return False, -100.0, 'Excluded standalone sauce/condiment'
+        bonus = min(item['protein'] * 0.55, 22.0) + min(item['calories'] * 0.015, 8.0)
+        return True, round(bonus, 1), 'Top flavor & protein-packed comfort favorite'
 
 
 def _classify_item_role(item: dict) -> str:
     """
-    Categorizes a menu item into 'protein', 'carb', or 'side', blocking
-    station headers, dips/sauces, and desserts from primary entree roles.
+    Categorizes a menu item into 'protein', 'carb', or 'side' so suggested
+    plates compose naturally like a real meal.
     """
     name_lower = item['name'].lower().strip()
 
@@ -950,15 +1150,21 @@ def _classify_item_role(item: dict) -> str:
     ):
         return 'side'
 
-    if 'olive oil' in name_lower or 'spinach' in name_lower or 'greens' in name_lower:
+    if any(k in name_lower for k in ['olive oil', 'spinach', 'greens', 'broccoli', 'asparagus', 'brussels', 'vegetable', 'salad', 'edamame']):
         return 'side'
 
     if _is_whole_fruit(name_lower):
         return 'side'
 
-    if item['protein'] >= 12.0 and item['protein'] >= item['carbs'] * 0.6:
+    # Main entree protein (high protein density or explicit entree meat/tofu/eggs)
+    entree_protein_hints = ['chicken', 'beef', 'steak', 'pork', 'salmon', 'fish', 'shrimp', 'turkey', 'tofu', 'egg', 'gyro', 'burger']
+    if item['protein'] >= 11.0 and (
+        item['protein'] >= item['carbs'] * 0.55
+        or any(h in name_lower for h in entree_protein_hints)
+    ):
         return 'protein'
 
+    # Complementary carb / grain base
     if item['carbs'] >= 15.0 and item['carbs'] > item['protein']:
         return 'carb'
 
@@ -966,7 +1172,6 @@ def _classify_item_role(item: dict) -> str:
 
 
 def _range_error(val: float, low: float, high: float) -> float:
-    """Returns 0.0 when val is inside [low, high], or normalized distance outside."""
     if val < low:
         return (low - val) / max(low, 1.0)
     if val > high:
@@ -974,32 +1179,73 @@ def _range_error(val: float, low: float, high: float) -> float:
     return 0.0
 
 
+def _build_why_top_pick(
+    location: str,
+    plate_items: list[dict],
+    totals: dict,
+    health_intensity: str,
+    dri_enabled: bool,
+    per_meal: Optional[dict],
+    dietary_filters: list[str],
+) -> str:
+    """Generates a concise, human-friendly summary explaining why this court won."""
+    tier_map = {
+        'high': 'seed-oil-free whole foods',
+        'mid': 'balanced everyday nutrition',
+        'low': 'flavor & protein density',
+    }
+    mode_desc = tier_map.get(health_intensity.strip().lower(), 'quality nutrition')
+    stations = list(dict.fromkeys(i['station'] for i in plate_items))
+    station_str = ', '.join(stations[:2])
+
+    filter_note = ''
+    if dietary_filters:
+        pretty_filters = ', '.join(f.replace('-', ' ').title() for f in dietary_filters[:3])
+        filter_note = f' Verified {pretty_filters}.'
+
+    if dri_enabled and per_meal:
+        cal_pct = int(round((totals['calories'] / max(per_meal['calories'], 1.0)) * 100))
+        return (
+            f"Best {mode_desc} match at {station_str} — hits {totals['protein']}g protein "
+            f"and {cal_pct}% of your {int(round(per_meal['calories']))} kcal meal target.{filter_note}"
+        )
+
+    return (
+        f"Top {mode_desc} pairing ready on the regular line at {station_str} "
+        f"({totals['protein']}g protein, {int(round(totals['calories']))} kcal).{filter_note}"
+    )
+
+
 # ==============================================================================
-# MODULE 5: SMART MULTI-ITEM PLATE BUILDER & DUAL-LOCATION RANKER
+# MODULE 5: COHESIVE PLATE BUILDER & OPTIONAL DRI PORTION-SIZING SOLVER
 # ==============================================================================
 
 def build_optimal_plates(
     open_items: list[dict],
-    meal_targets: dict,
+    meal_targets: Optional[dict],
     meal_goal: str,
     health_intensity: str,
-    top_n: int = 2,
+    dri_enabled: bool = False,
+    dietary_filters: Optional[list[str]] = None,
+    top_n: int = 3,
 ) -> list[dict]:
     """
-    Builds and scores optimal multi-item plates for each open dining court:
-    - Applies zero penalty for carbs/fats inside the healthy [min, max] range.
-    - Only doubles primary protein when single serving < protein_min AND doubling
-      brings the plate closer to protein_target than a single portion.
-    - Scales up with a second distinct carb or healthy-fat booster when
-      per_meal['calories'] >= 1000 (e.g., 2-meal/day schedules) without duplicating fruit.
+    Builds cohesive, non-repetitive multi-item plates (Protein + Carb/Grain + Side)
+    for open Purdue dining courts:
+    - When dri_enabled is False: ranks courts purely on mode quality, allergen
+      compliance, and balanced 1x meal pairings without personal macro targets.
+    - When dri_enabled is True: solves for clean serving multipliers (1x, 1.5x, 2x)
+      to hit per-meal USDA DRI ranges accurately without repeating rows.
     """
-    per_meal = meal_targets['per_meal']
+    active_filters = dietary_filters or []
+    per_meal = (meal_targets or {}).get('per_meal') if dri_enabled else None
     goal_norm = meal_goal.strip().lower()
-    is_high_protein = 'high protein' in goal_norm
-    high_calorie_meal = per_meal['calories'] >= 1000.0
+    is_high_protein = ('high protein' in goal_norm) or ('lean cut' in goal_norm)
 
     by_location: dict[str, list[dict]] = {}
     for item in open_items:
+        if not _passes_dietary_filters(item, active_filters):
+            continue
         allowed, health_bonus, reason = evaluate_item_health(item, health_intensity)
         if not allowed:
             continue
@@ -1021,138 +1267,158 @@ def build_optimal_plates(
 
         proteins = sorted(
             [i for i in pool if i['_role'] == 'protein'],
-            key=lambda x: x['protein'],
+            key=lambda x: (x['_health_bonus'] + x['protein'] * 0.8),
             reverse=True,
         )[:8]
         carbs = sorted(
             [i for i in pool if i['_role'] == 'carb'],
-            key=lambda x: x['carbs'],
+            key=lambda x: (x['_health_bonus'] + x['carbs'] * 0.35),
             reverse=True,
         )[:6]
         sides = sorted(
             [i for i in pool if i['_role'] == 'side'],
-            key=lambda x: x['_health_bonus'] + x['calories'] * 0.05 + x['protein'],
+            key=lambda x: (x['_health_bonus'] + x['protein'] * 0.5 + x['calories'] * 0.04),
             reverse=True,
         )[:6]
 
+        # Allow vegetarian / allergen-restricted menus to pair a hearty legume/grain bowl
+        # even if no >=11g single meat item is present
         if not proteins:
-            continue
-
-        # Smart protein doubling: only double when single serving < protein_min
-        # AND doubling is strictly closer to protein_target than a single serving
-        protein_combos = []
-        for p in proteins:
-            protein_combos.append([p])
-            single_pro = p['protein']
-            double_pro = single_pro * 2.0
-            if (
-                single_pro < per_meal['protein_min']
-                and abs(double_pro - per_meal['protein_target']) < abs(single_pro - per_meal['protein_target'])
-            ):
-                protein_combos.append([p, p])
+            fallback_mains = sorted(
+                [i for i in pool if i['protein'] >= 6.0 and i['calories'] >= 100.0],
+                key=lambda x: (x['_health_bonus'] + x['protein']),
+                reverse=True,
+            )[:4]
+            if not fallback_mains:
+                continue
+            proteins = fallback_mains
 
         carb_choices = carbs if carbs else [None]
         side_choices = sides if sides else [None]
 
-        # Optional 4th slot booster for >=1000 kcal per-meal targets (2 meals/day)
-        booster_pool = [None]
-        if high_calorie_meal:
-            booster_pool.extend(carbs[:4] + sides[:4])
+        # Portion multipliers: strictly 1.0x when DRI is OFF; solver multipliers when DRI is ON
+        if dri_enabled and per_meal:
+            p_mults = [1.0, 1.5, 2.0]
+            c_mults = [1.0, 1.5, 2.0]
+            s_mults = [1.0, 1.5]
+        else:
+            p_mults = [1.0]
+            c_mults = [1.0]
+            s_mults = [1.0]
 
         best_plate_score = -1e9
         best_plate_data = None
 
-        for p_list, c_item, s_item, b_item in product(
-            protein_combos, carb_choices, side_choices, booster_pool
-        ):
-            # Ensure booster item is distinct and never duplicates fruit
-            if b_item is not None:
-                used_names = {p_list[0]['name']}
-                if c_item:
-                    used_names.add(c_item['name'])
-                if s_item:
-                    used_names.add(s_item['name'])
-                if b_item['name'] in used_names:
-                    continue
-                if s_item and s_item['_is_fruit'] and b_item['_is_fruit']:
-                    continue
-
-            plate_items = list(p_list)
+        for p_item, c_item, s_item in product(proteins, carb_choices, side_choices):
+            # Ensure every item on the plate is strictly distinct
+            chosen_names = [p_item['name']]
             if c_item:
-                plate_items.append(c_item)
+                if c_item['name'] in chosen_names:
+                    continue
+                chosen_names.append(c_item['name'])
             if s_item:
-                plate_items.append(s_item)
-            if b_item:
-                plate_items.append(b_item)
+                if s_item['name'] in chosen_names:
+                    continue
+                chosen_names.append(s_item['name'])
 
-            tot_cal = sum(i['calories'] for i in plate_items)
-            tot_pro = sum(i['protein'] for i in plate_items)
-            tot_carb = sum(i['carbs'] for i in plate_items)
-            tot_fat = sum(i['fat'] for i in plate_items)
-            tot_sugar = sum(i['sugar'] for i in plate_items)
-            health_score = sum(i['_health_bonus'] for i in plate_items) / len(plate_items)
+            for pm in p_mults:
+                for cm in (c_mults if c_item else [1.0]):
+                    for sm in (s_mults if s_item else [1.0]):
+                        # Avoid scaling a plain fruit side above 1x
+                        if s_item and s_item['_is_fruit'] and sm > 1.0:
+                            continue
 
-            cal_err = abs(tot_cal - per_meal['calories']) / max(per_meal['calories'], 1.0)
-            pro_err = abs(tot_pro - per_meal['protein_target']) / max(per_meal['protein_target'], 1.0)
-            carb_err = _range_error(tot_carb, per_meal['carbs_min'], per_meal['carbs_max'])
-            fat_err = _range_error(tot_fat, per_meal['fat_min'], per_meal['fat_max'])
+                        slots = [('Main Protein', p_item, pm)]
+                        if c_item:
+                            slots.append(('Grain / Carb Base', c_item, cm))
+                        if s_item:
+                            slots.append(('Veggie / Fruit Side', s_item, sm))
 
-            pro_shortfall_penalty = 0.0
-            if tot_pro < per_meal['protein_min']:
-                pro_shortfall_penalty = (
-                    (per_meal['protein_min'] - tot_pro) / max(per_meal['protein_min'], 1.0)
-                ) * 40.0
+                        tot_cal = sum(it['calories'] * m for _, it, m in slots)
+                        tot_pro = sum(it['protein'] * m for _, it, m in slots)
+                        tot_carb = sum(it['carbs'] * m for _, it, m in slots)
+                        tot_fat = sum(it['fat'] * m for _, it, m in slots)
+                        tot_sugar = sum(it['sugar'] * m for _, it, m in slots)
 
-            if is_high_protein:
-                macro_penalty = (pro_err * 42.0) + (cal_err * 22.0) + (carb_err * 10.0) + (fat_err * 10.0)
-            else:
-                macro_penalty = (cal_err * 24.0) + (pro_err * 28.0) + (carb_err * 15.0) + (fat_err * 15.0)
+                        avg_health = sum(it['_health_bonus'] for _, it, _ in slots) / len(slots)
+                        cohesion_bonus = (4.0 if c_item else 0.0) + (4.0 if s_item else 0.0)
 
-            total_score = 100.0 + health_score - macro_penalty - pro_shortfall_penalty
+                        if dri_enabled and per_meal:
+                            cal_err = abs(tot_cal - per_meal['calories']) / max(per_meal['calories'], 1.0)
+                            pro_err = abs(tot_pro - per_meal['protein_target']) / max(per_meal['protein_target'], 1.0)
+                            carb_err = _range_error(tot_carb, per_meal['carbs_min'], per_meal['carbs_max'])
+                            fat_err = _range_error(tot_fat, per_meal['fat_min'], per_meal['fat_max'])
 
-            if total_score > best_plate_score:
-                best_plate_score = total_score
-                formatted_items = []
-                for idx, it in enumerate(plate_items):
-                    if idx < len(p_list):
-                        role_label = 'Protein'
-                    elif it is c_item:
-                        role_label = 'Carbohydrate'
-                    elif it is s_item:
-                        role_label = 'Side / Micronutrient'
-                    else:
-                        role_label = 'Calorie / Macro Booster'
+                            pro_shortfall = 0.0
+                            if tot_pro < per_meal['protein_min']:
+                                pro_shortfall = (
+                                    (per_meal['protein_min'] - tot_pro) / max(per_meal['protein_min'], 1.0)
+                                ) * 38.0
 
-                    formatted_items.append({
-                        'role': role_label,
-                        'station': it['station'],
-                        'name': it['name'],
-                        'calories': it['calories'],
-                        'protein': it['protein'],
-                        'carbs': it['carbs'],
-                        'fat': it['fat'],
-                        'used_fallback': it['used_fallback'],
-                        'reason': it['_health_reason'],
-                    })
+                            # Slight preference for simpler 1x portions when macro fit is tied
+                            portion_complexity = ((pm - 1.0) + (cm - 1.0) + (sm - 1.0)) * 1.2
 
-                best_plate_data = {
-                    'location': location,
-                    'hours_status': plate_items[0]['hours_status'],
-                    'closing_time': plate_items[0]['closing_time'],
-                    'score': round(total_score, 1),
-                    'items': formatted_items,
-                    'totals': {
-                        'calories': round(tot_cal, 1),
-                        'protein': round(tot_pro, 1),
-                        'carbs': round(tot_carb, 1),
-                        'fat': round(tot_fat, 1),
-                        'sugar': round(tot_sugar, 1),
-                    },
-                    'filter_summary': (
-                        f"Matched '{health_intensity.title()}' health filter: "
-                        + '; '.join(dict.fromkeys(i['_health_reason'] for i in plate_items))
-                    ),
-                }
+                            if is_high_protein:
+                                macro_penalty = (pro_err * 40.0) + (cal_err * 22.0) + (carb_err * 10.0) + (fat_err * 10.0)
+                            else:
+                                macro_penalty = (cal_err * 24.0) + (pro_err * 26.0) + (carb_err * 15.0) + (fat_err * 15.0)
+
+                            total_score = 100.0 + avg_health + cohesion_bonus - macro_penalty - pro_shortfall - portion_complexity
+                        else:
+                            # Non-DRI mode: score by mode quality, meal balance, and satisfying protein
+                            protein_yield_bonus = min(tot_pro * 0.35, 16.0)
+                            satiety_bonus = 5.0 if 400.0 <= tot_cal <= 950.0 else 0.0
+                            total_score = 100.0 + avg_health + cohesion_bonus + protein_yield_bonus + satiety_bonus
+
+                        if total_score > best_plate_score:
+                            best_plate_score = total_score
+                            formatted_items = []
+                            for role_label, it, mult in slots:
+                                mult_clean = int(mult) if float(mult).is_integer() else round(mult, 1)
+                                formatted_items.append({
+                                    'role': role_label,
+                                    'station': it['station'],
+                                    'name': it['name'],
+                                    'servings': mult_clean,
+                                    'calories': round(it['calories'] * mult, 1),
+                                    'protein': round(it['protein'] * mult, 1),
+                                    'carbs': round(it['carbs'] * mult, 1),
+                                    'fat': round(it['fat'] * mult, 1),
+                                    'allergens': it.get('allergens', []),
+                                    'used_fallback': it['used_fallback'],
+                                    'reason': it['_health_reason'],
+                                })
+
+                            totals_obj = {
+                                'calories': round(tot_cal, 1),
+                                'protein': round(tot_pro, 1),
+                                'carbs': round(tot_carb, 1),
+                                'fat': round(tot_fat, 1),
+                                'sugar': round(tot_sugar, 1),
+                            }
+
+                            why_pick = _build_why_top_pick(
+                                location=location,
+                                plate_items=formatted_items,
+                                totals=totals_obj,
+                                health_intensity=health_intensity,
+                                dri_enabled=dri_enabled,
+                                per_meal=per_meal,
+                                dietary_filters=active_filters,
+                            )
+
+                            best_plate_data = {
+                                'location': location,
+                                'hours_status': p_item['hours_status'],
+                                'closing_time': p_item['closing_time'],
+                                'score': round(total_score, 1),
+                                'items': formatted_items,
+                                'totals': totals_obj,
+                                'why_top_pick': why_pick,
+                                'filter_summary': '; '.join(
+                                    dict.fromkeys(it['_health_reason'] for _, it, _ in slots)
+                                ),
+                            }
 
         if best_plate_data:
             location_results.append(best_plate_data)
@@ -1162,32 +1428,38 @@ def build_optimal_plates(
 
 
 def recommend_meals(
-    sex: str,
-    age: int,
-    weight_lbs: float,
-    height_in: float,
-    activity_level: str,
-    meals_per_day: int,
-    meal_goal: str = 'High Protein',
+    sex: Optional[str] = None,
+    age: Optional[int] = None,
+    weight_lbs: Optional[float] = None,
+    height_in: Optional[float] = None,
+    activity_level: Optional[str] = None,
+    meals_per_day: Optional[int] = None,
+    meal_goal: str = 'Balanced Maintenance',
     health_intensity: str = 'High',
+    dri_enabled: bool = False,
+    dietary_filters: Optional[list[str]] = None,
     include_quick_bites: bool = False,
     static_menu_path: Optional[str] = None,
     current_time: Optional[datetime] = None,
 ) -> dict:
     """
-    Top-level orchestrator function. Ready to be called directly by a CLI,
-    Flask/FastAPI web backend, or scheduled worker.
+    Top-level orchestrator function. Supports both instant zero-biometric mode
+    (dri_enabled=False) and personalized USDA DRI portion-sizing mode (dri_enabled=True).
     """
-    targets = calculate_meal_targets(
-        sex=sex,
-        age=age,
-        weight_lbs=weight_lbs,
-        height_in=height_in,
-        activity_level=activity_level,
-        meals_per_day=meals_per_day,
-        meal_goal=meal_goal,
-        health_intensity=health_intensity,
-    )
+    targets = None
+    if dri_enabled:
+        if not all([sex, age, weight_lbs, height_in, activity_level, meals_per_day]):
+            raise ValueError('Please fill in all biometric fields to enable USDA DRI portion sizing.')
+        targets = calculate_meal_targets(
+            sex=str(sex),
+            age=int(age),
+            weight_lbs=float(weight_lbs),
+            height_in=float(height_in),
+            activity_level=str(activity_level),
+            meals_per_day=int(meals_per_day),
+            meal_goal=meal_goal,
+            health_intensity=health_intensity,
+        )
 
     all_items, from_cache = get_daily_menus(
         include_quick_bites=include_quick_bites,
@@ -1201,130 +1473,32 @@ def recommend_meals(
         meal_targets=targets,
         meal_goal=meal_goal,
         health_intensity=health_intensity,
-        top_n=2,
+        dri_enabled=dri_enabled,
+        dietary_filters=dietary_filters or [],
+        top_n=3,
     )
 
     return {
-        'timestamp': (current_time or datetime.now()).strftime('%Y-%m-%d %I:%M %p'),
+        'timestamp': (current_time or get_purdue_now()).strftime('%Y-%m-%d %I:%M %p'),
         'loaded_from_cache': from_cache,
+        'dri_enabled': dri_enabled,
+        'health_intensity': health_intensity,
+        'dietary_filters': dietary_filters or [],
         'targets': targets,
         'open_locations_count': len({i['location'] for i in open_items}),
         'recommendations': recommendations,
     }
 
 
-# ==============================================================================
-# TERMINAL INTERFACE (UI WRAPPER ONLY)
-# ==============================================================================
-
 def _parse_user_time_input(raw_input: str) -> Optional[datetime]:
-    """Safely parses 'HH:MM' 24-hr or '12:30 PM' input; returns None on empty/invalid."""
+    """Safely parses 'HH:MM' 24-hr or '12:30 PM' input in PURDUE_TZ; returns None on empty/invalid."""
     clean = raw_input.strip()
     if not clean:
         return None
     for fmt in ('%H:%M', '%I:%M %p', '%I:%M%p'):
         try:
             parsed_t = datetime.strptime(clean, fmt).time()
-            return datetime.combine(datetime.now().date(), parsed_t)
+            return datetime.combine(get_purdue_now().date(), parsed_t, tzinfo=PURDUE_TZ)
         except ValueError:
             continue
     return None
-
-
-def main():
-    print('====================================================')
-    print('       PURDUE DINING MEAL OPTIMIZATION ENGINE       ')
-    print('====================================================\n')
-
-    sex = input('Enter Sex (M/F) [M]: ').strip() or 'M'
-
-    try:
-        age = int(input('Enter Age (years) [18]: ').strip() or 18)
-    except ValueError:
-        age = 18
-
-    try:
-        weight_lbs = float(input('Enter Weight (lbs) [155]: ').strip() or 155)
-    except ValueError:
-        weight_lbs = 155.0
-
-    try:
-        height_in = float(input('Enter Height (inches) [72]: ').strip() or 72)
-    except ValueError:
-        height_in = 72.0
-
-    activity_level = input('Activity Level (Sedentary / Moderate / Active) [Moderate]: ').strip() or 'Moderate'
-
-    try:
-        meals_per_day = int(input('How many meals do you eat per day? [2]: ').strip() or 2)
-    except ValueError:
-        meals_per_day = 2
-
-    meal_goal = input('Meal Goal (High Protein / Balanced) [High Protein]: ').strip() or 'High Protein'
-    health_intensity = input('Health Intensity (High / Mid / Low) [High]: ').strip() or 'High'
-    sim_input = input('Time to check (e.g., 12:30 or 12:30 PM, or Enter for NOW): ').strip()
-
-    sim_time = _parse_user_time_input(sim_input)
-    if sim_input and sim_time is None:
-        print('Invalid time format entered—using live current time (NOW).')
-
-    print('\nLoading daily menus and checking live dining court hours...')
-    result = recommend_meals(
-        sex=sex,
-        age=age,
-        weight_lbs=weight_lbs,
-        height_in=height_in,
-        activity_level=activity_level,
-        meals_per_day=meals_per_day,
-        meal_goal=meal_goal,
-        health_intensity=health_intensity,
-        current_time=sim_time,
-    )
-
-    cache_msg = (
-        "Loaded instantly from today's local JSON cache."
-        if result['loaded_from_cache']
-        else 'Fetched live from Purdue HFS API and cached.'
-    )
-    print(f'Status: {cache_msg}')
-
-    per_meal = result['targets']['per_meal']
-    print('\n--- YOUR PER-MEAL USDA DRI TARGETS ---')
-    print(
-        f"Calories: ~{per_meal['calories']} kcal | "
-        f"Protein: {per_meal['protein_target']}g (min {per_meal['protein_min']}g) | "
-        f"Carbs: {per_meal['carbs_min']}-{per_meal['carbs_max']}g | "
-        f"Fat: {per_meal['fat_min']}-{per_meal['fat_max']}g | "
-        f"Sugar Max: {per_meal['sugar_max']}g"
-    )
-
-    recs = result['recommendations']
-    if not recs:
-        print('\nNo dining courts currently match your selected meal window and health filters.')
-        print('Tip: Try relaxing Health Intensity to Mid if API ingredient lists are N/A today.')
-        return
-
-    for rank, rec in enumerate(recs, start=1):
-        label = '#1 BEST DINING COURT' if rank == 1 else '#2 RUNNER-UP DINING COURT'
-        print(f'\n====================================================')
-        print(f"{label}: {rec['location'].upper()} ({rec['hours_status']})")
-        print(f'====================================================')
-
-        for item in rec['items']:
-            fb_tag = ' [USDA Fallback Estimate]' if item['used_fallback'] else ''
-            print(
-                f"  * [{item['role']}] {item['name']} ({item['station']}){fb_tag}\n"
-                f"      -> {item['calories']} kcal | {item['protein']}g P | {item['carbs']}g C | {item['fat']}g F"
-            )
-
-        t = rec['totals']
-        print('\n  Combined Plate Macros vs. Per-Meal DRI Target:')
-        print(f"    Calories : {t['calories']} kcal  (Target: ~{per_meal['calories']} kcal)")
-        print(f"    Protein  : {t['protein']} g     (Target: {per_meal['protein_target']} g)")
-        print(f"    Carbs    : {t['carbs']} g     (Healthy Range: {per_meal['carbs_min']}-{per_meal['carbs_max']} g)")
-        print(f"    Fat      : {t['fat']} g     (Healthy Range: {per_meal['fat_min']}-{per_meal['fat_max']} g)")
-        print(f"\n  Why it matched: {rec['filter_summary']}")
-
-
-if __name__ == '__main__':
-    main()

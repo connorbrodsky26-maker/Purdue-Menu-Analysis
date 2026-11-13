@@ -1,10 +1,6 @@
 import os
 from flask import Flask, render_template, request, jsonify
-
-try:
-    from purdue_menus_full_analysis import recommend_meals, _parse_user_time_input
-except ImportError:
-    from purdue_menus_full_analysis import recommend_meals, _parse_user_time_input
+from purdue_menus_full_analysis import recommend_meals, _parse_user_time_input
 
 app = Flask(__name__)
 
@@ -17,22 +13,48 @@ def index():
 
 @app.route('/api/recommend', methods=['POST'])
 def api_recommend():
-    """Receives user biometrics and preferences as JSON and returns meal recommendations."""
+    """Receives mode, allergy filters, and optional DRI biometrics as JSON."""
     data = request.get_json(silent=True) or {}
 
     try:
-        sex = str(data.get('sex', 'M')).strip() or 'M'
-        age = int(data.get('age', 18))
-        weight_lbs = float(data.get('weight_lbs', 155))
-        height_in = float(data.get('height_in', 72))
-        activity_level = str(data.get('activity_level', 'Moderate')).strip() or 'Moderate'
-        meals_per_day = int(data.get('meals_per_day', 2))
-        meal_goal = str(data.get('meal_goal', 'High Protein')).strip() or 'High Protein'
         health_intensity = str(data.get('health_intensity', 'High')).strip() or 'High'
+        dri_enabled = bool(data.get('dri_enabled', False))
         include_quick_bites = bool(data.get('include_quick_bites', False))
+        meal_goal = str(data.get('meal_goal', 'Balanced Maintenance')).strip() or 'Balanced Maintenance'
+
+        raw_filters = data.get('dietary_filters') or []
+        dietary_filters = [str(f).strip().lower() for f in raw_filters if str(f).strip()]
 
         sim_raw = str(data.get('sim_time', '')).strip()
         sim_time = _parse_user_time_input(sim_raw) if sim_raw else None
+
+        sex = None
+        age = None
+        weight_lbs = None
+        height_in = None
+        activity_level = None
+        meals_per_day = None
+
+        if dri_enabled:
+            sex = str(data.get('sex') or '').strip()
+            age_raw = data.get('age')
+            weight_raw = data.get('weight_lbs')
+            height_raw = data.get('height_in')
+            activity_level = str(data.get('activity_level') or '').strip()
+            meals_raw = data.get('meals_per_day')
+
+            if not all([sex, age_raw not in (None, ''), weight_raw not in (None, ''), height_raw not in (None, ''), activity_level, meals_raw not in (None, '')]):
+                return jsonify({
+                    'error': 'Please complete all biometric fields (Sex, Age, Weight, Height, Activity Level, and Meals/Day) to calculate personalized DRI portions.'
+                }), 400
+
+            age = int(age_raw)
+            weight_lbs = float(weight_raw)
+            height_in = float(height_raw)
+            meals_per_day = int(meals_raw)
+
+            if age <= 0 or weight_lbs <= 0 or height_in <= 0 or meals_per_day <= 0:
+                return jsonify({'error': 'Biometric values must be positive numbers.'}), 400
 
         result = recommend_meals(
             sex=sex,
@@ -43,15 +65,19 @@ def api_recommend():
             meals_per_day=meals_per_day,
             meal_goal=meal_goal,
             health_intensity=health_intensity,
+            dri_enabled=dri_enabled,
+            dietary_filters=dietary_filters,
             include_quick_bites=include_quick_bites,
             current_time=sim_time,
         )
         return jsonify(result)
 
+    except ValueError as val_err:
+        return jsonify({'error': str(val_err)}), 400
     except Exception as exc:
-        return jsonify({'error': str(exc)}), 400
+        return jsonify({'error': f'Unexpected error: {exc}'}), 500
 
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port,)
+    app.run(host='0.0.0.0', port=port)

@@ -7,313 +7,1109 @@
   <style>
     :root {
       --gold: #CFB991;
-      --gold-hover: #DECBA8;
+      --gold-dark: #9D8556;
+      --gold-bg: #FBF8F1;
       --black: #121212;
-      --card: #1E1E1E;
-      --input-bg: #141414;
-      --border: #333333;
-      --text: #F4F4F4;
-      --muted: #A8A8A8;
-      --green: #7EE787;
-      --red: #FF7B72;
+      --surface: #FFFFFF;
+      --bg: #F5F5F4;
+      --border: #E2E0D8;
+      --text: #1C1917;
+      --muted: #57534E;
+      --green: #15803D;
+      --green-bg: #DCFCE7;
+      --blue: #1D4ED8;
+      --blue-bg: #DBEAFE;
+      --amber: #B45309;
+      --amber-bg: #FEF3C7;
+      --radius: 14px;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
+
     * {
       box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
     }
+
     body {
-      margin: 0;
-      background: var(--black);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
       color: var(--text);
-      padding: 20px 16px 48px;
+      line-height: 1.5;
+      padding-bottom: 3rem;
     }
-    .container {
-      max-width: 780px;
-      margin: 0 auto;
-    }
+
     header {
-      border-bottom: 2px solid var(--gold);
-      padding-bottom: 12px;
-      margin-bottom: 20px;
+      background: var(--black);
+      color: #FFFFFF;
+      padding: 1.15rem 1rem;
+      border-bottom: 3px solid var(--gold);
     }
-    h1 {
-      margin: 0;
-      font-size: 1.55rem;
-      color: var(--gold);
-      letter-spacing: 0.4px;
-    }
-    .subtitle {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px;
-      margin-bottom: 18px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
-      gap: 12px;
-    }
-    label {
-      display: block;
-      font-size: 0.75rem;
-      color: var(--gold);
-      margin-bottom: 4px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--input-bg);
-      color: var(--text);
-      font-size: 0.95rem;
-    }
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 14px;
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-    .checkbox-row input {
-      width: auto;
-      accent-color: var(--gold);
-    }
-    button {
-      width: 100%;
-      margin-top: 16px;
-      padding: 13px;
-      border: none;
-      border-radius: 8px;
-      background: var(--gold);
-      color: #111111;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    button:hover {
-      background: var(--gold-hover);
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-    .dri-bar {
+
+    .header-inner {
+      max-width: 920px;
+      margin: 0 auto;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 8px;
-      font-size: 0.9rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
     }
-    .dri-pill {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      padding: 8px 12px;
-      border-radius: 6px;
-      flex: 1 1 130px;
-    }
-    .dri-pill span {
-      display: block;
-      color: var(--muted);
-      font-size: 0.75rem;
-    }
-    .rank-badge {
-      display: inline-block;
-      background: var(--gold);
-      color: #111111;
-      font-weight: 700;
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 4px;
-      margin-bottom: 6px;
-    }
-    .court-title {
-      margin: 0 0 4px;
+
+    .brand h1 {
       font-size: 1.25rem;
-    }
-    .hours {
-      color: var(--green);
-      font-size: 0.85rem;
-      margin-bottom: 12px;
-    }
-    .item-row {
-      border-top: 1px solid var(--border);
-      padding: 10px 0;
-    }
-    .item-role {
+      font-weight: 800;
+      letter-spacing: -0.02em;
       color: var(--gold);
-      font-size: 0.75rem;
+    }
+
+    .brand p {
+      font-size: 0.82rem;
+      color: #D6D3D1;
+    }
+
+    .time-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #232220;
+      border: 1px solid #3F3D39;
+      border-radius: 999px;
+      padding: 0.3rem 0.65rem;
+      font-size: 0.8rem;
+      color: #E7E5E4;
+    }
+
+    .time-pill input {
+      background: transparent;
+      border: none;
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.82rem;
+      width: 82px;
+      outline: none;
+    }
+
+    .time-pill input::placeholder {
+      color: #A8A29E;
+      font-weight: 600;
+    }
+
+    .time-pill button {
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      border-radius: 999px;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 1.1rem auto 0;
+      padding: 0 1rem;
+    }
+
+    /* Mode Selector Cards */
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+      .mode-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.95rem 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .mode-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-1px);
+    }
+
+    .mode-card.active {
+      border-color: var(--black);
+      background: var(--gold-bg);
+      box-shadow: 0 4px 14px rgba(207, 185, 145, 0.35);
+    }
+
+    .mode-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: 1.02rem;
+      color: var(--black);
+    }
+
+    .mode-badge {
+      font-size: 0.68rem;
       font-weight: 700;
       text-transform: uppercase;
-    }
-    .item-name {
-      font-weight: 600;
-      margin: 2px 0;
-    }
-    .item-macros {
+      padding: 0.15rem 0.48rem;
+      border-radius: 999px;
+      background: #EFECE4;
       color: var(--muted);
-      font-size: 0.85rem;
     }
-    .fallback-tag {
-      font-size: 0.72rem;
-      background: #2D2A22;
+
+    .mode-card.active .mode-badge {
+      background: var(--black);
       color: var(--gold);
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 6px;
     }
-    .totals-box {
-      background: var(--input-bg);
+
+    .mode-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Utility Action Bar (Allergies + Quick Bites + DRI Toggle) */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .toolbar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .chip-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 0.48rem 0.9rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip-btn:hover {
+      border-color: var(--gold-dark);
+    }
+
+    .chip-btn.has-active {
+      background: var(--black);
+      color: #FFFFFF;
+      border-color: var(--black);
+    }
+
+    .filter-count {
+      background: var(--gold);
+      color: var(--black);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.05rem 0.42rem;
+      border-radius: 999px;
+    }
+
+    .toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle-pill input {
+      accent-color: var(--black);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    /* Collapsible Drawers */
+    .drawer {
+      display: none;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .drawer.open {
+      display: block;
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .drawer-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .text-link {
+      background: none;
+      border: none;
+      color: var(--gold-dark);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.65rem;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 12px;
-      margin-top: 10px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: #FAFAF9;
+    }
+
+    .check-item:has(input:checked) {
+      background: var(--gold-bg);
+      border-color: var(--gold-dark);
+      font-weight: 700;
+    }
+
+    .check-item input {
+      accent-color: var(--black);
+      width: 15px;
+      height: 15px;
+    }
+
+    /* DRI Biometrics Form */
+    .biometrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .field label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .field input,
+    .field select {
+      padding: 0.55rem 0.65rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
       font-size: 0.9rem;
+      background: #FFFFFF;
+      color: var(--text);
     }
-    .reason {
+
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--black);
+    }
+
+    .height-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+    }
+
+    .dri-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-top: 0.9rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .primary-btn {
+      background: var(--black);
+      color: var(--gold);
+      border: none;
+      border-radius: 10px;
+      padding: 0.62rem 1.2rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary-btn:hover {
+      opacity: 0.92;
+    }
+
+    /* Status & Alerts */
+    .status-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.8rem;
       color: var(--muted);
+      margin-bottom: 0.85rem;
+    }
+
+    .alert-box {
+      background: #FEF2F2;
+      border: 1.5px solid #FECACA;
+      color: #991B1B;
+      border-radius: var(--radius);
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    /* DRI Target Summary Banner */
+    .target-banner {
+      background: var(--surface);
+      border: 1.5px solid var(--gold);
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .target-banner h3 {
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--gold-dark);
+      margin-bottom: 0.45rem;
+    }
+
+    .target-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .t-pill {
+      background: var(--gold-bg);
+      border: 1px solid #E8DEC5;
+      border-radius: 8px;
+      padding: 0.32rem 0.65rem;
       font-size: 0.82rem;
-      margin-top: 10px;
-      line-height: 1.4;
+      font-weight: 700;
     }
-    .status-note {
-      text-align: center;
-      color: var(--muted);
+
+    /* Recommendation Cards */
+    .rec-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .rec-card.rank-1 {
+      border: 2px solid var(--black);
+    }
+
+    .rec-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .rank-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      background: var(--black);
+      color: var(--gold);
+      margin-bottom: 0.25rem;
+    }
+
+    .rec-card:not(.rank-1) .rank-tag {
+      background: #E7E5E4;
+      color: var(--text);
+    }
+
+    .court-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--black);
+    }
+
+    .hours-badge {
+      background: var(--green-bg);
+      color: var(--green);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.28rem 0.65rem;
+      border-radius: 999px;
+    }
+
+    .why-box {
+      background: #FAFAF9;
+      border-left: 3px solid var(--gold-dark);
+      padding: 0.55rem 0.75rem;
+      border-radius: 0 8px 8px 0;
       font-size: 0.85rem;
-      margin: 12px 0;
+      color: var(--text);
+      margin-bottom: 0.85rem;
     }
-    .error-box {
-      color: var(--red);
-      border-color: var(--red);
+
+    .plate-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .plate-item {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.65rem 0.8rem;
+      background: #FAFAF9;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .item-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .item-role-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .role-pill {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 0.12rem 0.45rem;
+      border-radius: 6px;
+      background: var(--blue-bg);
+      color: var(--blue);
+    }
+
+    .serving-pill {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.12rem 0.48rem;
+      border-radius: 6px;
+      background: var(--amber-bg);
+      color: var(--amber);
+    }
+
+    .item-name {
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    .item-station {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .item-macros {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .totals-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .progress-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 0.65rem;
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--border);
+    }
+
+    .prog-item {
+      font-size: 0.78rem;
+    }
+
+    .prog-label {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      margin-bottom: 0.22rem;
+    }
+
+    .prog-track {
+      width: 100%;
+      height: 7px;
+      background: #E7E5E4;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .prog-fill {
+      height: 100%;
+      background: var(--black);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .prog-fill.good {
+      background: var(--green);
+    }
+
+    .spinner {
+      text-align: center;
+      padding: 2.2rem 1rem;
+      color: var(--muted);
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Purdue Dining Meal Optimizer</h1>
-      <p class="subtitle">Live HFS Menus &bull; USDA DRI Macro Targets &bull; Seed-Oil &amp; Whole-Food Filtering</p>
-    </header>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <h1>Purdue Dining Meal Optimizer</h1>
+        <p>Live open dining courts &bull; Easy-line ready &bull; Instant picks</p>
+      </div>
+      <div class="time-pill" title="Leave blank for live campus time (NOW), or enter HH:MM / 12:30 PM">
+        <span>Time:</span>
+        <input type="text" id="sim_time" placeholder="NOW" aria-label="Time override" />
+        <button type="button" id="apply_time_btn">Go</button>
+      </div>
+    </div>
+  </header>
 
-    <form id="optForm" class="card">
-      <div class="grid">
-        <div>
+  <main>
+    <!-- 2. Inclusive Front-Page Mode Selector -->
+    <section class="mode-grid" role="radiogroup" aria-label="Meal Style Mode">
+      <button type="button" class="mode-card active" data-mode="High">
+        <div class="mode-top">
+          <span>Healthiest</span>
+          <span class="mode-badge">Zero Seed Oils</span>
+        </div>
+        <div class="mode-desc">Verified whole-food ingredients, clean proteins &amp; fresh produce.</div>
+      </button>
+
+      <button type="button" class="mode-card" data-mode="Mid">
+        <div class="mode-top">
+          <span>Balanced</span>
+          <span class="mode-badge">Everyday Fuel</span>
+        </div>
+        <div class="mode-desc">Wholesome daily meals, lean entrees &amp; energizing grains.</div>
+      </button>
+
+      <button type="button" class="mode-card" data-mode="Low">
+        <div class="mode-top">
+          <span>Yummiest</span>
+          <span class="mode-badge">Max Flavor</span>
+        </div>
+        <div class="mode-desc">Campus comfort favorites &amp; high-protein crowd-pleasers.</div>
+      </button>
+    </section>
+
+    <!-- 4 & 6. Filter Drawer Trigger & Optional DRI Toggle -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button type="button" class="chip-btn" id="toggle_filter_drawer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+          <span>Allergies &amp; Dietary</span>
+          <span class="filter-count" id="active_filter_count" style="display:none;">0</span>
+        </button>
+
+        <label class="toggle-pill">
+          <input type="checkbox" id="include_quick_bites" />
+          <span>Include Quick Bites</span>
+        </label>
+      </div>
+
+      <label class="toggle-pill">
+        <input type="checkbox" id="dri_toggle" />
+        <span>Personalize Portions with USDA DRI Targets</span>
+      </label>
+    </div>
+
+    <!-- 4. Allergen & Dietary Filter Drawer -->
+    <section class="drawer" id="filter_drawer">
+      <div class="drawer-header">
+        <span class="drawer-title">Exclude Allergens &amp; Set Dietary Preferences</span>
+        <button type="button" class="text-link" id="clear_filters_btn">Clear all</button>
+      </div>
+      <div class="checkbox-grid" id="dietary_checkboxes">
+        <label class="check-item"><input type="checkbox" value="gluten-free" /> Gluten-Free</label>
+        <label class="check-item"><input type="checkbox" value="dairy-free" /> Dairy-Free</label>
+        <label class="check-item"><input type="checkbox" value="egg-free" /> Egg-Free</label>
+        <label class="check-item"><input type="checkbox" value="soy-free" /> Soy-Free</label>
+        <label class="check-item"><input type="checkbox" value="peanut-free" /> Peanut-Free</label>
+        <label class="check-item"><input type="checkbox" value="tree-nut-free" /> Tree-Nut-Free</label>
+        <label class="check-item"><input type="checkbox" value="shellfish-free" /> Shellfish-Free</label>
+        <label class="check-item"><input type="checkbox" value="vegetarian" /> Vegetarian</label>
+      </div>
+    </section>
+
+    <!-- 5 & 6. Collapsible DRI Biometrics & Portion-Sizing Drawer -->
+    <section class="drawer" id="dri_drawer">
+      <div class="drawer-header">
+        <span class="drawer-title">USDA DRI Biometrics &amp; Portion Solver</span>
+        <button type="button" class="text-link" id="clear_biometrics_btn">Reset stats</button>
+      </div>
+      <div class="biometrics-grid">
+        <div class="field">
+          <label for="meal_goal">Nutrition Goal</label>
+          <select id="meal_goal">
+            <option value="Balanced Maintenance">Balanced Maintenance</option>
+            <option value="High Protein / Muscle Gain">High Protein / Muscle Gain</option>
+            <option value="Lean Cut / Fat Loss">Lean Cut / Fat Loss</option>
+            <option value="Athletic Endurance / Energy">Athletic Endurance / Energy</option>
+            <option value="Low-Carb / Blood Sugar Focus">Low-Carb / Blood Sugar Focus</option>
+          </select>
+        </div>
+
+        <div class="field">
           <label for="sex">Sex</label>
           <select id="sex">
-            <option value="M" selected>Male (M)</option>
-            <option value="F">Female (F)</option>
+            <option value="">Select...</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
           </select>
         </div>
-        <div>
+
+        <div class="field">
           <label for="age">Age (yrs)</label>
-          <input type="number" id="age" value="18" min="14" max="90" required />
+          <input type="number" id="age" min="15" max="99" placeholder="e.g., 19" />
         </div>
-        <div>
+
+        <div class="field">
           <label for="weight_lbs">Weight (lbs)</label>
-          <input type="number" id="weight_lbs" value="155" min="70" max="450" step="0.5" required />
+          <input type="number" id="weight_lbs" min="70" max="450" step="0.5" placeholder="e.g., 155" />
         </div>
-        <div>
-          <label for="height_in">Height (in)</label>
-          <input type="number" id="height_in" value="72" min="48" max="90" step="0.5" required />
+
+        <div class="field">
+          <label>Height (ft / in)</label>
+          <div class="height-pair">
+            <select id="height_ft" aria-label="Height feet">
+              <option value="">ft</option>
+              <option value="4">4 ft</option>
+              <option value="5">5 ft</option>
+              <option value="6">6 ft</option>
+              <option value="7">7 ft</option>
+            </select>
+            <select id="height_in" aria-label="Height inches">
+              <option value="">in</option>
+              <option value="0">0 in</option>
+              <option value="1">1 in</option>
+              <option value="2">2 in</option>
+              <option value="3">3 in</option>
+              <option value="4">4 in</option>
+              <option value="5">5 in</option>
+              <option value="6">6 in</option>
+              <option value="7">7 in</option>
+              <option value="8">8 in</option>
+              <option value="9">9 in</option>
+              <option value="10">10 in</option>
+              <option value="11">11 in</option>
+            </select>
+          </div>
         </div>
-        <div>
+
+        <div class="field">
           <label for="activity_level">Activity Level</label>
           <select id="activity_level">
-            <option value="Sedentary">Sedentary</option>
-            <option value="Moderate" selected>Moderate</option>
-            <option value="Active">Active</option>
+            <option value="">Select...</option>
+            <option value="Sedentary">Sedentary (Desk / Light Walk)</option>
+            <option value="Moderate">Moderate (Campus Walk + 3x Lift)</option>
+            <option value="Active">Active (Daily Training / Club Sport)</option>
           </select>
         </div>
-        <div>
-          <label for="meals_per_day">Meals / Day</label>
-          <input type="number" id="meals_per_day" value="2" min="1" max="6" required />
-        </div>
-        <div>
-          <label for="meal_goal">Meal Goal</label>
-          <select id="meal_goal">
-            <option value="High Protein" selected>High Protein</option>
-            <option value="Balanced">Balanced</option>
+
+        <div class="field">
+          <label for="meals_per_day">Meals Per Day</label>
+          <select id="meals_per_day">
+            <option value="">Select...</option>
+            <option value="1">1 meal / day</option>
+            <option value="2">2 meals / day</option>
+            <option value="3">3 meals / day</option>
+            <option value="4">4 meals / day</option>
+            <option value="5">5 meals / day</option>
           </select>
-        </div>
-        <div>
-          <label for="health_intensity">Health Intensity</label>
-          <select id="health_intensity">
-            <option value="High" selected>High (Zero Seed Oils)</option>
-            <option value="Mid">Mid (Whole Meats/Oils OK)</option>
-            <option value="Low">Low (Max Protein/Flavor)</option>
-          </select>
-        </div>
-        <div>
-          <label for="sim_time">Time (Optional)</label>
-          <input type="text" id="sim_time" placeholder="NOW (or 12:30 / 18:00)" />
         </div>
       </div>
 
-      <label class="checkbox-row" for="include_quick_bites">
-        <input type="checkbox" id="include_quick_bites" />
-        Include Quick Bites (1bowl, Pete's Za, Sushi Boss)
-      </label>
+      <div class="dri-actions">
+        <span style="font-size:0.78rem; color:var(--muted);">
+          Solver scales serving multipliers (1x, 1.5x, 2x) to match your per-meal DRI targets.
+        </span>
+        <button type="button" class="primary-btn" id="calculate_dri_btn">Calculate &amp; Size Portions</button>
+      </div>
+    </section>
 
-      <button type="submit" id="submitBtn">Find Optimal Dining Court</button>
-    </form>
+    <!-- Status Strip & Validation Messages -->
+    <div class="status-strip">
+      <span id="status_text">Checking live Purdue dining courts...</span>
+      <span id="cache_badge"></span>
+    </div>
 
-    <div id="statusMsg" class="status-note"></div>
-    <div id="results"></div>
-  </div>
+    <div id="validation_banner" class="alert-box" style="display:none;"></div>
+    <div id="dri_targets_container"></div>
+    <div id="results_container">
+      <div class="spinner">Loading today's Purdue menus...</div>
+    </div>
+  </main>
 
   <script>
-    const SAVED_FIELDS = [
-      'sex', 'age', 'weight_lbs', 'height_in',
-      'activity_level', 'meals_per_day', 'meal_goal', 'health_intensity'
-    ];
+    const STORAGE_KEY = 'purdue_dining_optimizer_prefs_v2';
 
-    // Restore saved biometrics automatically on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      SAVED_FIELDS.forEach(id => {
-        const saved = localStorage.getItem('purdue_opt_' + id);
-        if (saved !== null) {
-          document.getElementById(id).value = saved;
-        }
+    const state = {
+      health_intensity: 'High',
+      dietary_filters: [],
+      dri_enabled: false,
+      include_quick_bites: false,
+      meal_goal: 'Balanced Maintenance',
+      sex: '',
+      age: '',
+      weight_lbs: '',
+      height_ft: '',
+      height_in: '',
+      activity_level: '',
+      meals_per_day: '',
+      sim_time: ''
+    };
+
+    function loadPreferences() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        Object.assign(state, saved);
+        // Never persist an old overridden clock across fresh visits
+        state.sim_time = '';
+      } catch (e) {
+        console.warn('Could not read saved preferences:', e);
+      }
+    }
+
+    function savePreferences() {
+      try {
+        const toSave = { ...state, sim_time: '' };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+      } catch (e) {
+        console.warn('Could not save preferences:', e);
+      }
+    }
+
+    function syncUIToState() {
+      // Mode cards
+      document.querySelectorAll('.mode-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.mode === state.health_intensity);
       });
-    });
 
-    const form = document.getElementById('optForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusMsg = document.getElementById('statusMsg');
-    const resultsDiv = document.getElementById('results');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Analyzing Purdue Dining Menus...';
-      statusMsg.textContent = 'Checking live dining court hours...';
-      resultsDiv.innerHTML = '';
-
-      SAVED_FIELDS.forEach(id => {
-        localStorage.setItem('purdue_opt_' + id, document.getElementById(id).value);
+      // Dietary checkboxes & count pill
+      const checkboxes = document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]');
+      checkboxes.forEach(cb => {
+        cb.checked = state.dietary_filters.includes(cb.value);
       });
+      const countEl = document.getElementById('active_filter_count');
+      const filterBtn = document.getElementById('toggle_filter_drawer');
+      if (state.dietary_filters.length > 0) {
+        countEl.textContent = state.dietary_filters.length;
+        countEl.style.display = 'inline-block';
+        filterBtn.classList.add('has-active');
+      } else {
+        countEl.style.display = 'none';
+        filterBtn.classList.remove('has-active');
+      }
+
+      // Quick bites & DRI toggle
+      document.getElementById('include_quick_bites').checked = !!state.include_quick_bites;
+      document.getElementById('dri_toggle').checked = !!state.dri_enabled;
+      document.getElementById('dri_drawer').classList.toggle('open', !!state.dri_enabled);
+
+      // Biometric fields (blank by default unless previously saved)
+      document.getElementById('meal_goal').value = state.meal_goal || 'Balanced Maintenance';
+      document.getElementById('sex').value = state.sex || '';
+      document.getElementById('age').value = state.age || '';
+      document.getElementById('weight_lbs').value = state.weight_lbs || '';
+      document.getElementById('height_ft').value = state.height_ft || '';
+      document.getElementById('height_in').value = state.height_in !== '' ? state.height_in : '';
+      document.getElementById('activity_level').value = state.activity_level || '';
+      document.getElementById('meals_per_day').value = state.meals_per_day || '';
+    }
+
+    function readBiometricsFromDOM() {
+      state.meal_goal = document.getElementById('meal_goal').value;
+      state.sex = document.getElementById('sex').value;
+      state.age = document.getElementById('age').value.trim();
+      state.weight_lbs = document.getElementById('weight_lbs').value.trim();
+      state.height_ft = document.getElementById('height_ft').value;
+      state.height_in = document.getElementById('height_in').value;
+      state.activity_level = document.getElementById('activity_level').value;
+      state.meals_per_day = document.getElementById('meals_per_day').value;
+      state.sim_time = document.getElementById('sim_time').value.trim();
+    }
+
+    function validateBiometrics() {
+      const missing = [];
+      if (!state.sex) missing.push('Sex');
+      if (!state.age) missing.push('Age');
+      if (!state.weight_lbs) missing.push('Weight');
+      if (!state.height_ft) missing.push('Height (ft)');
+      if (state.height_in === '') missing.push('Height (in)');
+      if (!state.activity_level) missing.push('Activity Level');
+      if (!state.meals_per_day) missing.push('Meals Per Day');
+      return missing;
+    }
+
+    function showValidation(msg) {
+      const box = document.getElementById('validation_banner');
+      if (!msg) {
+        box.style.display = 'none';
+        box.textContent = '';
+      } else {
+        box.style.display = 'block';
+        box.textContent = msg;
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderTargetBanner(targets) {
+      const container = document.getElementById('dri_targets_container');
+      if (!targets || !targets.per_meal) {
+        container.innerHTML = '';
+        return;
+      }
+      const pm = targets.per_meal;
+      container.innerHTML = `
+        <div class="target-banner">
+          <h3>Your Per-Meal USDA DRI Target (${escapeHtml(targets.goal_label)})</h3>
+          <div class="target-pills">
+            <span class="t-pill">Calories: ~${pm.calories} kcal</span>
+            <span class="t-pill">Protein: ${pm.protein_target}g (min ${pm.protein_min}g)</span>
+            <span class="t-pill">Carbs: ${pm.carbs_min}–${pm.carbs_max}g</span>
+            <span class="t-pill">Fat: ${pm.fat_min}–${pm.fat_max}g</span>
+            <span class="t-pill">Sugar Max: ${pm.sugar_max}g</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMacroProgress(totals, perMeal) {
+      if (!perMeal) return '';
+      const metrics = [
+        { label: 'Calories', val: totals.calories, target: perMeal.calories, unit: ' kcal' },
+        { label: 'Protein', val: totals.protein, target: perMeal.protein_target, unit: 'g' },
+        { label: 'Carbs', val: totals.carbs, target: perMeal.carbs_target, unit: 'g' },
+        { label: 'Fat', val: totals.fat, target: perMeal.fat_target, unit: 'g' },
+      ];
+
+      const barsHtml = metrics.map(m => {
+        const pct = Math.min(100, Math.round((m.val / Math.max(m.target, 1)) * 100));
+        const isGood = pct >= 80 && pct <= 120;
+        return `
+          <div class="prog-item">
+            <div class="prog-label">
+              <span>${m.label}</span>
+              <span>${m.val}${m.unit} / ${m.target}${m.unit}</span>
+            </div>
+            <div class="prog-track">
+              <div class="prog-fill ${isGood ? 'good' : ''}" style="width:${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `<div class="progress-grid">${barsHtml}</div>`;
+    }
+
+    function renderRecommendations(data) {
+      const resultsEl = document.getElementById('results_container');
+      const statusEl = document.getElementById('status_text');
+      const cacheEl = document.getElementById('cache_badge');
+
+      statusEl.textContent = `Showing picks for ${data.timestamp} (${data.open_locations_count} open locations)`;
+      cacheEl.textContent = data.loaded_from_cache ? 'Instant Cache' : 'Live Purdue HFS Menu';
+
+      renderTargetBanner(data.dri_enabled ? data.targets : null);
+
+      const recs = data.recommendations || [];
+      if (recs.length === 0) {
+        resultsEl.innerHTML = `
+          <div class="rec-card">
+            <h3 style="margin-bottom:0.35rem;">No matching plates found right now</h3>
+            <p style="font-size:0.88rem; color:var(--muted);">
+              Try switching to <strong>Balanced</strong> mode, relaxing an allergy filter, or checking an upcoming meal time.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      const perMeal = data.dri_enabled && data.targets ? data.targets.per_meal : null;
+
+      resultsEl.innerHTML = recs.map((rec, idx) => {
+        const rankLabel = idx === 0 ? '#1 Best Dining Court' : (idx === 1 ? '#2 Runner-Up' : `#${idx + 1} Option`);
+        const itemsHtml = rec.items.map(it => {
+          const showServing = data.dri_enabled || (it.servings && it.servings !== 1);
+          const servingTag = showServing
+            ? `<span class="serving-pill">${it.servings}x serving${it.servings > 1 ? 's' : ''}</span>`
+            : '';
+          return `
+            <div class="plate-item">
+              <div class="item-main">
+                <div class="item-role-row">
+                  <span class="role-pill">${escapeHtml(it.role)}</span>
+                  ${servingTag}
+                  <span class="item-name">${escapeHtml(it.name)}</span>
+                </div>
+                <div class="item-station">Station: ${escapeHtml(it.station)} &bull; ${escapeHtml(it.reason)}</div>
+              </div>
+              <div class="item-macros">
+                ${it.calories} kcal &bull; ${it.protein}g P &bull; ${it.carbs}g C &bull; ${it.fat}g F
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <article class="rec-card ${idx === 0 ? 'rank-1' : ''}">
+            <div class="rec-header">
+              <div>
+                <span class="rank-tag">${rankLabel}</span>
+                <h2 class="court-title">${escapeHtml(rec.location)}</h2>
+              </div>
+              <span class="hours-badge">${escapeHtml(rec.hours_status)}</span>
+            </div>
+
+            <div class="why-box">
+              <strong>Why this court:</strong> ${escapeHtml(rec.why_top_pick)}
+            </div>
+
+            <div class="plate-list">${itemsHtml}</div>
+
+            <div class="totals-bar">
+              <span>Total Plate: ${rec.totals.calories} kcal</span>
+              <span>${rec.totals.protein}g Protein &bull; ${rec.totals.carbs}g Carbs &bull; ${rec.totals.fat}g Fat</span>
+            </div>
+
+            ${renderMacroProgress(rec.totals, perMeal)}
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function fetchRecommendations() {
+      readBiometricsFromDOM();
+      savePreferences();
+      showValidation('');
 
       const payload = {
-        sex: document.getElementById('sex').value,
-        age: Number(document.getElementById('age').value),
-        weight_lbs: Number(document.getElementById('weight_lbs').value),
-        height_in: Number(document.getElementById('height_in').value),
-        activity_level: document.getElementById('activity_level').value,
-        meals_per_day: Number(document.getElementById('meals_per_day').value),
-        meal_goal: document.getElementById('meal_goal').value,
-        health_intensity: document.getElementById('health_intensity').value,
-        include_quick_bites: document.getElementById('include_quick_bites').checked,
-        sim_time: document.getElementById('sim_time').value
+        health_intensity: state.health_intensity,
+        dietary_filters: state.dietary_filters,
+        dri_enabled: state.dri_enabled,
+        include_quick_bites: state.include_quick_bites,
+        sim_time: state.sim_time
       };
+
+      if (state.dri_enabled) {
+        const missing = validateBiometrics();
+        if (missing.length > 0) {
+          document.getElementById('dri_drawer').classList.add('open');
+          showValidation(`Fill in ${missing.join(', ')} above and click "Calculate & Size Portions" to personalize serving sizes.`);
+          return;
+        }
+        const totalInches = (parseInt(state.height_ft, 10) * 12) + parseInt(state.height_in, 10);
+        payload.meal_goal = state.meal_goal;
+        payload.sex = state.sex;
+        payload.age = parseInt(state.age, 10);
+        payload.weight_lbs = parseFloat(state.weight_lbs);
+        payload.height_in = totalInches;
+        payload.activity_level = state.activity_level;
+        payload.meals_per_day = parseInt(state.meals_per_day, 10);
+      }
+
+      document.getElementById('status_text').textContent = 'Updating best dining courts...';
 
       try {
         const res = await fetch('/api/recommend', {
@@ -322,84 +1118,115 @@
           body: JSON.stringify(payload)
         });
         const data = await res.json();
-
-        if (!res.ok || data.error) {
-          statusMsg.textContent = '';
-          resultsDiv.innerHTML = `<div class="card error-box">Error: ${data.error || 'Request failed'}</div>`;
+        if (!res.ok) {
+          showValidation(data.error || 'Could not calculate recommendations.');
           return;
         }
-
-        renderResults(data);
+        renderRecommendations(data);
       } catch (err) {
-        statusMsg.textContent = '';
-        resultsDiv.innerHTML = `<div class="card error-box">Could not reach Flask server. Make sure app.py is running.</div>`;
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Find Optimal Dining Court';
+        showValidation('Network error while contacting Purdue menu service.');
       }
-    });
+    }
 
-    function renderResults(data) {
-      const pm = data.targets.per_meal;
-      statusMsg.textContent = data.loaded_from_cache
-        ? `Loaded from today's local JSON cache (${data.timestamp})`
-        : `Fetched live from Purdue HFS API (${data.timestamp})`;
+    // Wire up interactive listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPreferences();
+      syncUIToState();
 
-      let html = `
-        <div class="card">
-          <label>Per-Meal USDA DRI Target</label>
-          <div class="dri-bar">
-            <div class="dri-pill"><span>Calories</span><strong>~${pm.calories} kcal</strong></div>
-            <div class="dri-pill"><span>Protein</span><strong>${pm.protein_target}g</strong> (min ${pm.protein_min}g)</div>
-            <div class="dri-pill"><span>Carbs Range</span><strong>${pm.carbs_min}–${pm.carbs_max}g</strong></div>
-            <div class="dri-pill"><span>Fat Range</span><strong>${pm.fat_min}–${pm.fat_max}g</strong></div>
-            <div class="dri-pill"><span>Sugar Cap</span><strong>&le; ${pm.sugar_max}g</strong></div>
-          </div>
-        </div>
-      `;
-
-      if (!data.recommendations || data.recommendations.length === 0) {
-        html += `
-          <div class="card">
-            No dining courts matched your current time window and health filter.
-            Try switching Health Intensity to <strong>Mid</strong> or entering a meal time like <code>12:30</code> or <code>18:00</code>.
-          </div>
-        `;
-        resultsDiv.innerHTML = html;
-        return;
-      }
-
-      data.recommendations.forEach((rec, idx) => {
-        const badge = idx === 0 ? '#1 BEST DINING COURT' : '#2 RUNNER-UP DINING COURT';
-        const itemsHtml = rec.items.map(it => `
-          <div class="item-row">
-            <div class="item-role">${it.role} &bull; ${it.station}</div>
-            <div class="item-name">
-              ${it.name}${it.used_fallback ? '<span class="fallback-tag">USDA Estimate</span>' : ''}
-            </div>
-            <div class="item-macros">
-              ${it.calories} kcal &bull; ${it.protein}g Protein &bull; ${it.carbs}g Carbs &bull; ${it.fat}g Fat
-            </div>
-          </div>
-        `).join('');
-
-        const t = rec.totals;
-        html += `
-          <div class="card">
-            <div class="rank-badge">${badge}</div>
-            <h2 class="court-title">${rec.location}</h2>
-            <div class="hours">${rec.hours_status}</div>
-            ${itemsHtml}
-            <div class="totals-box">
-              <strong>Combined Plate:</strong> ${t.calories} kcal &bull; ${t.protein}g Protein &bull; ${t.carbs}g Carbs &bull; ${t.fat}g Fat
-            </div>
-            <div class="reason">${rec.filter_summary}</div>
-          </div>
-        `;
+      // 2. Mode card clicks -> instant refresh
+      document.querySelectorAll('.mode-card').forEach(card => {
+        card.addEventListener('click', () => {
+          state.health_intensity = card.dataset.mode;
+          syncUIToState();
+          fetchRecommendations();
+        });
       });
 
-      resultsDiv.innerHTML = html;
-    }
+      // 4. Allergy drawer toggle & checkboxes -> instant refresh
+      document.getElementById('toggle_filter_drawer').addEventListener('click', () => {
+        document.getElementById('filter_drawer').classList.toggle('open');
+      });
+
+      document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+          state.dietary_filters = Array.from(
+            document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]:checked')
+          ).map(el => el.value);
+          syncUIToState();
+          fetchRecommendations();
+        });
+      });
+
+      document.getElementById('clear_filters_btn').addEventListener('click', () => {
+        state.dietary_filters = [];
+        syncUIToState();
+        fetchRecommendations();
+      });
+
+      // Quick bites toggle
+      document.getElementById('include_quick_bites').addEventListener('change', (e) => {
+        state.include_quick_bites = e.target.checked;
+        fetchRecommendations();
+      });
+
+      // 6. DRI Biometrics collapsible toggle
+      document.getElementById('dri_toggle').addEventListener('change', (e) => {
+        state.dri_enabled = e.target.checked;
+        document.getElementById('dri_drawer').classList.toggle('open', state.dri_enabled);
+        savePreferences();
+        if (!state.dri_enabled) {
+          showValidation('');
+          fetchRecommendations();
+        } else {
+          const missing = validateBiometrics();
+          if (missing.length === 0) {
+            fetchRecommendations();
+          } else {
+            showValidation(`Enter your ${missing.join(', ')} to activate USDA DRI portion sizing.`);
+          }
+        }
+      });
+
+      document.getElementById('calculate_dri_btn').addEventListener('click', () => {
+        fetchRecommendations();
+      });
+
+      document.getElementById('clear_biometrics_btn').addEventListener('click', () => {
+        state.sex = '';
+        state.age = '';
+        state.weight_lbs = '';
+        state.height_ft = '';
+        state.height_in = '';
+        state.activity_level = '';
+        state.meals_per_day = '';
+        state.meal_goal = 'Balanced Maintenance';
+        syncUIToState();
+        savePreferences();
+        showValidation('Biometrics cleared. Fill in your stats above to recalculate.');
+      });
+
+      // Save biometric field edits to localStorage as user types/selects
+      ['meal_goal', 'sex', 'age', 'weight_lbs', 'height_ft', 'height_in', 'activity_level', 'meals_per_day'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+          readBiometricsFromDOM();
+          savePreferences();
+        });
+      });
+
+      // 1. Optional time override
+      document.getElementById('apply_time_btn').addEventListener('click', () => {
+        fetchRecommendations();
+      });
+      document.getElementById('sim_time').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          fetchRecommendations();
+        }
+      });
+
+      // 1. Instant "NOW" auto-load on initial page visit
+      fetchRecommendations();
+    });
   </script>
 </body>
 </html>
