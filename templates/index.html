@@ -6,19 +6,23 @@
   <title>Feast — Purdue Dining Companion</title>
   <style>
     :root {
-      --bg: #FAF8F5;
+      --bg: #F6F3EE;
       --surface: #FFFFFF;
-      --surface-alt: #F3EFEA;
-      --border: #E6DFD6;
-      --text: #1F1C19;
-      --text-muted: #6C635B;
+      --surface-alt: #EFECE6;
+      --surface-hover: #E7E2D9;
+      --border: #E2DDD4;
+      --text: #1E1B18;
+      --text-muted: #70685F;
       --terracotta: #C84B31;
-      --terracotta-dark: #A93B24;
+      --terracotta-dark: #A63A23;
       --terracotta-soft: #FBECE8;
       --leaf: #1D8A5A;
-      --leaf-soft: #E7F5EE;
-      --shadow: 0 10px 28px rgba(31, 28, 25, 0.06);
-      --radius: 18px;
+      --leaf-soft: #E6F4ED;
+      --amber: #D98A3C;
+      --shadow-sm: 0 4px 14px rgba(30, 27, 24, 0.05);
+      --shadow-lg: 0 14px 36px rgba(30, 27, 24, 0.10);
+      --radius-card: 22px;
+      --radius-pill: 999px;
     }
 
     * {
@@ -31,39 +35,42 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.48;
       -webkit-font-smoothing: antialiased;
+      padding-bottom: 6.5rem;
     }
 
-    .container {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 1.25rem 1.15rem 4rem;
-    }
-
-    /* Top Header & Feast Brand Wordmark */
+    /* Top Header */
     header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(246, 243, 238, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0.9rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      padding-bottom: 1.1rem;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 1.4rem;
-      flex-wrap: wrap;
     }
 
     .brand {
       display: inline-flex;
       align-items: center;
-      gap: 0.55rem;
       text-decoration: none;
+      user-select: none;
     }
 
     .wordmark {
-      font-size: 2.05rem;
+      font-size: 2rem;
       font-weight: 900;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.045em;
       color: var(--terracotta);
       display: inline-flex;
       align-items: baseline;
@@ -84,667 +91,972 @@
       pointer-events: none;
     }
 
-    .header-actions {
-      display: flex;
+    .live-pill {
+      display: inline-flex;
       align-items: center;
-      gap: 0.55rem;
-      flex-wrap: wrap;
-    }
-
-    .btn-ghost {
+      gap: 0.42rem;
       background: var(--surface);
       border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.52rem 0.9rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.15s ease;
-    }
-
-    .btn-ghost:hover {
-      border-color: var(--terracotta);
+      border-radius: var(--radius-pill);
+      padding: 0.36rem 0.82rem;
+      font-size: 0.77rem;
+      font-weight: 800;
       color: var(--terracotta);
+      box-shadow: var(--shadow-sm);
     }
 
-    .filter-count-pill {
-      background: var(--terracotta);
-      color: #fff;
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 0.08rem 0.44rem;
-      border-radius: 999px;
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--leaf);
+      display: inline-block;
     }
 
-    /* Greeting & Mode Switcher */
-    .hero-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 1.25rem;
+    /* Main Content Container */
+    .main-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.45rem 1.25rem 2rem;
+    }
+
+    .hero-section {
       margin-bottom: 1.4rem;
+    }
+
+    .hero-section h1 {
+      font-size: 1.72rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.25rem;
+      color: var(--text);
+    }
+
+    .hero-section p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Active Filters & DRI Summary Strip */
+    .active-strip {
+      display: flex;
       flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
     }
 
-    .greeting h1 {
-      font-size: 1.55rem;
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      margin-bottom: 0.2rem;
-    }
-
-    .greeting p {
-      color: var(--text-muted);
-      font-size: 0.94rem;
-    }
-
-    .meta-stamp {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    .mode-pills {
-      display: inline-flex;
-      background: var(--surface-alt);
-      padding: 0.28rem;
-      border-radius: 999px;
+    .active-chip {
+      background: var(--surface);
       border: 1px solid var(--border);
-      gap: 0.22rem;
+      border-radius: var(--radius-pill);
+      padding: 0.28rem 0.72rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text);
     }
 
-    .mode-btn {
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
+    .active-chip.accent {
+      background: var(--terracotta-soft);
+      border-color: rgba(200, 75, 49, 0.25);
+      color: var(--terracotta-dark);
+    }
+
+    .error-banner {
+      background: var(--terracotta-soft);
+      border: 1px solid rgba(200, 75, 49, 0.3);
+      color: var(--terracotta-dark);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.2rem;
       font-size: 0.86rem;
       font-weight: 700;
-      padding: 0.48rem 1rem;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: all 0.16s ease;
-    }
-
-    .mode-btn.active {
-      background: var(--terracotta);
-      color: #FFFFFF;
-      box-shadow: 0 3px 10px rgba(200, 75, 49, 0.26);
-    }
-
-    /* Target Banner (when DRI is enabled) */
-    .target-banner {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 0.85rem 1.1rem;
-      margin-bottom: 1.35rem;
       display: none;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
     }
 
-    .target-banner.visible {
-      display: flex;
-    }
-
-    .target-pills {
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-    }
-
-    .t-pill {
-      background: var(--surface-alt);
-      border-radius: 10px;
-      padding: 0.32rem 0.68rem;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    .target-disclaimer {
-      font-size: 0.74rem;
-      color: var(--text-muted);
-    }
-
-    /* Cards Grid */
+    /* Dining Court Cards Grid */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(315px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.35rem;
     }
 
-    .court-column {
+    .court-card-wrap {
       display: flex;
       flex-direction: column;
       gap: 0.55rem;
     }
 
-    .court-header {
+    .court-top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 0.25rem;
+      padding: 0 0.3rem;
     }
 
-    .court-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: -0.015em;
+    .court-name {
+      font-size: 1.12rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
     }
 
-    .hours-pill {
+    .court-hours {
       font-size: 0.75rem;
       font-weight: 700;
       color: var(--leaf);
-      background: var(--leaf-soft);
-      padding: 0.2rem 0.62rem;
-      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.32rem;
     }
 
-    .flashcard {
+    .meal-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-sm);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform 0.16s ease;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+      touch-action: pan-y;
     }
 
-    .combo-head {
-      padding: 1.05rem 1.15rem 0.45rem;
+    .meal-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+      padding: 1.15rem 1.2rem 0.45rem;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 0.65rem;
+      gap: 0.75rem;
     }
 
-    .combo-name {
-      font-size: 1.06rem;
+    .combo-title {
+      font-size: 1.12rem;
       font-weight: 800;
-      line-height: 1.28;
-      color: var(--text);
+      line-height: 1.26;
+      letter-spacing: -0.015em;
     }
 
-    .card-counter-btn {
+    .pager-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
       flex-shrink: 0;
       background: var(--surface-alt);
       border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 0.76rem;
-      font-weight: 800;
-      padding: 0.28rem 0.62rem;
-      border-radius: 999px;
-      cursor: pointer;
+      border-radius: var(--radius-pill);
+      padding: 0.18rem 0.45rem;
     }
 
-    .card-counter-btn:hover {
-      border-color: var(--terracotta);
+    .pager-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 0.08rem 0.32rem;
+      border-radius: 50%;
+    }
+
+    .pager-btn:hover {
       color: var(--terracotta);
     }
 
-    .combo-rationale-wrap {
-      padding: 0.12rem 1.15rem 0.55rem;
+    .pager-label {
+      font-size: 0.73rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      min-width: 2.1rem;
+      text-align: center;
+    }
+
+    /* Match Rationale & Pillar Chips */
+    .rationale-box {
+      padding: 0.15rem 1.2rem 0.6rem;
       display: flex;
       flex-direction: column;
       gap: 0.42rem;
     }
 
-    .rationale-badge {
+    .rationale-pill {
       display: inline-flex;
       align-items: center;
       gap: 0.36rem;
       align-self: flex-start;
       background: var(--leaf-soft);
       color: var(--leaf);
-      border: 1px solid rgba(29, 138, 90, 0.18);
+      border: 1px solid rgba(29, 138, 90, 0.2);
       border-radius: 10px;
-      padding: 0.26rem 0.62rem;
+      padding: 0.26rem 0.64rem;
       font-size: 0.74rem;
       font-weight: 700;
       line-height: 1.3;
     }
 
-    .rationale-badge.neutral {
+    .rationale-pill.neutral {
       background: var(--surface-alt);
       color: var(--text-muted);
       border-color: var(--border);
     }
 
-    .pillar-chips {
+    .pillar-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.32rem;
+      gap: 0.34rem;
     }
 
-    .pillar-chip {
-      font-size: 0.67rem;
+    .pillar-tag {
+      font-size: 0.68rem;
       font-weight: 700;
       color: var(--text-muted);
       background: var(--surface-alt);
       border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.13rem 0.48rem;
+      border-radius: var(--radius-pill);
+      padding: 0.14rem 0.5rem;
     }
 
-    .plate-board {
-      padding: 0.35rem 1.15rem 0.85rem;
+    /* Expandable Plate Items */
+    .items-list {
+      padding: 0.25rem 1.2rem 0.9rem;
       display: flex;
       flex-direction: column;
-      gap: 0.58rem;
+      gap: 0.55rem;
     }
 
-    .plate-item {
+    .dish-row {
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.62rem 0.78rem;
+      border-radius: 14px;
+      padding: 0.68rem 0.85rem;
+      cursor: pointer;
+      transition: background 0.14s ease;
     }
 
-    .plate-item-top {
+    .dish-row:hover {
+      background: var(--surface-alt);
+    }
+
+    .dish-main-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.18rem;
+      gap: 0.75rem;
     }
 
-    .role-tag {
+    .dish-info {
+      min-width: 0;
+    }
+
+    .dish-meta-top {
       font-size: 0.68rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--terracotta);
+      margin-bottom: 0.14rem;
     }
 
-    .station-tag {
-      font-size: 0.71rem;
+    .dish-meta-top span {
       color: var(--text-muted);
       font-weight: 600;
+      text-transform: none;
+      letter-spacing: 0;
     }
 
-    .item-title {
-      font-size: 0.92rem;
+    .dish-name {
+      font-size: 0.93rem;
       font-weight: 700;
-      margin-bottom: 0.2rem;
-    }
-
-    .item-macros {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .card-footer {
-      background: var(--surface-alt);
-      border-top: 1px solid var(--border);
-      padding: 0.78rem 1.15rem;
-    }
-
-    .totals-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.83rem;
-      font-weight: 800;
-      margin-bottom: 0.42rem;
-    }
-
-    .macro-bar {
-      height: 6px;
-      border-radius: 999px;
-      overflow: hidden;
-      display: flex;
-      background: var(--border);
-    }
-
-    .bar-p { background: var(--terracotta); }
-    .bar-c { background: #E2955A; }
-    .bar-f { background: var(--leaf); }
-
-    /* Drawer / Modal */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(25, 22, 19, 0.45);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      z-index: 50;
-    }
-
-    .overlay.open {
-      display: flex;
-    }
-
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      width: 100%;
-      max-width: 540px;
-      max-height: 88vh;
-      overflow-y: auto;
-      padding: 1.35rem;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
-    }
-
-    .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .modal-head h2 {
-      font-size: 1.15rem;
-      font-weight: 800;
-    }
-
-    .close-btn {
-      background: var(--surface-alt);
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .section-label {
-      font-size: 0.78rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-      margin: 0.9rem 0 0.5rem;
-    }
-
-    .filter-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-      gap: 0.45rem;
-    }
-
-    .pill-check {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.45rem 0.65rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .pill-check input {
-      accent-color: var(--terracotta);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.65rem;
-      margin-top: 0.55rem;
-    }
-
-    .field label {
-      display: block;
-      font-size: 0.76rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 0.22rem;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%;
-      padding: 0.52rem 0.68rem;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      font-size: 0.88rem;
-      font-family: inherit;
       color: var(--text);
     }
 
-    .btn-primary {
+    .dish-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .dish-pro {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+    }
+
+    .dish-cal {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .dish-chevron {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      transition: transform 0.16s ease;
+      display: inline-block;
+    }
+
+    .dish-row.expanded .dish-chevron {
+      transform: rotate(180deg);
+    }
+
+    .dish-details {
+      display: none;
+      margin-top: 0.52rem;
+      padding-top: 0.48rem;
+      border-top: 1px dashed var(--border);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .dish-row.expanded .dish-details {
+      display: block;
+    }
+
+    /* Card Bottom Macro Breakdown */
+    .card-bottom {
+      background: var(--surface-alt);
+      border-top: 1px solid var(--border);
+      padding: 0.85rem 1.2rem 0.95rem;
+    }
+
+    .macro-pills-row {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.48rem;
+    }
+
+    .m-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.22rem 0.54rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .macro-bar-track {
+      height: 6px;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      display: flex;
+      background: var(--border);
+      margin-bottom: 0.42rem;
+    }
+
+    .seg-p { background: var(--terracotta); }
+    .seg-c { background: var(--amber); }
+    .seg-f { background: var(--leaf); }
+
+    .macro-pct-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* Floating Bottom Dock */
+    .bottom-dock {
+      position: fixed;
+      bottom: 1.15rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      max-width: calc(100vw - 1.5rem);
+    }
+
+    .mode-dock {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 0.3rem;
+      box-shadow: var(--shadow-lg);
+      gap: 0.2rem;
+    }
+
+    .dock-mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 800;
+      padding: 0.54rem 1.05rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .dock-mode-btn.active {
+      background: var(--terracotta);
+      color: #FFFFFF;
+      box-shadow: 0 3px 10px rgba(200, 75, 49, 0.28);
+    }
+
+    .dock-filter-btn {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      box-shadow: var(--shadow-lg);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .dock-filter-btn:hover {
+      border-color: var(--terracotta);
+      color: var(--terracotta);
+    }
+
+    .dock-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: var(--terracotta);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    /* Slide-Over Preferences Drawer */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(25, 22, 19, 0.42);
+      z-index: 60;
+      display: none;
+    }
+
+    .drawer-backdrop.open {
+      display: block;
+    }
+
+    .prefs-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
       width: 100%;
-      margin-top: 1.1rem;
+      max-width: 420px;
+      background: var(--bg);
+      border-left: 1px solid var(--border);
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: -12px 0 36px rgba(0, 0, 0, 0.14);
+    }
+
+    .prefs-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: 1.15rem 1.25rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-header h2 {
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .done-btn {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 0.44rem 1.05rem;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .drawer-body {
+      padding: 1.15rem 1.25rem 2.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.35rem;
+    }
+
+    .drawer-sec-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .drawer-sec-title {
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .text-link-btn {
+      background: none;
+      border: none;
+      color: var(--terracotta);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .diet-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.48rem;
+    }
+
+    .diet-row-check {
+      display: flex;
+      align-items: center;
+      gap: 0.68rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.14s ease;
+    }
+
+    .diet-row-check:hover {
+      border-color: var(--terracotta);
+    }
+
+    .diet-row-check input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--terracotta);
+      cursor: pointer;
+    }
+
+    .toggle-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0.8rem 0.9rem;
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .toggle-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--terracotta);
+    }
+
+    .dri-panel {
+      margin-top: 0.85rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      gap: 0.68rem;
+    }
+
+    .dri-panel.open {
+      display: flex;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      margin-bottom: 0.24rem;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      width: 100%;
+      padding: 0.56rem 0.72rem;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 0.86rem;
+      font-family: inherit;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.58rem;
+    }
+
+    .time-row {
+      display: flex;
+      gap: 0.48rem;
+    }
+
+    .time-row input {
+      flex: 1;
+      padding: 0.56rem 0.75rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+
+    .btn-dark {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 0.56rem 0.95rem;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-terracotta {
       background: var(--terracotta);
       color: #fff;
       border: none;
       border-radius: 12px;
-      padding: 0.72rem 1rem;
-      font-size: 0.92rem;
+      padding: 0.65rem 1rem;
+      font-size: 0.86rem;
       font-weight: 800;
       cursor: pointer;
+      width: 100%;
     }
 
-    .btn-primary:hover {
+    .btn-terracotta:hover {
       background: var(--terracotta-dark);
     }
 
-    .status-box {
+    .empty-state {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2.2rem 1.4rem;
+      border-radius: var(--radius-card);
+      padding: 2.5rem 1.4rem;
       text-align: center;
       color: var(--text-muted);
       font-weight: 600;
     }
 
-    .error-box {
-      background: var(--terracotta-soft);
-      border: 1px solid rgba(200, 75, 49, 0.3);
-      color: var(--terracotta-dark);
-      border-radius: 12px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 1rem;
-      font-size: 0.88rem;
-      font-weight: 700;
-      display: none;
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .skeleton-card {
+      height: 310px;
+      border-radius: var(--radius-card);
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface-alt) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.3s infinite;
+      border: 1px solid var(--border);
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
+
+  <header>
+    <div class="header-inner">
       <div class="brand" aria-label="Feast">
         <span class="wordmark">
           Feas<span class="t-leaf-wrap">t
             <svg class="leaf-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M20 4C12 4 6 9 6 17C14 17 20 11 20 4Z" fill="#1D8A5A"/>
-              <path d="M6 17C10 13 14 10 19 5" stroke="#E7F5EE" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M6 17C10 13 14 10 19 5" stroke="#E6F4ED" stroke-width="1.6" stroke-linecap="round"/>
             </svg>
           </span>
         </span>
       </div>
 
-      <div class="header-actions">
-        <button type="button" class="btn-ghost" onclick="openModal('prefsModal')">
-          Dietary &amp; Portions
-          <span class="filter-count-pill" id="activeFilterCount" style="display:none;">0</span>
-        </button>
-        <button type="button" class="btn-ghost" onclick="openModal('feedbackModal')">
-          Feedback
-        </button>
+      <div class="live-pill" id="liveStatusPill">
+        <span class="live-dot"></span>
+        <span id="liveStatusText">Loading menus...</span>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <section class="hero-bar">
-      <div class="greeting">
-        <h1 id="greetingTitle">Loading campus menus...</h1>
-        <p id="greetingSub">Checking live dining court lines across Purdue.</p>
-        <div class="meta-stamp" id="metaStamp"></div>
-      </div>
-
-      <div class="mode-pills" role="group" aria-label="Meal scoring mode">
-        <button type="button" class="mode-btn active" data-mode="High" onclick="setMode('High')">Healthiest</button>
-        <button type="button" class="mode-btn" data-mode="Mid" onclick="setMode('Mid')">Balanced</button>
-        <button type="button" class="mode-btn" data-mode="Low" onclick="setMode('Low')">Yummiest</button>
-      </div>
+  <main class="main-wrap">
+    <section class="hero-section">
+      <h1 id="greetingTitle">Finding what’s open on campus...</h1>
+      <p id="greetingSub">Balanced meal options from live dining court menus.</p>
     </section>
 
-    <div class="error-box" id="errorBox"></div>
+    <div class="active-strip" id="activeStrip" style="display:none;"></div>
+    <div class="error-banner" id="errorBanner"></div>
 
-    <div class="target-banner" id="targetBanner">
-      <div class="target-pills" id="targetPills"></div>
-      <div class="target-disclaimer" id="targetDisclaimer"></div>
+    <div id="cardsContainer">
+      <div class="skeleton-grid">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Floating Bottom Mode & Preferences Dock -->
+  <nav class="bottom-dock" aria-label="Meal Mode and Filters">
+    <div class="mode-dock" role="radiogroup" aria-label="Meal Style Mode">
+      <button type="button" class="dock-mode-btn active" data-mode="High" onclick="selectMode('High')">Healthiest</button>
+      <button type="button" class="dock-mode-btn" data-mode="Mid" onclick="selectMode('Mid')">Balanced</button>
+      <button type="button" class="dock-mode-btn" data-mode="Low" onclick="selectMode('Low')">Yummiest</button>
     </div>
 
-    <main id="cardsContainer">
-      <div class="status-box">Fetching Purdue HFS dining court menus...</div>
-    </main>
-  </div>
+    <button type="button" class="dock-filter-btn" onclick="openDrawer()" aria-label="Open Preferences">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="21" x2="4" y2="14"></line>
+        <line x1="4" y1="10" x2="4" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12" y2="3"></line>
+        <line x1="20" y1="21" x2="20" y2="16"></line>
+        <line x1="20" y1="12" x2="20" y2="3"></line>
+        <line x1="1" y1="14" x2="7" y2="14"></line>
+        <line x1="9" y1="8" x2="15" y2="8"></line>
+        <line x1="17" y1="16" x2="23" y2="16"></line>
+      </svg>
+      <span class="dock-badge" id="dockBadge">0</span>
+    </button>
+  </nav>
 
-  <!-- Dietary & Portion Preferences Modal -->
-  <div class="overlay" id="prefsModal" onclick="if(event.target===this) closeModal('prefsModal')">
-    <div class="modal">
-      <div class="modal-head">
-        <h2>Dietary &amp; Portion Preferences</h2>
-        <button type="button" class="close-btn" onclick="closeModal('prefsModal')">&times;</button>
-      </div>
+  <!-- Slide-Over Preferences Drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawerAndApply()"></div>
+  <aside class="prefs-drawer" id="prefsDrawer" aria-label="Filters and Settings" role="dialog">
+    <div class="drawer-header">
+      <h2>Preferences</h2>
+      <button type="button" class="done-btn" onclick="closeDrawerAndApply()">Done</button>
+    </div>
 
-      <div class="section-label">Dietary &amp; Allergy Filters</div>
-      <div class="filter-grid" id="dietary_checkboxes">
-        <label class="pill-check"><input type="checkbox" value="vegetarian" /> Vegetarian</label>
-        <label class="pill-check"><input type="checkbox" value="vegan" /> Vegan</label>
-        <label class="pill-check"><input type="checkbox" value="gluten-free" /> Gluten-Free</label>
-        <label class="pill-check"><input type="checkbox" value="dairy-free" /> Dairy-Free</label>
-        <label class="pill-check"><input type="checkbox" value="egg-free" /> Egg-Free</label>
-        <label class="pill-check"><input type="checkbox" value="soy-free" /> Soy-Free</label>
-        <label class="pill-check"><input type="checkbox" value="peanut-free" /> Peanut-Free</label>
-        <label class="pill-check"><input type="checkbox" value="tree-nut-free" /> Tree-Nut-Free</label>
-        <label class="pill-check"><input type="checkbox" value="shellfish-free" /> Shellfish-Free</label>
-        <label class="pill-check"><input type="checkbox" value="fish-free" /> Fish-Free</label>
-        <label class="pill-check"><input type="checkbox" value="sesame-free" /> Sesame-Free</label>
-      </div>
-
-      <div class="section-label">Personalized Portion Targets (DRI)</div>
-      <label class="pill-check" style="margin-bottom:0.5rem;">
-        <input type="checkbox" id="dri_enabled" onchange="toggleDriFields()" />
-        Customize portions to my body &amp; meal goal
-      </label>
-
-      <div id="driFieldsWrap" style="display:none;">
-        <div class="form-grid">
-          <div class="field">
-            <label for="dri_sex">Sex</label>
-            <select id="dri_sex">
-              <option value="M">Male</option>
-              <option value="F">Female</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="dri_age">Age</label>
-            <input type="number" id="dri_age" min="14" max="99" placeholder="19" />
-          </div>
-          <div class="field">
-            <label for="dri_weight">Weight (lbs)</label>
-            <input type="number" id="dri_weight" min="70" max="450" placeholder="155" />
-          </div>
-          <div class="field">
-            <label for="dri_height">Height (in)</label>
-            <input type="number" id="dri_height" min="48" max="88" placeholder="72" />
-          </div>
-          <div class="field">
-            <label for="dri_activity">Activity Level</label>
-            <select id="dri_activity">
-              <option value="sedentary">Sedentary</option>
-              <option value="moderate" selected>Moderate</option>
-              <option value="active">Active</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="dri_meals">Meals / Day</label>
-            <input type="number" id="dri_meals" min="1" max="6" value="2" />
-          </div>
+    <div class="drawer-body">
+      <!-- Dietary & Allergies -->
+      <div>
+        <div class="drawer-sec-head">
+          <span class="drawer-sec-title">Dietary &amp; Allergies</span>
+          <button type="button" class="text-link-btn" onclick="clearAllDietary()">Clear all</button>
         </div>
-        <div class="field" style="margin-top:0.65rem;">
-          <label for="dri_goal">Meal Goal</label>
-          <select id="dri_goal">
-            <option value="Balanced Maintenance">Balanced Maintenance</option>
-            <option value="High Protein / Muscle">High Protein / Muscle</option>
-            <option value="Lean Cut / Fat Loss">Lean Cut / Fat Loss</option>
-            <option value="Athletic Endurance">Athletic Endurance</option>
-            <option value="Low-Carb / Blood Sugar">Low-Carb / Blood Sugar</option>
-          </select>
+        <div class="diet-stack" id="dietary_checkboxes">
+          <label class="diet-row-check"><input type="checkbox" value="vegetarian" /> Vegetarian</label>
+          <label class="diet-row-check"><input type="checkbox" value="vegan" /> Vegan</label>
+          <label class="diet-row-check"><input type="checkbox" value="gluten-free" /> Gluten-Free</label>
+          <label class="diet-row-check"><input type="checkbox" value="dairy-free" /> Dairy-Free</label>
+          <label class="diet-row-check"><input type="checkbox" value="egg-free" /> Egg-Free</label>
+          <label class="diet-row-check"><input type="checkbox" value="soy-free" /> Soy-Free</label>
+          <label class="diet-row-check"><input type="checkbox" value="peanut-free" /> Peanut-Free</label>
+          <label class="diet-row-check"><input type="checkbox" value="tree-nut-free" /> Tree-Nut-Free</label>
+          <label class="diet-row-check"><input type="checkbox" value="shellfish-free" /> Shellfish-Free</label>
+          <label class="diet-row-check"><input type="checkbox" value="fish-free" /> Fish-Free</label>
+          <label class="diet-row-check"><input type="checkbox" value="sesame-free" /> Sesame-Free</label>
         </div>
       </div>
 
-      <div class="section-label">Preview Another Time (Optional)</div>
-      <div class="field">
-        <label for="sim_time">Campus Time (leave blank for right now)</label>
-        <input type="text" id="sim_time" placeholder="e.g. 12:30 PM or 6:15 PM" />
+      <!-- Tailor Plates to My Goals (DRI) -->
+      <div class="toggle-card">
+        <label class="toggle-row">
+          <span>Tailor Plates to My Goals</span>
+          <input type="checkbox" id="dri_enabled" onchange="toggleDriPanel()" />
+        </label>
+
+        <div class="dri-panel" id="driPanel">
+          <div class="drawer-sec-title">Your Body &amp; Goal</div>
+
+          <div class="field-group">
+            <label for="dri_goal">Meal Goal</label>
+            <select id="dri_goal">
+              <option value="Balanced Maintenance">Balanced Maintenance</option>
+              <option value="High Protein / Muscle Gain">High Protein / Muscle Gain</option>
+              <option value="Lean Cut / Fat Loss">Lean Cut / Fat Loss</option>
+              <option value="Athletic Endurance / Energy">Athletic Endurance / Energy</option>
+              <option value="Low-Carb / Blood Sugar Focus">Low-Carb / Blood Sugar Focus</option>
+            </select>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label for="dri_sex">Sex</label>
+              <select id="dri_sex">
+                <option value="">Select...</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="dri_age">Age</label>
+              <input type="number" id="dri_age" min="14" max="99" placeholder="19" />
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label for="dri_weight">Weight (lbs)</label>
+              <input type="number" id="dri_weight" min="70" max="450" placeholder="155" />
+            </div>
+            <div class="field-group">
+              <label>Height</label>
+              <div class="two-col">
+                <select id="dri_ft" aria-label="Height feet">
+                  <option value="">ft</option>
+                  <option value="4">4 ft</option>
+                  <option value="5">5 ft</option>
+                  <option value="6">6 ft</option>
+                  <option value="7">7 ft</option>
+                </select>
+                <select id="dri_in" aria-label="Height inches">
+                  <option value="">in</option>
+                  <option value="0">0 in</option>
+                  <option value="1">1 in</option>
+                  <option value="2">2 in</option>
+                  <option value="3">3 in</option>
+                  <option value="4">4 in</option>
+                  <option value="5">5 in</option>
+                  <option value="6">6 in</option>
+                  <option value="7">7 in</option>
+                  <option value="8">8 in</option>
+                  <option value="9">9 in</option>
+                  <option value="10">10 in</option>
+                  <option value="11">11 in</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label for="dri_activity">Activity Level</label>
+              <select id="dri_activity">
+                <option value="">Select...</option>
+                <option value="Sedentary">Sedentary</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Active">Active</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="dri_meals">Meals / Day</label>
+              <select id="dri_meals">
+                <option value="">Select...</option>
+                <option value="1">1 meal</option>
+                <option value="2">2 meals</option>
+                <option value="3">3 meals</option>
+                <option value="4">4 meals</option>
+                <option value="5">5 meals</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <button type="button" class="btn-primary" onclick="applyPreferences()">Save &amp; Update Plates</button>
-    </div>
-  </div>
+      <!-- Check Another Time -->
+      <div>
+        <div class="drawer-sec-head">
+          <span class="drawer-sec-title">Check Another Time</span>
+          <button type="button" class="text-link-btn" onclick="resetToNow()">Use NOW</button>
+        </div>
+        <div class="time-row">
+          <input type="text" id="sim_time" placeholder="e.g. 12:30 PM or 6:00 PM" />
+          <button type="button" class="btn-dark" onclick="closeDrawerAndApply()">Set</button>
+        </div>
+      </div>
 
-  <!-- Feedback Modal -->
-  <div class="overlay" id="feedbackModal" onclick="if(event.target===this) closeModal('feedbackModal')">
-    <div class="modal">
-      <div class="modal-head">
-        <h2>Send Feedback</h2>
-        <button type="button" class="close-btn" onclick="closeModal('feedbackModal')">&times;</button>
+      <!-- Send Feedback -->
+      <div class="toggle-card">
+        <div class="drawer-sec-head" style="margin-bottom:0.5rem;">
+          <span class="drawer-sec-title">Send Feedback</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.55rem;">
+          <div class="field-group">
+            <select id="fb_category">
+              <option value="General">General Feedback</option>
+              <option value="Dish / Pairing">Dish or Pairing Request</option>
+              <option value="Ingredient / Allergy">Ingredient or Allergy Flag</option>
+              <option value="Bug">Bug Report</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <textarea id="fb_message" rows="3" placeholder="Tell us what to improve on Feast..."></textarea>
+          </div>
+          <div class="field-group">
+            <input type="text" id="fb_contact" placeholder="Email or name (optional)" />
+          </div>
+          <div id="fbStatus" style="font-size:0.78rem; font-weight:700;"></div>
+          <button type="button" class="btn-terracotta" onclick="submitFeedback()">Send Feedback</button>
+        </div>
       </div>
-      <div class="field">
-        <label for="fb_category">Topic</label>
-        <select id="fb_category">
-          <option value="General">General Feedback</option>
-          <option value="Dish / Pairing">Dish or Pairing Suggestion</option>
-          <option value="Ingredient / Allergy">Ingredient or Allergy Flag</option>
-          <option value="Bug">Bug Report</option>
-        </select>
-      </div>
-      <div class="field" style="margin-top:0.65rem;">
-        <label for="fb_message">Note</label>
-        <textarea id="fb_message" rows="4" placeholder="What would make Feast more helpful at Purdue?"></textarea>
-      </div>
-      <div class="field" style="margin-top:0.65rem;">
-        <label for="fb_contact">Purdue Email or Name (optional)</label>
-        <input type="text" id="fb_contact" placeholder="pete@purdue.edu" />
-      </div>
-      <div id="fbStatus" style="margin-top:0.6rem;font-size:0.84rem;font-weight:700;color:var(--leaf);"></div>
-      <button type="button" class="btn-primary" onclick="submitFeedback()">Send Note</button>
     </div>
-  </div>
+  </aside>
 
   <script>
-    const STORAGE_KEY = 'feast_dining_prefs_v9';
+    const STORAGE_KEY = 'feast_purdue_prefs_v10';
 
     const state = {
       health_intensity: 'High',
       dietary_filters: [],
       dri_enabled: false,
-      sex: 'M',
+      meal_goal: 'Balanced Maintenance',
+      sex: '',
       age: '',
       weight_lbs: '',
-      height_in: '',
-      activity_level: 'moderate',
-      meals_per_day: 2,
-      meal_goal: 'Balanced Maintenance',
+      height_ft: '',
+      height_in_rem: '',
+      activity_level: '',
+      meals_per_day: '',
       sim_time: ''
     };
 
     let lastRecommendations = [];
     const comboIndexByLoc = {};
+    let touchStartX = 0;
 
     function escapeHtml(str) {
       return String(str ?? '')
@@ -755,26 +1067,26 @@
         .replace(/'/g, '&#39;');
     }
 
-    function loadPreferences() {
+    function loadPrefs() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
-          const parsed = JSON.parse(raw);
-          Object.assign(state, parsed);
+          const saved = JSON.parse(raw);
+          Object.assign(state, saved);
           state.sim_time = '';
         }
       } catch (e) {}
     }
 
-    function savePreferences() {
+    function savePrefs() {
       try {
-        const toSave = { ...state, sim_time: '' };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+        const copy = { ...state, sim_time: '' };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(copy));
       } catch (e) {}
     }
 
-    function syncFormFromState() {
-      document.querySelectorAll('.mode-btn').forEach(btn => {
+    function syncUiFromState() {
+      document.querySelectorAll('.dock-mode-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === state.health_intensity);
       });
 
@@ -783,124 +1095,148 @@
         cb.checked = activeSet.has(cb.value);
       });
 
-      const badge = document.getElementById('activeFilterCount');
-      const count = activeSet.size + (state.dri_enabled ? 1 : 0);
-      badge.textContent = String(count);
-      badge.style.display = count > 0 ? 'inline-block' : 'none';
+      const totalActive = activeSet.size + (state.dri_enabled ? 1 : 0) + (state.sim_time ? 1 : 0);
+      const badge = document.getElementById('dockBadge');
+      badge.textContent = String(totalActive);
+      badge.style.display = totalActive > 0 ? 'inline-flex' : 'none';
 
       document.getElementById('dri_enabled').checked = !!state.dri_enabled;
-      document.getElementById('dri_sex').value = state.sex || 'M';
+      document.getElementById('dri_goal').value = state.meal_goal || 'Balanced Maintenance';
+      document.getElementById('dri_sex').value = state.sex || '';
       document.getElementById('dri_age').value = state.age || '';
       document.getElementById('dri_weight').value = state.weight_lbs || '';
-      document.getElementById('dri_height').value = state.height_in || '';
-      document.getElementById('dri_activity').value = state.activity_level || 'moderate';
-      document.getElementById('dri_meals').value = state.meals_per_day || 2;
-      document.getElementById('dri_goal').value = state.meal_goal || 'Balanced Maintenance';
+      document.getElementById('dri_ft').value = state.height_ft || '';
+      document.getElementById('dri_in').value = state.height_in_rem || '';
+      document.getElementById('dri_activity').value = state.activity_level || '';
+      document.getElementById('dri_meals').value = state.meals_per_day || '';
       document.getElementById('sim_time').value = state.sim_time || '';
-      toggleDriFields();
+      toggleDriPanel();
     }
 
-    function toggleDriFields() {
-      const enabled = document.getElementById('dri_enabled').checked;
-      document.getElementById('driFieldsWrap').style.display = enabled ? 'block' : 'none';
+    function toggleDriPanel() {
+      const open = document.getElementById('dri_enabled').checked;
+      document.getElementById('driPanel').classList.toggle('open', open);
     }
 
-    function openModal(id) {
-      syncFormFromState();
-      document.getElementById(id).classList.add('open');
+    function openDrawer() {
+      syncUiFromState();
+      document.getElementById('drawerBackdrop').classList.add('open');
+      document.getElementById('prefsDrawer').classList.add('open');
     }
 
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('open');
-    }
+    function closeDrawerAndApply() {
+      document.getElementById('drawerBackdrop').classList.remove('open');
+      document.getElementById('prefsDrawer').classList.remove('open');
 
-    function setMode(mode) {
-      state.health_intensity = mode;
-      savePreferences();
-      syncFormFromState();
-      fetchRecommendations();
-    }
-
-    function applyPreferences() {
-      const selectedFilters = [];
+      const selected = [];
       document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]:checked').forEach(cb => {
-        selectedFilters.push(cb.value);
+        selected.push(cb.value);
       });
 
-      state.dietary_filters = selectedFilters;
+      state.dietary_filters = selected;
       state.dri_enabled = document.getElementById('dri_enabled').checked;
+      state.meal_goal = document.getElementById('dri_goal').value;
       state.sex = document.getElementById('dri_sex').value;
       state.age = document.getElementById('dri_age').value;
       state.weight_lbs = document.getElementById('dri_weight').value;
-      state.height_in = document.getElementById('dri_height').value;
+      state.height_ft = document.getElementById('dri_ft').value;
+      state.height_in_rem = document.getElementById('dri_in').value;
       state.activity_level = document.getElementById('dri_activity').value;
       state.meals_per_day = document.getElementById('dri_meals').value;
-      state.meal_goal = document.getElementById('dri_goal').value;
       state.sim_time = document.getElementById('sim_time').value.trim();
 
-      savePreferences();
-      syncFormFromState();
-      closeModal('prefsModal');
+      savePrefs();
+      syncUiFromState();
       fetchRecommendations();
     }
 
-    function buildCardRationaleHtml(combo) {
+    function clearAllDietary() {
+      document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+      });
+    }
+
+    function resetToNow() {
+      document.getElementById('sim_time').value = '';
+      closeDrawerAndApply();
+    }
+
+    function selectMode(mode) {
+      if (state.health_intensity === mode) return;
+      state.health_intensity = mode;
+      savePrefs();
+      syncUiFromState();
+      fetchRecommendations();
+    }
+
+    function stepCard(loc, delta) {
+      const rec = lastRecommendations.find(r => r.location === loc);
+      if (!rec || !rec.combos || rec.combos.length <= 1) return;
+      const len = rec.combos.length;
+      const cur = comboIndexByLoc[loc] || 0;
+      comboIndexByLoc[loc] = (cur + delta + len) % len;
+      renderCards();
+    }
+
+    function handleCardTouchStart(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }
+
+    function handleCardTouchEnd(e, loc) {
+      const dx = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(dx) > 42) {
+        stepCard(loc, dx < 0 ? 1 : -1);
+      }
+    }
+
+    function buildRationaleHtml(combo) {
       const bd = combo.score_breakdown || {};
       const notes = Array.isArray(bd.compatibility_notes) ? bd.compatibility_notes : [];
-      let summaryText = bd.match_summary || '';
+      let summary = bd.match_summary || '';
 
-      if (!summaryText) {
+      if (!summary) {
         const pairing = notes.find(n => !n.startsWith('Cohesive ')) || notes[0] || 'Balanced campus plate';
         const firstReason = (combo.items && combo.items[0] && combo.items[0].reason) || '';
         const quality = firstReason.toLowerCase().includes('seed-oil-free')
           ? 'Verified seed-oil-free'
           : 'Balanced dining staple';
-        summaryText = `${pairing} • ${quality}`;
+        summary = `${pairing} • ${quality}`;
       }
 
-      const isVerifiedClean = summaryText.toLowerCase().includes('seed-oil-free');
-      const pillarHtml = (
+      const isClean = summary.toLowerCase().includes('seed-oil-free');
+      const hasPillars = (
         typeof bd.culinary_compatibility === 'number' &&
         typeof bd.food_quality === 'number' &&
         typeof bd.nutrition_balance === 'number'
-      )
-        ? `<div class="pillar-chips">
-            <span class="pillar-chip">Pairing ${Math.round(bd.culinary_compatibility)}</span>
-            <span class="pillar-chip">Quality ${Math.round(bd.food_quality)}</span>
-            <span class="pillar-chip">Balance ${Math.round(bd.nutrition_balance)}</span>
+      );
+
+      const pillarsHtml = hasPillars
+        ? `<div class="pillar-row">
+            <span class="pillar-tag">Pairing ${Math.round(bd.culinary_compatibility)}</span>
+            <span class="pillar-tag">Quality ${Math.round(bd.food_quality)}</span>
+            <span class="pillar-tag">Balance ${Math.round(bd.nutrition_balance)}</span>
           </div>`
         : '';
 
       return `
-        <div class="combo-rationale-wrap">
-          <div class="rationale-badge ${isVerifiedClean ? '' : 'neutral'}">
-            <span>${isVerifiedClean ? '&#10003;' : '&#9679;'}</span>
-            <span>${escapeHtml(summaryText)}</span>
+        <div class="rationale-box">
+          <div class="rationale-pill ${isClean ? '' : 'neutral'}">
+            <span>${isClean ? '&#10003;' : '&#9679;'}</span>
+            <span>${escapeHtml(summary)}</span>
           </div>
-          ${pillarHtml}
+          ${pillarsHtml}
         </div>
       `;
     }
 
-    function advanceLocationCard(locKey, direction) {
-      const rec = lastRecommendations.find(r => r.location === locKey);
-      if (!rec || !rec.combos || rec.combos.length <= 1) return;
-      const total = rec.combos.length;
-      const current = comboIndexByLoc[locKey] || 0;
-      comboIndexByLoc[locKey] = direction === 'right'
-        ? (current - 1 + total) % total
-        : (current + 1) % total;
-      renderCardsOnly();
-    }
-
-    function renderCardsOnly() {
+    function renderCards() {
       const container = document.getElementById('cardsContainer');
       if (!lastRecommendations.length) {
-        container.innerHTML = `<div class="status-box">No matching plates found for the current filters and mode. Try switching to <strong>Balanced</strong> or relaxing an allergen filter.</div>`;
+        container.innerHTML = `<div class="empty-state">No matching plates found for your active filters and mode. Try switching to <strong>Balanced</strong> or relaxing a filter in Preferences.</div>`;
         return;
       }
 
-      const columnsHtml = lastRecommendations.map(rec => {
+      const html = lastRecommendations.map(rec => {
         const combos = rec.combos && rec.combos.length ? rec.combos : [{
           combo_name: 'Recommended Plate',
           items: rec.items || [],
@@ -909,21 +1245,33 @@
           score_breakdown: {}
         }];
 
-        const activeComboIdx = (comboIndexByLoc[rec.location] || 0) % combos.length;
-        const combo = combos[activeComboIdx];
-        const hasMultiple = combos.length > 1;
+        const idx = (comboIndexByLoc[rec.location] || 0) % combos.length;
+        const combo = combos[idx];
         const safeLoc = rec.location.replace(/'/g, "\\'");
 
-        const itemsHtml = (combo.items || []).map(item => `
-          <div class="plate-item">
-            <div class="plate-item-top">
-              <span class="role-tag">${escapeHtml(item.role || 'Item')}</span>
-              <span class="station-tag">${escapeHtml(item.station || '')}</span>
+        const pagerHtml = combos.length > 1
+          ? `<div class="pager-controls">
+              <button type="button" class="pager-btn" onclick="stepCard('${safeLoc}', -1)" aria-label="Previous option">&lsaquo;</button>
+              <span class="pager-label">${idx + 1} / ${combos.length}</span>
+              <button type="button" class="pager-btn" onclick="stepCard('${safeLoc}', 1)" aria-label="Next option">&rsaquo;</button>
+            </div>`
+          : '';
+
+        const itemsHtml = (combo.items || []).map(it => `
+          <div class="dish-row" onclick="this.classList.toggle('expanded')">
+            <div class="dish-main-line">
+              <div class="dish-info">
+                <div class="dish-meta-top">${escapeHtml(it.role || 'Item')} &bull; <span>${escapeHtml(it.station || '')}</span></div>
+                <div class="dish-name">${escapeHtml(it.name)}</div>
+              </div>
+              <div class="dish-right">
+                <div class="dish-pro">${Math.round(it.protein)}g P <span class="dish-chevron">&#9662;</span></div>
+                <div class="dish-cal">${Math.round(it.calories)} kcal</div>
+              </div>
             </div>
-            <div class="item-title">${escapeHtml(item.name)}</div>
-            <div class="item-macros">
-              ${Math.round(item.calories)} kcal &middot; ${Math.round(item.protein)}g P &middot; ${Math.round(item.carbs)}g C &middot; ${Math.round(item.fat)}g F
-              ${item.used_fallback ? ' &middot; <em>est.</em>' : ''}
+            <div class="dish-details">
+              Carbs: ${Math.round(it.carbs)}g &middot; Fat: ${Math.round(it.fat)}g
+              ${it.reason ? ` &middot; ${escapeHtml(it.reason)}` : ''}
             </div>
           </div>
         `).join('');
@@ -932,33 +1280,42 @@
         const split = combo.macro_split || { protein_pct: 33, carbs_pct: 34, fat_pct: 33 };
 
         return `
-          <section class="court-column">
-            <div class="court-header">
-              <h2 class="court-title">${escapeHtml(rec.location)}</h2>
-              <span class="hours-pill">${escapeHtml(rec.hours_status || 'Open')}</span>
+          <section class="court-card-wrap">
+            <div class="court-top-row">
+              <h2 class="court-name">${escapeHtml(rec.location)}</h2>
+              <span class="court-hours">&bull; ${escapeHtml(rec.hours_status || 'Open')}</span>
             </div>
 
-            <article class="flashcard">
+            <article class="meal-card"
+              ontouchstart="handleCardTouchStart(event)"
+              ontouchend="handleCardTouchEnd(event, '${safeLoc}')">
               <div>
-                <div class="combo-head">
-                  <div class="combo-name">${escapeHtml(combo.combo_name)}</div>
-                  ${hasMultiple ? `<button type="button" class="card-counter-btn" onclick="advanceLocationCard('${safeLoc}', 'left')" title="Next option">${activeComboIdx + 1} / ${combos.length} &rsaquo;</button>` : ''}
+                <div class="card-header">
+                  <div class="combo-title">${escapeHtml(combo.combo_name)}</div>
+                  ${pagerHtml}
                 </div>
 
-                ${buildCardRationaleHtml(combo)}
+                ${buildRationaleHtml(combo)}
 
-                <div class="plate-board">${itemsHtml}</div>
+                <div class="items-list">${itemsHtml}</div>
               </div>
 
-              <div class="card-footer">
-                <div class="totals-row">
-                  <span>${Math.round(tot.calories)} kcal total</span>
-                  <span>${Math.round(tot.protein)}g P &middot; ${Math.round(tot.carbs)}g C &middot; ${Math.round(tot.fat)}g F</span>
+              <div class="card-bottom">
+                <div class="macro-pills-row">
+                  <span class="m-pill">${Math.round(tot.protein)}g Protein</span>
+                  <span class="m-pill">${Math.round(tot.carbs)}g Carbs</span>
+                  <span class="m-pill">${Math.round(tot.fat)}g Fat</span>
+                  <span class="m-pill">${Math.round(tot.calories)} kcal</span>
                 </div>
-                <div class="macro-bar" title="Protein ${split.protein_pct}% | Carbs ${split.carbs_pct}% | Fat ${split.fat_pct}%">
-                  <div class="bar-p" style="width:${split.protein_pct}%"></div>
-                  <div class="bar-c" style="width:${split.carbs_pct}%"></div>
-                  <div class="bar-f" style="width:${split.fat_pct}%"></div>
+                <div class="macro-bar-track">
+                  <div class="seg-p" style="width:${split.protein_pct}%"></div>
+                  <div class="seg-c" style="width:${split.carbs_pct}%"></div>
+                  <div class="seg-f" style="width:${split.fat_pct}%"></div>
+                </div>
+                <div class="macro-pct-line">
+                  <span>&bull; Protein ${split.protein_pct}%</span>
+                  <span>&bull; Carbs ${split.carbs_pct}%</span>
+                  <span>&bull; Fat ${split.fat_pct}%</span>
                 </div>
               </div>
             </article>
@@ -966,55 +1323,83 @@
         `;
       }).join('');
 
-      container.innerHTML = `<div class="cards-grid">${columnsHtml}</div>`;
+      container.innerHTML = `<div class="cards-grid">${html}</div>`;
     }
 
     async function fetchRecommendations() {
-      const errorBox = document.getElementById('errorBox');
-      errorBox.style.display = 'none';
-      document.getElementById('cardsContainer').innerHTML = `<div class="status-box">Building best plates across open Purdue dining courts...</div>`;
+      const errEl = document.getElementById('errorBanner');
+      errEl.style.display = 'none';
+      document.getElementById('cardsContainer').innerHTML = `
+        <div class="skeleton-grid">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+      `;
+
+      let totalHeightInches = null;
+      if (state.height_ft !== '' && state.height_in_rem !== '') {
+        totalHeightInches = (parseInt(state.height_ft, 10) * 12) + parseInt(state.height_in_rem, 10);
+      }
+
+      const payload = {
+        health_intensity: state.health_intensity,
+        dietary_filters: state.dietary_filters,
+        dri_enabled: state.dri_enabled,
+        meal_goal: state.meal_goal,
+        sex: state.sex,
+        age: state.age,
+        weight_lbs: state.weight_lbs,
+        height_in: totalHeightInches,
+        activity_level: state.activity_level,
+        meals_per_day: state.meals_per_day,
+        sim_time: state.sim_time
+      };
 
       try {
         const res = await fetch('/api/recommend', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(state)
+          body: JSON.stringify(payload)
         });
         const data = await res.json();
 
         if (!res.ok) {
-          errorBox.textContent = data.error || 'Unable to load recommendations.';
-          errorBox.style.display = 'block';
+          errEl.textContent = data.error || 'Unable to load recommendations.';
+          errEl.style.display = 'block';
           document.getElementById('cardsContainer').innerHTML = '';
           return;
         }
 
         document.getElementById('greetingTitle').textContent = data.greeting_title || 'Campus Dining Lineup';
         document.getElementById('greetingSub').textContent = data.greeting_sub || '';
-        document.getElementById('metaStamp').textContent =
-          `${data.timestamp} • ${data.open_locations_count} dining court${data.open_locations_count === 1 ? '' : 's'} serving`;
 
-        const banner = document.getElementById('targetBanner');
+        const timeLabel = (data.timestamp || '').split(' ').slice(1).join(' ');
+        document.getElementById('liveStatusText').textContent =
+          `${timeLabel || 'Live'} • ${data.open_locations_count} Open`;
+
+        const strip = document.getElementById('activeStrip');
+        const chips = [];
+        (state.dietary_filters || []).forEach(f => {
+          chips.push(`<span class="active-chip">${escapeHtml(f)}</span>`);
+        });
         if (data.dri_enabled && data.targets && data.targets.per_meal) {
           const pm = data.targets.per_meal;
-          document.getElementById('targetPills').innerHTML = `
-            <span class="t-pill">Target: ~${Math.round(pm.calories)} kcal / meal</span>
-            <span class="t-pill">Protein: ${Math.round(pm.protein_target)}g</span>
-            <span class="t-pill">Carbs: ${Math.round(pm.carbs_target)}g</span>
-            <span class="t-pill">Fat: ${Math.round(pm.fat_target)}g</span>
-          `;
-          document.getElementById('targetDisclaimer').textContent = data.targets.disclaimer || '';
-          banner.classList.add('visible');
+          chips.push(`<span class="active-chip accent">Target ~${Math.round(pm.calories)} kcal &middot; ${Math.round(pm.protein_target)}g P</span>`);
+        }
+        if (chips.length) {
+          strip.innerHTML = chips.join('');
+          strip.style.display = 'flex';
         } else {
-          banner.classList.remove('visible');
+          strip.style.display = 'none';
         }
 
         lastRecommendations = data.recommendations || [];
         lastRecommendations.forEach(r => { comboIndexByLoc[r.location] = 0; });
-        renderCardsOnly();
+        renderCards();
       } catch (err) {
-        errorBox.textContent = 'Network error connecting to Feast server.';
-        errorBox.style.display = 'block';
+        errEl.textContent = 'Network error connecting to Feast server.';
+        errEl.style.display = 'block';
         document.getElementById('cardsContainer').innerHTML = '';
       }
     }
@@ -1040,12 +1425,8 @@
         const data = await res.json();
         if (res.ok) {
           statusEl.style.color = 'var(--leaf)';
-          statusEl.textContent = data.message || 'Sent!';
+          statusEl.textContent = data.message || 'Thanks for helping shape Feast!';
           document.getElementById('fb_message').value = '';
-          setTimeout(() => {
-            statusEl.textContent = '';
-            closeModal('feedbackModal');
-          }, 1100);
         } else {
           statusEl.style.color = 'var(--terracotta)';
           statusEl.textContent = data.error || 'Could not send feedback.';
@@ -1056,8 +1437,8 @@
       }
     }
 
-    loadPreferences();
-    syncFormFromState();
+    loadPrefs();
+    syncUiFromState();
     fetchRecommendations();
   </script>
 </body>
