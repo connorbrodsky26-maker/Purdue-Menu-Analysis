@@ -186,6 +186,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.55rem;
+      overflow-x: clip;
     }
 
     .court-top-row {
@@ -210,6 +211,13 @@
       gap: 0.32rem;
     }
 
+    .card-stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
     .meal-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -219,8 +227,19 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
+      flex: 1;
       touch-action: pan-y;
+      user-select: none;
+      will-change: transform, opacity;
+      transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.22s ease,
+                  box-shadow 0.16s ease;
+    }
+
+    .meal-card.dragging {
+      transition: none;
+      cursor: grabbing;
+      box-shadow: var(--shadow-lg);
     }
 
     .meal-card:hover {
@@ -242,11 +261,18 @@
       letter-spacing: -0.015em;
     }
 
+    .pager-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.28rem;
+      flex-shrink: 0;
+    }
+
     .pager-controls {
       display: inline-flex;
       align-items: center;
-      gap: 0.25rem;
-      flex-shrink: 0;
+      gap: 0.2rem;
       background: var(--surface-alt);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
@@ -257,11 +283,12 @@
       background: none;
       border: none;
       color: var(--text);
-      font-size: 0.85rem;
+      font-size: 0.92rem;
       font-weight: 800;
       cursor: pointer;
-      padding: 0.08rem 0.32rem;
+      padding: 0.08rem 0.34rem;
       border-radius: 50%;
+      line-height: 1;
     }
 
     .pager-btn:hover {
@@ -274,6 +301,29 @@
       color: var(--text-muted);
       min-width: 2.1rem;
       text-align: center;
+    }
+
+    .pager-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+      padding-right: 0.25rem;
+    }
+
+    .pager-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--border);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: width 0.2s ease, background 0.2s ease;
+    }
+
+    .pager-dot.active {
+      width: 15px;
+      background: var(--terracotta);
     }
 
     /* Match Rationale & Pillar Chips */
@@ -1037,7 +1087,7 @@
   </aside>
 
   <script>
-    const STORAGE_KEY = 'feast_purdue_prefs_v10';
+    const STORAGE_KEY = 'feast_purdue_prefs_v11';
 
     const state = {
       health_intensity: 'High',
@@ -1056,7 +1106,8 @@
 
     let lastRecommendations = [];
     const comboIndexByLoc = {};
-    let touchStartX = 0;
+    const animatingLoc = {};
+    let dragState = null;
 
     function escapeHtml(str) {
       return String(str ?? '')
@@ -1065,6 +1116,10 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+    }
+
+    function locSlug(loc) {
+      return String(loc || '').toLowerCase().replace(/[^a-z0-9]+/g, '_');
     }
 
     function loadPrefs() {
@@ -1169,26 +1224,6 @@
       fetchRecommendations();
     }
 
-    function stepCard(loc, delta) {
-      const rec = lastRecommendations.find(r => r.location === loc);
-      if (!rec || !rec.combos || rec.combos.length <= 1) return;
-      const len = rec.combos.length;
-      const cur = comboIndexByLoc[loc] || 0;
-      comboIndexByLoc[loc] = (cur + delta + len) % len;
-      renderCards();
-    }
-
-    function handleCardTouchStart(e) {
-      touchStartX = e.changedTouches[0].screenX;
-    }
-
-    function handleCardTouchEnd(e, loc) {
-      const dx = e.changedTouches[0].screenX - touchStartX;
-      if (Math.abs(dx) > 42) {
-        stepCard(loc, dx < 0 ? 1 : -1);
-      }
-    }
-
     function buildRationaleHtml(combo) {
       const bd = combo.score_breakdown || {};
       const notes = Array.isArray(bd.compatibility_notes) ? bd.compatibility_notes : [];
@@ -1229,6 +1264,249 @@
       `;
     }
 
+    function buildCardInnerHtml(rec) {
+      const combos = rec.combos && rec.combos.length ? rec.combos : [{
+        combo_name: 'Recommended Plate',
+        items: rec.items || [],
+        totals: rec.totals || { calories: 0, protein: 0, carbs: 0, fat: 0 },
+        macro_split: { protein_pct: 33, carbs_pct: 34, fat_pct: 33 },
+        score_breakdown: {}
+      }];
+
+      const idx = (comboIndexByLoc[rec.location] || 0) % combos.length;
+      const combo = combos[idx];
+      const safeLoc = rec.location.replace(/'/g, "\\'");
+
+      const dotsHtml = combos.length > 1
+        ? `<div class="pager-dots">
+            ${combos.map((_, dotIdx) => `
+              <button type="button"
+                class="pager-dot ${dotIdx === idx ? 'active' : ''}"
+                onclick="jumpToCombo('${safeLoc}', ${dotIdx})"
+                aria-label="Option ${dotIdx + 1}"></button>
+            `).join('')}
+          </div>`
+        : '';
+
+      const pagerHtml = combos.length > 1
+        ? `<div class="pager-wrap">
+            <div class="pager-controls">
+              <button type="button" class="pager-btn" onclick="stepCard('${safeLoc}', -1)" aria-label="Previous option">&lsaquo;</button>
+              <span class="pager-label">${idx + 1} / ${combos.length}</span>
+              <button type="button" class="pager-btn" onclick="stepCard('${safeLoc}', 1)" aria-label="Next option">&rsaquo;</button>
+            </div>
+            ${dotsHtml}
+          </div>`
+        : '';
+
+      const itemsHtml = (combo.items || []).map(it => `
+        <div class="dish-row" onclick="toggleDishRow(this)">
+          <div class="dish-main-line">
+            <div class="dish-info">
+              <div class="dish-meta-top">${escapeHtml(it.role || 'Item')} &bull; <span>${escapeHtml(it.station || '')}</span></div>
+              <div class="dish-name">${escapeHtml(it.name)}</div>
+            </div>
+            <div class="dish-right">
+              <div class="dish-pro">${Math.round(it.protein)}g P <span class="dish-chevron">&#9662;</span></div>
+              <div class="dish-cal">${Math.round(it.calories)} kcal</div>
+            </div>
+          </div>
+          <div class="dish-details">
+            Carbs: ${Math.round(it.carbs)}g &middot; Fat: ${Math.round(it.fat)}g
+            ${it.reason ? ` &middot; ${escapeHtml(it.reason)}` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      const tot = combo.totals || { calories: 0, protein: 0, carbs: 0, fat: 0 };
+      const split = combo.macro_split || { protein_pct: 33, carbs_pct: 34, fat_pct: 33 };
+
+      return `
+        <div>
+          <div class="card-header">
+            <div class="combo-title">${escapeHtml(combo.combo_name)}</div>
+            ${pagerHtml}
+          </div>
+
+          ${buildRationaleHtml(combo)}
+
+          <div class="items-list">${itemsHtml}</div>
+        </div>
+
+        <div class="card-bottom">
+          <div class="macro-pills-row">
+            <span class="m-pill">${Math.round(tot.protein)}g Protein</span>
+            <span class="m-pill">${Math.round(tot.carbs)}g Carbs</span>
+            <span class="m-pill">${Math.round(tot.fat)}g Fat</span>
+            <span class="m-pill">${Math.round(tot.calories)} kcal</span>
+          </div>
+          <div class="macro-bar-track">
+            <div class="seg-p" style="width:${split.protein_pct}%"></div>
+            <div class="seg-c" style="width:${split.carbs_pct}%"></div>
+            <div class="seg-f" style="width:${split.fat_pct}%"></div>
+          </div>
+          <div class="macro-pct-line">
+            <span>&bull; Protein ${split.protein_pct}%</span>
+            <span>&bull; Carbs ${split.carbs_pct}%</span>
+            <span>&bull; Fat ${split.fat_pct}%</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleDishRow(rowEl) {
+      if (dragState && dragState.moved) return;
+      rowEl.classList.toggle('expanded');
+    }
+
+    function animateCardSwap(loc, targetIdx, direction) {
+      const rec = lastRecommendations.find(r => r.location === loc);
+      if (!rec || !rec.combos || rec.combos.length <= 1) return;
+      if (animatingLoc[loc]) return;
+
+      const cardEl = document.getElementById(`card-${locSlug(loc)}`);
+      if (!cardEl) {
+        comboIndexByLoc[loc] = targetIdx;
+        return;
+      }
+
+      animatingLoc[loc] = true;
+      const exitX = direction > 0 ? '-105%' : '105%';
+      const exitRot = direction > 0 ? '-2.5deg' : '2.5deg';
+      const enterX = direction > 0 ? '60%' : '-60%';
+
+      cardEl.classList.remove('dragging');
+      cardEl.style.transition = 'transform 0.19s cubic-bezier(0.4, 0, 1, 1), opacity 0.16s ease';
+      cardEl.style.transform = `translateX(${exitX}) rotate(${exitRot})`;
+      cardEl.style.opacity = '0';
+
+      setTimeout(() => {
+        comboIndexByLoc[loc] = targetIdx;
+        cardEl.innerHTML = buildCardInnerHtml(rec);
+
+        cardEl.style.transition = 'none';
+        cardEl.style.transform = `translateX(${enterX}) scale(0.985)`;
+        cardEl.style.opacity = '0';
+
+        void cardEl.offsetWidth;
+
+        cardEl.style.transition = 'transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease';
+        cardEl.style.transform = 'translateX(0) rotate(0deg) scale(1)';
+        cardEl.style.opacity = '1';
+
+        setTimeout(() => {
+          cardEl.style.transition = '';
+          cardEl.style.transform = '';
+          cardEl.style.opacity = '';
+          animatingLoc[loc] = false;
+        }, 260);
+      }, 185);
+    }
+
+    function stepCard(loc, delta) {
+      const rec = lastRecommendations.find(r => r.location === loc);
+      if (!rec || !rec.combos || rec.combos.length <= 1) return;
+      const len = rec.combos.length;
+      const cur = comboIndexByLoc[loc] || 0;
+      const nextIdx = (cur + delta + len) % len;
+      animateCardSwap(loc, nextIdx, delta);
+    }
+
+    function jumpToCombo(loc, targetIdx) {
+      const rec = lastRecommendations.find(r => r.location === loc);
+      if (!rec || !rec.combos || rec.combos.length <= 1) return;
+      const cur = comboIndexByLoc[loc] || 0;
+      if (cur === targetIdx) return;
+      const direction = targetIdx > cur ? 1 : -1;
+      animateCardSwap(loc, targetIdx, direction);
+    }
+
+    function attachCardGestures() {
+      document.querySelectorAll('.meal-card[data-loc]').forEach(cardEl => {
+        const loc = cardEl.dataset.loc;
+
+        cardEl.addEventListener('pointerdown', (e) => {
+          if (e.button !== 0 && e.pointerType === 'mouse') return;
+          if (e.target.closest('button')) return;
+          const rec = lastRecommendations.find(r => r.location === loc);
+          if (!rec || !rec.combos || rec.combos.length <= 1) return;
+          if (animatingLoc[loc]) return;
+
+          dragState = {
+            loc,
+            cardEl,
+            pointerId: e.pointerId,
+            startX: e.clientX,
+            startY: e.clientY,
+            startTime: performance.now(),
+            dx: 0,
+            lockedHorizontal: false,
+            moved: false
+          };
+        });
+
+        cardEl.addEventListener('pointermove', (e) => {
+          if (!dragState || dragState.pointerId !== e.pointerId || dragState.loc !== loc) return;
+          const dx = e.clientX - dragState.startX;
+          const dy = e.clientY - dragState.startY;
+
+          if (!dragState.lockedHorizontal) {
+            if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10) {
+              dragState = null;
+              return;
+            }
+            if (Math.abs(dx) > 10) {
+              dragState.lockedHorizontal = true;
+              dragState.moved = true;
+              cardEl.classList.add('dragging');
+              try { cardEl.setPointerCapture(e.pointerId); } catch (_) {}
+            } else {
+              return;
+            }
+          }
+
+          dragState.dx = dx;
+          const clamped = Math.max(-160, Math.min(160, dx));
+          const rot = clamped * 0.018;
+          const fade = 1 - Math.min(Math.abs(clamped) / 420, 0.25);
+          cardEl.style.transform = `translateX(${clamped}px) rotate(${rot}deg)`;
+          cardEl.style.opacity = String(fade);
+        });
+
+        const endDrag = (e) => {
+          if (!dragState || dragState.pointerId !== e.pointerId || dragState.loc !== loc) return;
+          const currentDrag = dragState;
+          cardEl.classList.remove('dragging');
+          try { cardEl.releasePointerCapture(e.pointerId); } catch (_) {}
+
+          const elapsed = Math.max(performance.now() - currentDrag.startTime, 1);
+          const velocity = Math.abs(currentDrag.dx) / elapsed;
+          const passedThreshold = currentDrag.lockedHorizontal && (Math.abs(currentDrag.dx) > 58 || (Math.abs(currentDrag.dx) > 28 && velocity > 0.45));
+
+          if (passedThreshold) {
+            const delta = currentDrag.dx < 0 ? 1 : -1;
+            dragState = null;
+            stepCard(loc, delta);
+          } else {
+            if (currentDrag.lockedHorizontal) {
+              cardEl.style.transition = 'transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease';
+              cardEl.style.transform = 'translateX(0) rotate(0deg)';
+              cardEl.style.opacity = '1';
+              setTimeout(() => {
+                cardEl.style.transition = '';
+                cardEl.style.transform = '';
+                cardEl.style.opacity = '';
+              }, 245);
+            }
+            setTimeout(() => { dragState = null; }, 30);
+          }
+        };
+
+        cardEl.addEventListener('pointerup', endDrag);
+        cardEl.addEventListener('pointercancel', endDrag);
+      });
+    }
+
     function renderCards() {
       const container = document.getElementById('cardsContainer');
       if (!lastRecommendations.length) {
@@ -1237,48 +1515,7 @@
       }
 
       const html = lastRecommendations.map(rec => {
-        const combos = rec.combos && rec.combos.length ? rec.combos : [{
-          combo_name: 'Recommended Plate',
-          items: rec.items || [],
-          totals: rec.totals || { calories: 0, protein: 0, carbs: 0, fat: 0 },
-          macro_split: { protein_pct: 33, carbs_pct: 34, fat_pct: 33 },
-          score_breakdown: {}
-        }];
-
-        const idx = (comboIndexByLoc[rec.location] || 0) % combos.length;
-        const combo = combos[idx];
-        const safeLoc = rec.location.replace(/'/g, "\\'");
-
-        const pagerHtml = combos.length > 1
-          ? `<div class="pager-controls">
-              <button type="button" class="pager-btn" onclick="stepCard('${safeLoc}', -1)" aria-label="Previous option">&lsaquo;</button>
-              <span class="pager-label">${idx + 1} / ${combos.length}</span>
-              <button type="button" class="pager-btn" onclick="stepCard('${safeLoc}', 1)" aria-label="Next option">&rsaquo;</button>
-            </div>`
-          : '';
-
-        const itemsHtml = (combo.items || []).map(it => `
-          <div class="dish-row" onclick="this.classList.toggle('expanded')">
-            <div class="dish-main-line">
-              <div class="dish-info">
-                <div class="dish-meta-top">${escapeHtml(it.role || 'Item')} &bull; <span>${escapeHtml(it.station || '')}</span></div>
-                <div class="dish-name">${escapeHtml(it.name)}</div>
-              </div>
-              <div class="dish-right">
-                <div class="dish-pro">${Math.round(it.protein)}g P <span class="dish-chevron">&#9662;</span></div>
-                <div class="dish-cal">${Math.round(it.calories)} kcal</div>
-              </div>
-            </div>
-            <div class="dish-details">
-              Carbs: ${Math.round(it.carbs)}g &middot; Fat: ${Math.round(it.fat)}g
-              ${it.reason ? ` &middot; ${escapeHtml(it.reason)}` : ''}
-            </div>
-          </div>
-        `).join('');
-
-        const tot = combo.totals || { calories: 0, protein: 0, carbs: 0, fat: 0 };
-        const split = combo.macro_split || { protein_pct: 33, carbs_pct: 34, fat_pct: 33 };
-
+        const slug = locSlug(rec.location);
         return `
           <section class="court-card-wrap">
             <div class="court-top-row">
@@ -1286,44 +1523,17 @@
               <span class="court-hours">&bull; ${escapeHtml(rec.hours_status || 'Open')}</span>
             </div>
 
-            <article class="meal-card"
-              ontouchstart="handleCardTouchStart(event)"
-              ontouchend="handleCardTouchEnd(event, '${safeLoc}')">
-              <div>
-                <div class="card-header">
-                  <div class="combo-title">${escapeHtml(combo.combo_name)}</div>
-                  ${pagerHtml}
-                </div>
-
-                ${buildRationaleHtml(combo)}
-
-                <div class="items-list">${itemsHtml}</div>
-              </div>
-
-              <div class="card-bottom">
-                <div class="macro-pills-row">
-                  <span class="m-pill">${Math.round(tot.protein)}g Protein</span>
-                  <span class="m-pill">${Math.round(tot.carbs)}g Carbs</span>
-                  <span class="m-pill">${Math.round(tot.fat)}g Fat</span>
-                  <span class="m-pill">${Math.round(tot.calories)} kcal</span>
-                </div>
-                <div class="macro-bar-track">
-                  <div class="seg-p" style="width:${split.protein_pct}%"></div>
-                  <div class="seg-c" style="width:${split.carbs_pct}%"></div>
-                  <div class="seg-f" style="width:${split.fat_pct}%"></div>
-                </div>
-                <div class="macro-pct-line">
-                  <span>&bull; Protein ${split.protein_pct}%</span>
-                  <span>&bull; Carbs ${split.carbs_pct}%</span>
-                  <span>&bull; Fat ${split.fat_pct}%</span>
-                </div>
-              </div>
-            </article>
+            <div class="card-stage">
+              <article class="meal-card" id="card-${slug}" data-loc="${escapeHtml(rec.location)}">
+                ${buildCardInnerHtml(rec)}
+              </article>
+            </div>
           </section>
         `;
       }).join('');
 
       container.innerHTML = `<div class="cards-grid">${html}</div>`;
+      attachCardGestures();
     }
 
     async function fetchRecommendations() {
