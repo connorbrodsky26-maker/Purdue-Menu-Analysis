@@ -187,13 +187,17 @@ ORDERED_KEYWORD_MACROS = [
     ('sweet and sour', (330.0, 18.0, 36.0, 12.0, 18.0)),
     ('general tso', (360.0, 18.0, 38.0, 15.0, 16.0)),
     ('orange chicken', (350.0, 19.0, 36.0, 14.0, 15.0)),
+    ('southwest chicken salad', (380.0, 28.0, 20.0, 20.0, 4.0)),
     ('caesar salad', (240.0, 8.0, 12.0, 18.0, 3.0)),
     ('cobb salad', (340.0, 22.0, 12.0, 22.0, 4.0)),
     ('greek salad', (220.0, 7.0, 14.0, 15.0, 5.0)),
     ('chicken salad', (290.0, 20.0, 8.0, 20.0, 4.0)),
     ('tuna salad', (270.0, 19.0, 7.0, 18.0, 3.0)),
     ('egg salad', (280.0, 14.0, 6.0, 22.0, 3.0)),
+    ('pasta salad', (230.0, 6.0, 32.0, 9.0, 4.0)),
+    ('macaroni salad', (240.0, 5.0, 30.0, 11.0, 5.0)),
     ('potato salad', (220.0, 4.0, 26.0, 11.0, 5.0)),
+    ('fruit salad', (85.0, 1.0, 21.0, 0.3, 16.0)),
 
     # 6. Single proteins & dairy anchors
     ('scrambled egg', (180.0, 12.0, 2.0, 13.5, 1.0)),
@@ -271,14 +275,28 @@ ORDERED_KEYWORD_MACROS = [
     ('fruit', (75.0, 0.8, 19.0, 0.2, 14.0)),
 ]
 
+# Explicit oil & refined-fat terms (avoids flagging whole sunflower seeds or soybeans/edamame)
 SEED_OILS = [
-    'canola', 'soybean', 'corn oil', 'cottonseed', 'sunflower',
-    'safflower', 'vegetable oil', 'margarine', 'shortening', 'hydrogenated'
+    'canola oil', 'canola',
+    'soybean oil', 'soya oil',
+    'corn oil',
+    'cottonseed oil',
+    'sunflower oil', 'high oleic sunflower oil',
+    'safflower oil', 'high oleic safflower oil',
+    'rapeseed oil', 'grapeseed oil', 'rice bran oil',
+    'vegetable oil', 'vegetable shortening',
+    'margarine', 'shortening', 'hydrogenated'
 ]
+
 HIGH_SUGAR_ADDITIVES = [
     'high fructose corn syrup', 'corn syrup', 'cane sugar', 'brown sugar',
     'dextrose', 'maltodextrin', 'invert sugar', 'icing', 'frosting', 'glaze'
 ]
+
+STRICT_REFINED_SUGAR_INGREDIENTS = [
+    'high fructose corn syrup', 'corn syrup', 'invert sugar', 'icing', 'frosting'
+]
+
 DEEP_FRIED_MARKERS = [
     'deep fried', 'breaded', 'battered', 'tempura', 'crispy fried',
     'panko', 'cornmeal crust', 'fried in'
@@ -347,6 +365,28 @@ BREAKFAST_ENTREE_MARKERS = [
     'pancake', 'waffle', 'french toast', 'breakfast skillet'
 ]
 
+STARCH_SALAD_KEYWORDS = [
+    'pasta salad', 'macaroni salad', 'potato salad', 'orzo salad',
+    'couscous salad', 'tortellini salad', 'noodle salad', 'ramen salad',
+    'quinoa salad'
+]
+
+FRUIT_SALAD_KEYWORDS = [
+    'fruit salad', 'fresh fruit salad', 'mixed fruit salad',
+    'berry salad', 'tropical fruit salad', 'melon salad'
+]
+
+DESSERT_SALAD_KEYWORDS = [
+    'ambrosia salad', 'jello salad', 'gelatin salad', 'marshmallow salad',
+    'cookie salad', 'snickers salad', 'dessert salad', 'watergate salad'
+]
+
+ENTREE_PROTEIN_SALAD_KEYWORDS = [
+    'chicken salad', 'tuna salad', 'egg salad', 'cobb salad', 'chef salad',
+    'taco salad', 'steak salad', 'salmon salad', 'shrimp salad', 'turkey salad',
+    'fajita salad', 'buffalo chicken', 'southwest chicken', 'chicken caesar'
+]
+
 VEGETABLE_KEYWORDS = [
     'broccoli', 'asparagus', 'brussels', 'cauliflower', 'zucchini', 'carrot',
     'carrots', 'green bean', 'green beans', 'spinach', 'kale', 'mixed vegetables',
@@ -401,6 +441,23 @@ ANIMAL_BYPRODUCT_KEYWORDS = [
     'mozzarella', 'cheddar', 'parmesan', 'feta', 'ricotta', 'queso',
     'egg', 'mayonnaise', 'aioli', 'honey', 'ghee', 'custard',
     'sour cream', 'cream cheese', 'buttermilk', 'goat cheese'
+]
+
+# Plant-based analogs and non-dairy plant milks/butters excluded from meat/dairy keyword regexes
+PLANT_BASED_ANALOG_PATTERNS = [
+    r'\b(?:plant[- ]based|plant|vegan|vegetarian|meatless|faux|mock|imitation|soy|tofu|seitan|tempeh|cauliflower|jackfruit|mushroom|black\s+bean|chickpea|veggie|impossible|beyond|gardein|morningstar|quorn)\s+(?:chicken|chick\'?n|beef|pork|turkey|ham|bacon|sausage|steak|burger|meatball|pepperoni|salami|chorizo|bratwurst|hot\s+dog|gyro|barbacoa|carnitas|brisket|rib|wing|drumstick|tender|nugget|patty|crab|lobster|shrimp|fish|tuna|salmon|seafood)s?\b',
+    r'\b(?:buffalo|bbq|barbecue|honey\s+mustard|korean|teriyaki)\s+cauliflower\s+(?:wing|bite|nugget|tender)s?\b',
+    r'\bcauliflower\s+(?:wing|bite|nugget|tender)s?\b',
+    r'\bplant[- ]based\b',
+]
+
+NON_DAIRY_EXCEPTION_PATTERNS = [
+    r'\b(?:coconut|almond|oat|soy|soya|rice|cashew|hemp|pea|flax|macadamia|hazelnut|pistachio|walnut|plant[- ]based|plant|non[- ]?dairy)\s+milks?\b',
+    r'\bsoymilks?\b',
+    r'\b(?:coconut|oat|soy|plant[- ]based|non[- ]?dairy|vegan)\s+(?:cream|creamer|yogurt|cheese|butter|mozzarella|cheddar|parmesan|feta|ricotta|queso)\b',
+    r'\b(?:peanut|almond|cashew|sunflower|seed|apple|pumpkin|cocoa|shea|nut)\s+butters?\b',
+    r'\bbutternut\b',
+    r'\bcream\s+of\s+(?:tartar|wheat|rice|coconut)\b',
 ]
 
 
@@ -646,47 +703,8 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
     return hydrate_missing_macros(normalized_items)
 
 
-def merge_external_menus(
-    menu_items: list[dict], static_menu_path: Optional[str] = None
-) -> list[dict]:
-    if not static_menu_path or not os.path.exists(static_menu_path):
-        return menu_items
-
-    try:
-        with open(static_menu_path, 'r', encoding='utf-8') as f:
-            external_data = json.load(f)
-    except (OSError, ValueError):
-        return menu_items
-
-    for entry in external_data:
-        normalized = {
-            'location': entry.get('location', 'PMU'),
-            'meal_period': entry.get('meal_period', 'All Day'),
-            'hours_status': entry.get('hours_status', 'Unknown'),
-            'closing_time': entry.get('closing_time', ''),
-            'start_time': entry.get('start_time', '08:00:00'),
-            'end_time': entry.get('end_time', '21:00:00'),
-            'station': entry.get('station', 'Main Counter'),
-            'name': entry.get('name', 'Unknown Item'),
-            'calories': float(entry.get('calories', 0.0)),
-            'protein': float(entry.get('protein', 0.0)),
-            'carbs': float(entry.get('carbs', 0.0)),
-            'fat': float(entry.get('fat', 0.0)),
-            'sugar': float(entry.get('sugar', 0.0)),
-            'ingredients': entry.get('ingredients', 'N/A'),
-            'allergens': [str(a).lower() for a in entry.get('allergens', [])],
-            'is_vegetarian': entry.get('is_vegetarian'),
-            'is_vegan': entry.get('is_vegan'),
-            'used_fallback': bool(entry.get('used_fallback', False)),
-        }
-        menu_items.append(normalized)
-
-    return menu_items
-
-
 def get_daily_menus(
     locations: Optional[list[str]] = None,
-    static_menu_path: Optional[str] = None,
     force_refresh: bool = False,
     target_date: Optional[str] = None,
 ) -> tuple[list[dict], bool]:
@@ -700,19 +718,16 @@ def get_daily_menus(
             with open(cache_path, 'r', encoding='utf-8') as f:
                 raw_cache = json.load(f)
 
-            # Support both structured cache envelope and legacy list format safely
             if isinstance(raw_cache, dict):
                 cached_date = raw_cache.get('date')
                 cached_locs = set(raw_cache.get('locations') or [])
                 cached_items = raw_cache.get('items') or []
                 if cached_date == date_str and allowed_set.issubset(cached_locs) and cached_items:
                     filtered = [it for it in cached_items if it.get('location') in allowed_set]
-                    filtered = merge_external_menus(filtered, static_menu_path)
                     return hydrate_missing_macros(filtered), True
             elif isinstance(raw_cache, list) and raw_cache:
                 filtered = [it for it in raw_cache if it.get('location') in allowed_set]
                 if filtered:
-                    filtered = merge_external_menus(filtered, static_menu_path)
                     return hydrate_missing_macros(filtered), True
         except (OSError, ValueError):
             pass
@@ -738,7 +753,6 @@ def get_daily_menus(
         except OSError:
             pass
 
-    all_items = merge_external_menus(all_items, static_menu_path)
     return hydrate_missing_macros(all_items), False
 
 
@@ -795,7 +809,6 @@ def calculate_meal_targets(
 
     elif 'lean cut' in goal_norm or 'fat loss' in goal_norm:
         if is_minor:
-            # Safeguard: Never prescribe calorie deficits for users under 18
             daily_calories = maintenance_calories
             safety_note = (
                 'Calorie deficits are disabled for users under 18; showing balanced '
@@ -1037,6 +1050,22 @@ def _assess_ingredient_certainty(item: dict) -> str:
     return 'unknown'
 
 
+def _sanitize_plant_based_text(text: str) -> str:
+    """Strips plant-based meat/poultry/seafood analog phrases before meat keyword regexes."""
+    cleaned = text
+    for pat in PLANT_BASED_ANALOG_PATTERNS:
+        cleaned = re.sub(pat, ' ', cleaned, flags=re.IGNORECASE)
+    return cleaned
+
+
+def _sanitize_non_dairy_text(text: str) -> str:
+    """Strips non-dairy plant milks and nut/plant butters before dairy keyword regexes."""
+    cleaned = text
+    for pat in NON_DAIRY_EXCEPTION_PATTERNS:
+        cleaned = re.sub(pat, ' ', cleaned, flags=re.IGNORECASE)
+    return cleaned
+
+
 def _passes_dietary_filters(item: dict, dietary_filters: list[str]) -> bool:
     if not dietary_filters:
         return True
@@ -1049,41 +1078,63 @@ def _passes_dietary_filters(item: dict, dietary_filters: list[str]) -> bool:
     combined = f'{name_lower} {ing_lower}'
     has_verified_ing = bool(ing_raw and ing_raw.upper() != 'N/A')
 
+    meat_check_text = _sanitize_plant_based_text(combined)
+    dairy_check_text = _sanitize_non_dairy_text(combined)
+
     allergen_rules = {
         'gluten-free': {
             'api_tags': {'gluten', 'wheat'},
             'keywords': ['wheat', 'barley', 'rye', 'semolina', 'flour', 'bread', 'pasta', 'tortilla', 'crouton', 'panko', 'bagel', 'muffin', 'pancake', 'pita'],
             'safe_override': ['gluten-free', 'gluten free', 'gf '],
+            'text_source': combined,
         },
         'dairy-free': {
             'api_tags': {'milk', 'dairy'},
             'keywords': ['milk', 'cheese', 'butter', 'cream', 'whey', 'casein', 'yogurt', 'mozzarella', 'cheddar', 'parmesan', 'feta', 'ricotta', 'queso'],
             'safe_override': ['dairy-free', 'dairy free', 'vegan', 'violife'],
+            'text_source': dairy_check_text,
         },
         'egg-free': {
             'api_tags': {'eggs', 'egg'},
             'keywords': ['egg', 'mayonnaise', 'aioli'],
             'safe_override': ['egg-free', 'egg free', 'vegan'],
+            'text_source': combined,
         },
         'soy-free': {
             'api_tags': {'soy', 'soybeans'},
             'keywords': ['soy', 'soybean', 'tofu', 'edamame', 'tamari', 'teriyaki', 'miso'],
             'safe_override': ['soy-free', 'soy free'],
+            'text_source': combined,
         },
         'peanut-free': {
             'api_tags': {'peanuts', 'peanut'},
             'keywords': ['peanut', 'kung pao', 'reese'],
             'safe_override': ['peanut-free', 'peanut free'],
+            'text_source': combined,
         },
         'tree-nut-free': {
             'api_tags': {'tree nuts', 'tree nut', 'nuts'},
             'keywords': ['almond', 'walnut', 'pecan', 'cashew', 'pistachio', 'hazelnut', 'macadamia', 'pine nut', 'coconut'],
             'safe_override': ['nut-free', 'nut free'],
+            'text_source': combined,
         },
         'shellfish-free': {
             'api_tags': {'shellfish', 'crustacean shellfish'},
             'keywords': ['shrimp', 'crab', 'lobster', 'clam', 'mussel', 'oyster', 'scallop', 'crawfish'],
             'safe_override': [],
+            'text_source': meat_check_text,
+        },
+        'fish-free': {
+            'api_tags': {'fish'},
+            'keywords': ['fish', 'salmon', 'tuna', 'cod', 'tilapia', 'anchovy', 'anchovies', 'pollock', 'haddock', 'halibut', 'trout', 'mahi', 'catfish', 'sardine', 'worcestershire'],
+            'safe_override': ['fish-free', 'fish free', 'vegan', 'vegetarian'],
+            'text_source': meat_check_text,
+        },
+        'sesame-free': {
+            'api_tags': {'sesame', 'sesame seeds'},
+            'keywords': ['sesame', 'tahini', 'hummus', 'halvah', 'benne', 'gomashio'],
+            'safe_override': ['sesame-free', 'sesame free'],
+            'text_source': combined,
         },
     }
 
@@ -1100,7 +1151,8 @@ def _passes_dietary_filters(item: dict, dietary_filters: list[str]) -> bool:
                 return False
 
         if not any(safe in name_lower for safe in rule['safe_override']):
-            if any(re.search(rf'\b{re.escape(kw)}s?\b', combined) for kw in rule['keywords']):
+            target_text = rule['text_source']
+            if any(re.search(rf'\b{re.escape(kw)}s?\b', target_text) for kw in rule['keywords']):
                 return False
 
     if 'vegetarian' in active:
@@ -1108,7 +1160,7 @@ def _passes_dietary_filters(item: dict, dietary_filters: list[str]) -> bool:
         if is_veg is False:
             return False
         if is_veg is None:
-            if any(re.search(rf'\b{re.escape(m)}s?\b', combined) for m in MEAT_SEAFOOD_KEYWORDS):
+            if any(re.search(rf'\b{re.escape(m)}s?\b', meat_check_text) for m in MEAT_SEAFOOD_KEYWORDS):
                 return False
 
     if 'vegan' in active:
@@ -1118,9 +1170,9 @@ def _passes_dietary_filters(item: dict, dietary_filters: list[str]) -> bool:
         if allergens & {'milk', 'dairy', 'eggs', 'egg', 'shellfish', 'crustacean shellfish', 'fish'}:
             return False
         if is_vegan is None and 'vegan' not in name_lower:
-            if any(re.search(rf'\b{re.escape(m)}s?\b', combined) for m in MEAT_SEAFOOD_KEYWORDS):
+            if any(re.search(rf'\b{re.escape(m)}s?\b', meat_check_text) for m in MEAT_SEAFOOD_KEYWORDS):
                 return False
-            if any(re.search(rf'\b{re.escape(a)}s?\b', combined) for a in ANIMAL_BYPRODUCT_KEYWORDS):
+            if any(re.search(rf'\b{re.escape(a)}s?\b', dairy_check_text) for a in ANIMAL_BYPRODUCT_KEYWORDS):
                 return False
 
     return True
@@ -1152,7 +1204,6 @@ def _is_standalone_bakery(item: dict) -> bool:
     """
     name_lower = (item.get('name') or '').lower().strip()
 
-    # Priority check: Filled sandwiches, burgers, wraps, and entrees are NEVER standalone bakery items
     if any(re.search(rf'\b{re.escape(m)}\b', name_lower) for m in SANDWICH_ENTREE_MARKERS + COMPLETE_ENTREE_MARKERS + BREAKFAST_ENTREE_MARKERS):
         return False
 
@@ -1203,12 +1254,22 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
     if any(z == name_lower or f' {z}' in name_lower for z in zero_cal_items):
         return False, 0.0, 'Negligible macro contribution'
 
-    has_seed_oil = any(oil in combined_text for oil in SEED_OILS)
-    has_high_sugar = any(s in combined_text for s in HIGH_SUGAR_ADDITIVES)
+    has_seed_oil = any(
+        re.search(rf'\b{re.escape(oil)}s?\b', combined_text) for oil in SEED_OILS
+    )
+    has_sugar_marker = any(s in combined_text for s in HIGH_SUGAR_ADDITIVES)
+    has_strict_refined_ing = any(s in ing_lower for s in STRICT_REFINED_SUGAR_INGREDIENTS)
     is_deep_fried = any(f in combined_text for f in DEEP_FRIED_MARKERS)
     has_artificial = any(a in combined_text for a in ARTIFICIAL_ADDITIVES)
-    is_dessert = any(d in name_lower for d in DESSERT_KEYWORDS)
-    whole_fruit = _is_whole_fruit(name_lower)
+    is_dessert = any(d in name_lower for d in DESSERT_KEYWORDS) or any(ds in name_lower for ds in DESSERT_SALAD_KEYWORDS)
+    whole_fruit = _is_whole_fruit(name_lower) or any(fs in name_lower for fs in FRUIT_SALAD_KEYWORDS)
+
+    # Gate high-sugar triggers against actual gram threshold (> 8.0g) rather than title substrings alone
+    has_high_sugar = (not whole_fruit) and (
+        item['sugar'] > 8.0
+        or (has_sugar_marker and item['sugar'] > 8.0)
+        or has_strict_refined_ing
+    )
 
     if tier == 'high':
         # Healthiest: Strict seed-oil-free, dye-free, deep-fry-free, added-sugar-free
@@ -1222,8 +1283,8 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
             return False, 0.0, 'Excluded: artificial dyes or preservatives'
         if is_dessert:
             return False, 0.0, 'Excluded: dessert'
-        if has_high_sugar or (item['sugar'] > 10.0 and not whole_fruit):
-            return False, 0.0, 'Excluded: added sugar'
+        if has_high_sugar:
+            return False, 0.0, 'Excluded: added sugar (>8g)'
 
         score = 68.0
         if certainty == 'verified':
@@ -1266,7 +1327,6 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
 
     else:
         # 'low' -> Yummiest: Evaluates culinary appeal, flavor richness, and recognizable dishes
-        # Does NOT treat raw calories or raw protein as proxies for taste.
         if is_dessert:
             return False, 0.0, 'Excluded: standalone dessert'
 
@@ -1403,11 +1463,31 @@ def _extract_main_ingredient_key(item: dict) -> str:
 
 
 def _is_composed_salad(item: dict) -> bool:
-    name_lower = item['name'].lower()
+    """
+    Identifies leafy/vegetable composed salads (Caesar Salad, Greek Salad, Garden Salad)
+    that can serve as standalone salad mains or foundations for lean proteins,
+    while excluding fruit salads, starch/pasta salads, dessert salads, and complete
+    protein-topped entree salads.
+    """
+    name_lower = (item.get('name') or '').lower().strip()
     if 'salad' not in name_lower:
         return False
-    if any(k in name_lower for k in ['chicken salad', 'tuna salad', 'egg salad', 'potato salad', 'macaroni salad']):
+
+    if any(k in name_lower for k in (
+        STARCH_SALAD_KEYWORDS
+        + FRUIT_SALAD_KEYWORDS
+        + DESSERT_SALAD_KEYWORDS
+        + ENTREE_PROTEIN_SALAD_KEYWORDS
+    )):
         return False
+
+    protein_in_salad_title = [
+        'chicken', 'turkey', 'beef', 'steak', 'pork', 'ham', 'bacon',
+        'salmon', 'tuna', 'shrimp', 'crab', 'lobster', 'fish', 'tofu'
+    ]
+    if any(re.search(rf'\b{re.escape(p)}(?:s|es)?\b', name_lower) for p in protein_in_salad_title):
+        return False
+
     return True
 
 
@@ -1425,12 +1505,12 @@ def classify_food_item(item: dict) -> str:
       - 'complete_entree' (burrito, quesadilla, taco plate, pizza, casserole, chili)
       - 'pasta_entree'    (pasta dish, lasagna, lo mein, mac & cheese, ramen)
       - 'bowl'            (grain bowl, rice bowl, burrito bowl, poke bowl)
-      - 'composed_salad'  (caesar salad, greek salad, garden salad, cobb salad)
+      - 'composed_salad'  (caesar salad, greek salad, garden salad)
       - 'breakfast_entree'(omelet, scrambled eggs, pancakes, waffles, breakfast sandwich)
-      - 'protein_entree'  (standalone meat, fish, tofu, paneer, eggs)
-      - 'carb_base'       (rice, quinoa, couscous, potatoes, beans, standalone bread/roll)
+      - 'protein_entree'  (standalone meat, fish, tofu, paneer, eggs, or complete protein entree salad)
+      - 'carb_base'       (rice, quinoa, couscous, potatoes, beans, pasta/macaroni salad, standalone bread/roll)
       - 'vegetable'       (broccoli, asparagus, green beans, spinach, roasted veg)
-      - 'side'            (whole fruit, cottage cheese, yogurt, light side)
+      - 'side'            (whole fruit, fruit salad, cottage cheese, yogurt, light side)
     """
     name_lower = (item.get('name') or '').lower().strip()
     ing_lower = (item.get('ingredients') or '').lower()
@@ -1438,9 +1518,23 @@ def classify_food_item(item: dict) -> str:
     if (
         name_lower in STATION_HEADER_NAMES
         or any(d in name_lower for d in DESSERT_KEYWORDS)
+        or any(ds in name_lower for ds in DESSERT_SALAD_KEYWORDS)
         or _is_dip_or_condiment(item)
     ):
         return 'exclude'
+
+    # 0. Explicit Salad Sub-Classifications (before pasta/carb rules)
+    if 'salad' in name_lower:
+        if any(fs in name_lower for fs in FRUIT_SALAD_KEYWORDS):
+            return 'side'
+        if any(ss in name_lower for ss in STARCH_SALAD_KEYWORDS):
+            return 'carb_base'
+        if any(es in name_lower for es in ENTREE_PROTEIN_SALAD_KEYWORDS):
+            return 'protein_entree'
+        if _is_composed_salad(item):
+            return 'composed_salad'
+        # Salads with explicit protein in title (e.g., "Southwest Chicken Salad", "Grilled Salmon Salad")
+        return 'protein_entree'
 
     # 1. Filled Sandwiches & Burgers (MUST precede standalone bread/bun rules)
     if any(re.search(rf'\b{re.escape(m)}\b', name_lower) for m in SANDWICH_ENTREE_MARKERS):
@@ -1464,28 +1558,23 @@ def classify_food_item(item: dict) -> str:
     if any(re.search(rf'\b{re.escape(m)}\b', name_lower) for m in PASTA_ENTREE_MARKERS):
         return 'pasta_entree'
 
-    # 6. Composed Salads
-    if _is_composed_salad(item):
-        return 'composed_salad'
-
-    # 7. Standalone Bakery (only after sandwich/complete entree overrides)
+    # 6. Standalone Bakery (only after sandwich/complete entree overrides)
     if _is_standalone_bakery(item):
         if any(b in name_lower for b in ['hamburger bun', 'hot dog bun', 'bun', 'buns']):
             return 'exclude'
         return 'carb_base'
 
-    # 8. Vegetables
+    # 7. Vegetables
     if any(re.search(rf'\b{re.escape(v)}\b', name_lower) for v in VEGETABLE_KEYWORDS):
-        # Edamame has high protein and can also act as plant protein if needed, but keep edamame as protein/side smartly
         if 'edamame' in name_lower:
             return 'protein_entree'
         return 'vegetable'
 
-    # 9. Whole Fruits
+    # 8. Whole Fruits
     if _is_whole_fruit(name_lower):
         return 'side'
 
-    # 10. Protein Entrees (checked via protein keywords + macro profile + ingredient metadata)
+    # 9. Protein Entrees (checked via protein keywords + macro profile + ingredient metadata)
     entree_protein_hints = [
         'chicken', 'beef', 'steak', 'pork', 'salmon', 'fish', 'shrimp',
         'turkey', 'tofu', 'tempeh', 'seitan', 'egg', 'meatball',
@@ -1508,7 +1597,7 @@ def classify_food_item(item: dict) -> str:
     ):
         return 'protein_entree'
 
-    # 11. Carbohydrate / Grain / Legume Bases
+    # 10. Carbohydrate / Grain / Legume Bases
     if item['carbs'] >= 15.0 and item['carbs'] > item['protein']:
         return 'carb_base'
 
@@ -1518,10 +1607,7 @@ def classify_food_item(item: dict) -> str:
 def _build_option_b_anchors(pool: list[dict], existing_proteins: list[dict]) -> list[dict]:
     """
     Option B Fallback: Ensures strictly seed-oil-free whole-food anchors are available
-    when a dining court has fewer than 3 traditional meat entrees:
-      1. Eggs, tofu, paneer, cottage cheese, Greek yogurt, edamame (>= 6g protein)
-      2. Beans, lentils, chickpeas, quinoa
-      3. Plain complex grains & potatoes (brown rice, white rice, sweet potato, oatmeal)
+    when a dining court has fewer than 3 traditional meat entrees.
     """
     anchors = list(existing_proteins)
     seen_names = {p['name'] for p in anchors}
@@ -1586,13 +1672,6 @@ def evaluate_culinary_compatibility(
 ) -> tuple[bool, float, list[str]]:
     """
     Positive, multi-dimensional culinary compatibility engine (returns 0..100 score).
-    Evaluates:
-      - Cuisine harmony
-      - Flavor & sauce profile alignment
-      - Traditional / recognizable meal pairings
-      - Cooking method & texture contrast
-      - Station synergy (modest bonus, never primary driver)
-      - Hard rejection of redundant starches, double entrees, or clashing cuisines
     """
     items = [it for _, it in slots]
     if not items:
@@ -1602,29 +1681,29 @@ def evaluate_culinary_compatibility(
     names_lower = [it['name'].lower() for it in items]
 
     # 1. Hard structural guards
-    # Reject combining two complete/sandwich/pasta/bowl entrees
     complete_roles = {'sandwich', 'complete_entree', 'pasta_entree', 'bowl', 'breakfast_entree'}
     if sum(1 for r in roles if r in complete_roles) > 1:
         return False, 0.0, ['Rejected: multiple complete entrees']
 
-    # Reject redundant starch bases (e.g., pasta + rice, sandwich + bread, rice + rice, potato + potato)
+    # Reject redundant starch bases (e.g., pasta + rice, sandwich + bread, rice + rice)
     starch_count = 0
     for it in items:
         n = it['name'].lower()
         r = it['_role']
         if r in ('pasta_entree', 'sandwich', 'complete_entree', 'bowl') or any(
-            g in n for g in ['rice', 'pasta', 'noodle', 'spaghetti', 'penne', 'potato', 'bread', 'roll', 'tortilla', 'naan', 'pita', 'couscous', 'quinoa']
+            g in n for g in ['rice', 'pasta', 'noodle', 'spaghetti', 'penne', 'potato', 'bread', 'roll', 'tortilla', 'naan', 'pita', 'couscous', 'quinoa', 'macaroni']
         ):
             starch_count += 1
     if starch_count > 1:
         return False, 0.0, ['Rejected: redundant carbohydrate/starch components']
 
-    # Reject composed salad paired with rice or pasta
-    if 'composed_salad' in roles and any(
+    # Reject any salad paired with heavy hot rice/pasta starches
+    has_any_salad = 'composed_salad' in roles or any('salad' in n for n in names_lower)
+    if has_any_salad and any(
         any(g in n for g in ['rice', 'pasta', 'noodle', 'spaghetti', 'penne', 'mac'])
         for n in names_lower
     ):
-        return False, 0.0, ['Rejected: composed salad paired with heavy starch']
+        return False, 0.0, ['Rejected: salad paired with heavy starch']
 
     # 2. Cuisine compatibility check
     cuisines = [it['_cuisine'] for it in items if it['_cuisine'] != 'neutral']
@@ -1642,18 +1721,21 @@ def evaluate_culinary_compatibility(
         if bad_pair.issubset(distinct_cuisines):
             return False, 0.0, ['Rejected: conflicting cuisine profiles']
 
-    # Single-item complete entree baseline
+    # Single-item complete entree or standalone salad main baseline
     if len(items) == 1:
         single_role = items[0]['_role']
+        single_name = items[0]['name'].lower()
         if single_role in ('complete_entree', 'bowl', 'sandwich', 'pasta_entree', 'breakfast_entree'):
             return True, 78.0, [f'Self-contained {single_role.replace("_", " ")}']
+        if single_role == 'composed_salad' or 'salad' in single_name:
+            return True, 76.0, ['Standalone composed salad main']
         return True, 64.0, ['Single-component plate']
 
-    # 3. Positive Compatibility Scoring (starts at 50 and earns points for genuine culinary harmony)
+    # 3. Positive Compatibility Scoring
     score = 50.0
     reasons: list[str] = []
 
-    # A. Cuisine alignment (+18 for matching non-neutral cuisine, +10 for cuisine + neutral)
+    # A. Cuisine alignment
     if len(cuisines) >= 2 and len(distinct_cuisines) == 1:
         score += 18.0
         reasons.append(f'Cohesive {cuisines[0]} cuisine pairing')
@@ -1669,7 +1751,7 @@ def evaluate_culinary_compatibility(
         (['teriyaki', 'orange chicken', 'general tso', 'stir fry', 'bulgogi', 'curry', 'tikka'], ['jasmine rice', 'white rice', 'brown rice', 'basmati rice', 'rice'], 16.0, 'Classic Asian protein & steamed rice pairing'),
         (['chicken parmesan', 'meatball', 'italian chicken', 'bolognese', 'marinara'], ['pasta', 'spaghetti', 'penne', 'fettuccine', 'broccoli', 'green beans'], 15.0, 'Classic Italian entree pairing'),
         (['taco', 'carnitas', 'barbacoa', 'carne asada', 'fajita', 'chorizo'], ['spanish rice', 'mexican rice', 'cilantro lime', 'black bean', 'pinto bean'], 16.0, 'Traditional Latin plate pairing'),
-        (['grilled chicken', 'steak', 'salmon', 'pork loin', 'turkey'], ['roasted potato', 'sweet potato', 'mashed potato', 'quinoa', 'asparagus', 'broccoli', 'green beans'], 14.0, 'Classic grill & vegetable/starch balance'),
+        (['grilled chicken', 'steak', 'salmon', 'pork loin', 'turkey'], ['roasted potato', 'sweet potato', 'mashed potato', 'quinoa', 'asparagus', 'broccoli', 'green beans', 'pasta salad', 'potato salad'], 14.0, 'Classic grill & vegetable/starch balance'),
         (['gyro', 'shawarma', 'lemon herb', 'mediterranean', 'greek'], ['couscous', 'quinoa', 'chickpea', 'garbanzo', 'greek salad'], 15.0, 'Mediterranean flavor pairing'),
         (['burger', 'cheeseburger', 'sandwich', 'panini', 'wrap'], ['fruit', 'apple', 'berries', 'watermelon', 'broccoli', 'salad', 'sweet potato'], 12.0, 'Balanced sandwich/burger & crisp side'),
         (['scrambled', 'omelet', 'frittata', 'pancake', 'waffle'], ['bacon', 'sausage', 'fruit', 'berries', 'banana', 'oatmeal'], 14.0, 'Classic breakfast pairing'),
@@ -1696,7 +1778,7 @@ def evaluate_culinary_compatibility(
         score += 7.0
         reasons.append('Complementary cooking textures')
 
-    # E. Modest same-station convenience bonus (max +5, never dominates)
+    # E. Modest same-station convenience bonus
     stations = [it['station'].lower().strip() for it in items]
     if len(stations) >= 2 and len(set(stations)) == 1:
         score += 5.0
@@ -1706,22 +1788,12 @@ def evaluate_culinary_compatibility(
 
 def _generate_meal_templates(pool: list[dict], health_intensity: str) -> list[tuple[str, list[tuple[str, dict]]]]:
     """
-    Intelligent candidate generation across multiple meal structures rather than
-    forcing every meal into Protein + Carb + Side:
-      1. Protein Entree + Carb Base + Vegetable/Side
-      2. Protein Entree + Vegetable/Side (low-carb / clean plate)
-      3. Complete Entree / Burrito / Pizza + Optional Light Side
-      4. Sandwich / Burger + Optional Crisp Side
-      5. Pasta Entree + Optional Vegetable/Side
-      6. Grain/Rice Bowl + Optional Protein/Vegetable
-      7. Composed Salad + Protein Entree (+ Optional Bread/Fruit)
-      8. Breakfast Entree + Complementary Side
+    Intelligent candidate generation across multiple meal structures.
     """
     by_role: dict[str, list[dict]] = {}
     for it in pool:
         by_role.setdefault(it['_role'], []).append(it)
 
-    # Preserve culinary & cuisine diversity when selecting candidates per role
     def _diverse_top(items_list: list[dict], limit: int) -> list[dict]:
         if len(items_list) <= limit:
             return items_list
@@ -1761,10 +1833,18 @@ def _generate_meal_templates(pool: list[dict], health_intensity: str) -> list[tu
 
     candidates: list[tuple[str, list[tuple[str, dict]]]] = []
 
-    # Template 1 & 2: Protein-anchored meals
+    # Template 1 & 2: Protein-anchored meals (with special handling for entree protein salads)
     for p in proteins:
+        is_protein_salad = 'salad' in p['name'].lower()
+        if is_protein_salad:
+            # Complete entree salads (e.g., Southwest Chicken Salad, Cobb Salad) stand alone or pair with a crisp side
+            candidates.append(('salad_meal', [('Main', p)]))
+            for ls in light_sides[:5]:
+                if ls['name'] != p['name']:
+                    candidates.append(('salad_side', [('Main', p), ('Side', ls)]))
+            continue
+
         main_label = 'Main' if p['_role'] == 'protein_entree' else 'Base'
-        # Protein + Carb + Veg/Side
         for c in carbs:
             if c['name'] == p['name']:
                 continue
@@ -1775,7 +1855,6 @@ def _generate_meal_templates(pool: list[dict], health_intensity: str) -> list[tu
                 if vs:
                     slots.append(('Side', vs))
                 candidates.append(('protein_carb_veg', slots))
-        # Protein + Veg/Side (no extra starch)
         for vs in veg_and_sides[:8]:
             if vs['name'] != p['name']:
                 candidates.append(('protein_veg', [(main_label, p), ('Side', vs)]))
@@ -1794,24 +1873,28 @@ def _generate_meal_templates(pool: list[dict], health_intensity: str) -> list[tu
             if ls['name'] != sw['name']:
                 candidates.append(('sandwich_side', [('Main', sw), ('Side', ls)]))
 
-    # Template 5: Pasta Entree + Optional Vegetable/Light Side (never extra rice/pasta)
+    # Template 5: Pasta Entree + Optional Vegetable/Light Side
     for pa in pasta_entrees:
         candidates.append(('pasta_meal', [('Main', pa)]))
         for v in vegs[:5]:
             if v['name'] != pa['name']:
                 candidates.append(('pasta_veg', [('Main', pa), ('Side', v)]))
 
-    # Template 6: Bowl + Optional Protein or Vegetable
+    # Template 6: Bowl + Optional Vegetable
     for bw in bowls:
         candidates.append(('bowl_meal', [('Main', bw)]))
         for v in vegs[:4]:
             if v['name'] != bw['name']:
                 candidates.append(('bowl_veg', [('Main', bw), ('Side', v)]))
 
-    # Template 7: Composed Salad + Protein Entree (+ Optional Bread/Fruit)
+    # Template 7: Composed Salad (standalone salad main OR foundation paired with lean protein)
     for sal in salads:
+        candidates.append(('salad_meal', [('Main', sal)]))
+        for side_opt in sides[:4]:
+            if side_opt['name'] != sal['name']:
+                candidates.append(('salad_side', [('Main', sal), ('Side', side_opt)]))
         for p in proteins[:6]:
-            if p['name'] == sal['name'] or p['_role'] != 'protein_entree':
+            if p['name'] == sal['name'] or p['_role'] != 'protein_entree' or 'salad' in p['name'].lower():
                 continue
             candidates.append(('salad_protein', [('Main', p), ('Base', sal)]))
             for side_opt in sides[:3]:
@@ -1830,8 +1913,7 @@ def _generate_meal_templates(pool: list[dict], health_intensity: str) -> list[tu
 
 def _score_meal_completeness(slots: list[tuple[str, dict]], template_name: str) -> float:
     """
-    Evaluates whether the meal feels complete, coherent, and satisfying
-    WITHOUT penalizing complete entrees, sandwiches, pasta, or bowls for having 1-2 items.
+    Evaluates whether the meal feels complete, coherent, and satisfying.
     """
     items = [it for _, it in slots]
     roles = {it['_role'] for it in items}
@@ -1840,13 +1922,16 @@ def _score_meal_completeness(slots: list[tuple[str, dict]], template_name: str) 
 
     score = 62.0
 
-    # Complete single-item foundations deserve high completeness without forced add-ons
     if roles & {'complete_entree', 'sandwich', 'pasta_entree', 'bowl', 'breakfast_entree'}:
         score += 22.0
         if len(items) == 2:
-            score += 8.0  # Well-paired light vegetable or fruit side
+            score += 8.0
     elif 'composed_salad' in roles and 'protein_entree' in roles:
         score += 26.0
+    elif 'composed_salad' in roles or ('protein_entree' in roles and any('salad' in it['name'].lower() for it in items)):
+        score += 20.0
+        if len(items) == 2:
+            score += 6.0
     elif 'protein_entree' in roles and 'carb_base' in roles and ('vegetable' in roles or 'side' in roles):
         score += 28.0
     elif 'protein_entree' in roles and ('carb_base' in roles or 'vegetable' in roles):
@@ -1854,9 +1939,8 @@ def _score_meal_completeness(slots: list[tuple[str, dict]], template_name: str) 
     elif len(items) >= 2:
         score += 12.0
 
-    # Penalize micro-plates (< 240 kcal) or bloated plates (> 1150 kcal)
-    if tot_cal < 240.0:
-        score -= 22.0
+    if tot_cal < 220.0:
+        score -= 20.0
     elif tot_cal > 1150.0:
         score -= 15.0
 
@@ -1873,11 +1957,6 @@ def _score_nutrition_balance(
     meal_goal: str,
     health_intensity: str,
 ) -> float:
-    """
-    Evaluates overall nutritional balance (0..100).
-    Uses personalized DRI targets when enabled, or balanced macro distribution otherwise.
-    Does NOT blindly equate maximum protein or minimum calories with perfection.
-    """
     cal = totals['calories']
     pro = totals['protein']
     carb = totals['carbs']
@@ -1901,7 +1980,6 @@ def _score_nutrition_balance(
 
         return round(max(0.0, min(100.0 - penalty, 100.0)), 1)
 
-    # Non-DRI mode-calibrated nutrition balance
     profile = MODE_SCORING_PROFILES.get(health_intensity.strip().lower(), MODE_SCORING_PROFILES['mid'])
     low_cal, high_cal = profile['target_cal_range']
 
@@ -1913,7 +1991,6 @@ def _score_nutrition_balance(
     else:
         score -= min(((cal - high_cal) / high_cal) * 25.0, 20.0)
 
-    # Reward balanced macro proportions rather than extreme skew
     total_macro_cal = max((pro * 4.0) + (carb * 4.0) + (fat * 9.0), 1.0)
     p_share = (pro * 4.0) / total_macro_cal
     c_share = (carb * 4.0) / total_macro_cal
@@ -1933,9 +2010,6 @@ def _score_nutrition_balance(
 
 
 def _score_variety_and_presentation(slots: list[tuple[str, dict]]) -> float:
-    """
-    Rewards visual, textural, and food-type variety across the plate (0..100).
-    """
     items = [it for _, it in slots]
     if len(items) == 1:
         role = items[0]['_role']
@@ -1949,9 +2023,43 @@ def _score_variety_and_presentation(slots: list[tuple[str, dict]]) -> float:
     score += min((len(distinct_methods) - 1) * 8.0, 12.0)
 
     if 'vegetable' in distinct_roles or 'composed_salad' in distinct_roles:
-        score += 8.0  # Adds color, freshness, and crunch
+        score += 8.0
 
     return round(max(0.0, min(score, 100.0)), 1)
+
+
+def _build_match_summary(
+    slots: list[tuple[str, dict]],
+    compat_reasons: list[str],
+    health_intensity: str,
+) -> str:
+    """
+    Builds a compact human-readable match rationale for UI recommendation cards
+    (e.g., "Classic Asian protein & steamed rice pairing • Verified seed-oil-free").
+    """
+    items = [it for _, it in slots]
+    culinary_note = 'Balanced campus plate'
+    if compat_reasons:
+        specific = [
+            r for r in compat_reasons
+            if not r.startswith('Cohesive ') and r != 'Clean neutral accompaniment'
+        ]
+        culinary_note = specific[0] if specific else compat_reasons[0]
+
+    tier = health_intensity.strip().lower()
+    reasons_text = ' '.join((it.get('_health_reason') or '').lower() for it in items)
+    if 'verified seed-oil-free' in reasons_text:
+        quality_note = 'Verified seed-oil-free'
+    elif tier == 'low':
+        quality_note = 'High culinary appeal'
+    elif tier == 'high':
+        quality_note = 'Clean whole-food plate'
+    else:
+        quality_note = 'Balanced dining staple'
+
+    if culinary_note.lower() == quality_note.lower():
+        return culinary_note
+    return f'{culinary_note} • {quality_note}'
 
 
 def _clean_food_short_name(name: str) -> str:
@@ -1997,41 +2105,26 @@ def _compute_similarity_penalty(
     cand_meta: dict,
     selected_metas: list[dict],
 ) -> float:
-    """
-    Multi-dimensional diversity penalty comparing a candidate meal against
-    already-selected meals for the same dining court across:
-      - Exact item overlap
-      - Primary main ingredient (e.g., two chicken entrees)
-      - Cuisine profile
-      - Meal template structure
-      - Cooking method
-    """
     if not selected_metas:
         return 0.0
 
     max_penalty = 0.0
     for prev in selected_metas:
         pen = 0.0
-        # Exact food name overlap
         shared_items = cand_meta['item_names'] & prev['item_names']
         pen += len(shared_items) * 14.0
 
-        # Same primary anchor food
         if cand_meta['anchor_name'] == prev['anchor_name']:
             pen += 22.0
-        # Same core protein/ingredient (e.g., two different chicken dishes)
         elif cand_meta['main_ingredient'] == prev['main_ingredient']:
             pen += 10.0
 
-        # Same cuisine profile
         if cand_meta['cuisine'] == prev['cuisine'] and cand_meta['cuisine'] != 'neutral':
             pen += 5.0
 
-        # Same meal template
         if cand_meta['template'] == prev['template']:
             pen += 4.0
 
-        # Same cooking method on anchor
         if cand_meta['anchor_method'] == prev['anchor_method']:
             pen += 2.5
 
@@ -2151,6 +2244,7 @@ def build_optimal_plates(
                 'nutrition_balance': nutrition_score,
                 'variety_presentation': variety_score,
                 'compatibility_notes': compat_reasons,
+                'match_summary': _build_match_summary(slots, compat_reasons, health_intensity),
             }
 
             scored_candidates.append((weighted_total, anchor_item, slots, totals_obj, breakdown, meta))
@@ -2160,7 +2254,6 @@ def build_optimal_plates(
 
         scored_candidates.sort(key=lambda x: x[0], reverse=True)
 
-        # Iterative greedy selection with multi-dimensional diversity penalty
         selected_combos = []
         selected_metas: list[dict] = []
         remaining = list(scored_candidates)
@@ -2242,7 +2335,6 @@ def recommend_meals(
     health_intensity: str = 'High',
     dri_enabled: bool = False,
     dietary_filters: Optional[list[str]] = None,
-    static_menu_path: Optional[str] = None,
     current_time: Optional[datetime] = None,
     prebuilt_items: Optional[list[dict]] = None,
 ) -> dict:
@@ -2271,7 +2363,6 @@ def recommend_meals(
         all_items, from_cache = hydrate_missing_macros(prebuilt_items), False
     else:
         all_items, from_cache = get_daily_menus(
-            static_menu_path=static_menu_path,
             target_date=now.strftime('%Y-%m-%d'),
         )
 
