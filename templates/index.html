@@ -8,8 +8,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Feast" />
   <meta name="application-name" content="Feast" />
+
+  <!-- Social Share Meta Tags (GroupMe, iMessage, Discord, Slack) -->
+  <meta property="og:title" content="Feast — Purdue Campus Dining" />
+  <meta property="og:description" content="Find clean, protein-packed meal combos open right now across Purdue dining courts." />
+  <meta property="og:type" content="website" />
+
   <title>Feast — Campus Dining</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%23F7F3EE'/%3E%3Cg transform='translate(10, 32)'%3E%3Cpath d='M4 8H24V15H12V24H22V31H12V46H4V8Z' fill='%23C84B31'/%3E%3Cpath d='M38 18C45.5 18 50 23.5 50 31.5V34H32.5C33.2 38 35.8 40.3 39.8 40.3C42.8 40.3 44.8 39 46.2 37.3L50.5 41.5C48 44.6 44.2 46.6 39.2 46.6C30.8 46.6 25.2 40.8 25.2 32.3C25.2 23.8 30.7 18 38 18ZM32.6 29.2H42.8C42.3 25.8 40.4 24 37.8 24C35.1 24 33.2 25.9 32.6 29.2Z' fill='%23C84B31'/%3E%3Cpath d='M63.5 18C71 18 75.5 22 75.5 29V46H68.3V42.8C66.6 45.2 63.8 46.6 60.4 46.6C55.2 46.6 51.8 43.3 51.8 38.4C51.8 33.2 55.8 30.3 62.6 29.7L68.1 29.2V28.3C68.1 25.4 66.2 23.8 63.2 23.8C60.4 23.8 58.6 25 57.7 27L52.2 24.2C54.1 20.3 58.1 18 63.5 18ZM68.1 34.1L63.5 34.5C60.4 34.8 58.9 36.1 58.9 38.1C58.9 40.1 60.5 41.3 62.8 41.3C66 41.3 68.1 39.2 68.1 36.1V34.1Z' fill='%23C84B31'/%3E%3Cpath d='M88.5 18C93.8 18 97.6 20.3 99.1 24L93.5 26.5C92.6 24.5 90.9 23.5 88.5 23.5C86.3 23.5 84.9 24.4 84.9 25.9C84.9 27.3 86.2 28.1 89.2 28.8L92.4 29.5C97.5 30.7 100 33.4 100 37.8C100 43.2 95.3 46.6 88.4 46.6C82.4 46.6 78.2 43.9 76.8 39.8L82.6 37.3C83.6 39.7 85.6 41 88.6 41C91.1 41 92.6 40 92.6 38.4C92.6 36.9 91.4 36.1 88.4 35.4L85.1 34.7C80.3 33.6 77.7 30.9 77.7 26.5C77.7 21.3 82.1 18 88.5 18Z' fill='%23C84B31'/%3E%3Cpath d='M104 11.5H111.4V18.7H116.5V24.7H111.4V36.4C111.4 39.1 112.6 40.3 115.2 40.3H116.8V46.2H113.8C107.4 46.2 104 43.1 104 36.6V24.7H100.5V18.7H104V11.5Z' fill='%23C84B31'/%3E%3Cpath d='M107.7 10.6C106.5 4.2 111.8 -1.2 119.5 -2.2C119.1 5.6 114.2 10.9 107.7 10.6Z' fill='%231D8A5A'/%3E%3Cpath d='M108.4 10C111.5 6.4 114.8 3.2 118.4 -0.9" stroke='%23F7F3EE' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+  <link rel="manifest" href="/manifest.webmanifest?v=2" />
   <style>
     :root {
       --bg: #F7F3EE;
@@ -735,7 +742,7 @@
       padding: 0.18rem 0.58rem;
     }
 
-    /* Floating Bottom Mode & Preferences Dock (3 Crisp Buttons) */
+    /* Floating Bottom Mode & Preferences Dock */
     .bottom-dock {
       position: fixed;
       left: 0;
@@ -1509,8 +1516,8 @@
   <header>
     <div class="header-inner">
       <div class="brand" aria-label="Feast" onclick="selectHall('ALL')">
-        <!-- Geometric Block Sans-Serif Wordmark matching attached reference logo -->
-        <svg class="feast-wordmark-svg" viewBox="0 0 132 54" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Feast">
+        <!-- Geometric Block Sans-Serif Wordmark -->
+        <svg class="feast-wordmark-svg" viewBox="0 0 128 54" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Feast">
           <!-- Geometric Upright 'F' -->
           <path d="M4 13H24.5V19.8H11.8V28.4H22.2V35.2H11.8V49H4V13Z" fill="#C84B31"/>
           <!-- Geometric 'e' -->
@@ -1521,7 +1528,7 @@
           <path d="M90.5 22.4C95.8 22.4 99.6 24.7 101.1 28.4L95.5 30.8C94.6 28.8 92.9 27.8 90.5 27.8C88.3 27.8 86.9 28.7 86.9 30.2C86.9 31.6 88.2 32.4 91.2 33.1L94.4 33.8C99.5 35 102 37.7 102 42.1C102 47.4 97.3 50.4 90.4 50.4C84.4 50.4 80.2 47.8 78.8 43.8L84.6 41.3C85.6 43.7 87.6 45 90.6 45C93.1 45 94.6 44 94.6 42.4C94.6 40.9 93.4 40.1 90.4 39.4L87.1 38.7C82.3 37.6 79.7 34.9 79.7 30.6C79.7 25.5 84.1 22.4 90.5 22.4Z" fill="#C84B31"/>
           <!-- Geometric 't' -->
           <path d="M107.2 15.8H114.6V23H119.8V28.9H114.6V40.4C114.6 43.1 115.8 44.3 118.4 44.3H120V49.8H117C110.6 49.8 107.2 46.8 107.2 40.6V28.9H103.6V23H107.2V15.8Z" fill="#C84B31"/>
-          <!-- Stemless Green Leaf perched atop 't' with curved negative-space center venation -->
+          <!-- Stemless Green Leaf perched atop 't' with curved center venation -->
           <path d="M111.1 14.8C109.9 8.2 115.4 2.7 123.3 1.7C122.9 9.7 117.8 15.1 111.1 14.8Z" fill="#1D8A5A"/>
           <path d="M111.8 14.1C114.9 10.6 118.3 7.3 122.1 3.1" stroke="#F7F3EE" stroke-width="1.55" stroke-linecap="round"/>
         </svg>
@@ -1555,7 +1562,7 @@
     </div>
   </main>
 
-  <!-- Floating Bottom Mode & Preferences Dock (3 Crisp Buttons) -->
+  <!-- Floating Bottom Mode & Preferences Dock -->
   <nav class="bottom-dock" id="bottomDock" aria-label="Meal Mode and Filters">
     <div class="mode-dock" id="modeDock" role="radiogroup" aria-label="Meal Style Mode">
       <button type="button" class="dock-mode-btn active" data-mode="High" onclick="selectMode('High')">Healthy</button>
@@ -1743,37 +1750,14 @@
               <input type="number" id="dri_weight" min="70" max="450" placeholder="155" />
             </div>
             <div class="field-group">
-              <label>Height</label>
-              <div class="two-col">
-                <select id="dri_ft" aria-label="Height feet">
-                  <option value="">ft</option>
-                  <option value="4">4 ft</option>
-                  <option value="5">5 ft</option>
-                  <option value="6">6 ft</option>
-                  <option value="7">7 ft</option>
-                </select>
-                <select id="dri_in" aria-label="Height inches">
-                  <option value="">in</option>
-                  <option value="0">0 in</option>
-                  <option value="1">1 in</option>
-                  <option value="2">2 in</option>
-                  <option value="3">3 in</option>
-                  <option value="4">4 in</option>
-                  <option value="5">5 in</option>
-                  <option value="6">6 in</option>
-                  <option value="7">7 in</option>
-                  <option value="8">8 in</option>
-                  <option value="9">9 in</option>
-                  <option value="10">10 in</option>
-                  <option value="11">11 in</option>
-                </select>
-              </div>
+              <label for="dri_height">Height (in)</label>
+              <input type="number" id="dri_height" min="48" max="84" placeholder="72" />
             </div>
           </div>
 
           <div class="two-col">
             <div class="field-group">
-              <label for="dri_activity">Activity Level</label>
+              <label for="dri_activity">Activity</label>
               <select id="dri_activity">
                 <option value="">Select...</option>
                 <option value="Sedentary">Sedentary</option>
@@ -1783,469 +1767,161 @@
             </div>
             <div class="field-group">
               <label for="dri_meals">Meals / Day</label>
-              <select id="dri_meals">
-                <option value="">Select...</option>
-                <option value="1">1 meal</option>
-                <option value="2">2 meals</option>
-                <option value="3">3 meals</option>
-                <option value="4">4 meals</option>
-                <option value="5">5 meals</option>
-              </select>
+              <input type="number" id="dri_meals" min="1" max="6" placeholder="2" />
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Check Another Time -->
+      <!-- Preview Another Time -->
       <div>
-        <div class="drawer-sec-head">
-          <span class="drawer-sec-title">Check Another Time</span>
-          <button type="button" class="text-link-btn" onclick="resetToNow()">Use NOW</button>
-        </div>
+        <div class="drawer-sec-title" style="margin-bottom: 0.45rem;">Preview Another Time</div>
         <div class="time-row">
-          <input type="text" id="sim_time" placeholder="e.g. 12:30 PM or 6:00 PM" />
-          <button type="button" class="btn-dark" onclick="closeDrawerAndApply()">Set</button>
+          <input type="text" id="sim_time" placeholder="e.g. 6:30 PM or 12:15 PM" />
+          <button type="button" class="btn-dark" onclick="applySimTime()">Go</button>
         </div>
       </div>
 
-      <!-- Send Feedback -->
+      <!-- Feedback -->
       <div class="toggle-card">
-        <div class="drawer-sec-head" style="margin-bottom:0.5rem;">
-          <span class="drawer-sec-title">Send Feedback</span>
-        </div>
+        <div class="drawer-sec-title" style="margin-bottom: 0.55rem;">Send Feedback</div>
         <div style="display:flex; flex-direction:column; gap:0.55rem;">
           <div class="field-group">
             <select id="fb_category">
-              <option value="General">General Feedback</option>
-              <option value="Dish / Pairing">Dish or Pairing Request</option>
-              <option value="Ingredient / Allergy">Ingredient or Allergy Flag</option>
-              <option value="Bug">Bug Report</option>
+              <option value="Feature Idea">Feature Idea</option>
+              <option value="Meal Suggestion">Meal Suggestion</option>
+              <option value="Bug Report">Bug Report</option>
             </select>
           </div>
           <div class="field-group">
-            <textarea id="fb_message" rows="3" placeholder="Tell us what to improve on Feast..."></textarea>
+            <textarea id="fb_message" rows="2" placeholder="Tell us how to make Feast better..."></textarea>
           </div>
-          <div class="field-group">
-            <input type="text" id="fb_contact" placeholder="Email or name (optional)" />
-          </div>
-          <div id="fbStatus" style="font-size:0.8rem; font-weight:700;"></div>
-          <button type="button" class="btn-terracotta" onclick="submitFeedback()">Send Feedback</button>
+          <button type="button" class="btn-terracotta" onclick="submitFeedback()">Send Note</button>
+          <div id="fbStatus" style="font-size:0.78rem; font-weight:800; color:var(--leaf); display:none;"></div>
         </div>
       </div>
 
-      <!-- Replay Tutorial Button -->
-      <div>
-        <button type="button" class="btn-outline" onclick="replayTutorialFromPrefs()">
-          <span>&#9654;</span>
-          <span>Replay Tutorial</span>
-        </button>
-      </div>
+      <!-- Replay App Tour -->
+      <button type="button" class="btn-outline" onclick="replayTourFromDrawer()">
+        Replay Quick Tour
+      </button>
     </div>
   </aside>
 
   <script>
-    /* Prevent mobile pinch-zoom & double-tap zoom for a native app feel */
-    document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
-    document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
-    document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
-
-    const POSITIVE_NOTES = [
+    const STORAGE_KEY = 'feast_prefs_v8';
+    const TOUR_SEEN_KEY = 'feast_tour_seen_v1';
+    const SWIPE_HINT_DISMISSED_KEY = 'feast_swipe_hint_dismissed_v1';
+    const POSITIVE_MOTIVATIONS = [
       "You’re doing great today. Go fuel up.",
-      "Class is done—you earned a great meal.",
-      "Good food, good energy. You’ve got this.",
-      "Proud of the effort you’re putting in today.",
-      "Take a breath and enjoy something delicious.",
-      "You bring great energy—now go recharge.",
-      "Solid work today. Treat yourself to a good plate."
+      "Strong body, sharp mind. Grab a great plate.",
+      "Take a breath between classes and eat well.",
+      "Good energy starts with a solid meal.",
+      "Keep showing up—your future self thanks you."
     ];
-    const activePositiveNote = POSITIVE_NOTES[Math.floor(Math.random() * POSITIVE_NOTES.length)];
-    document.getElementById('greetingTitle').textContent = activePositiveNote;
 
-    /* Home Screen Icon & Web App Manifest Generator matching the updated Feast logo */
-    (function setupFeastHomeScreenIcons() {
-      function renderFeastWordmarkPng(size) {
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return '';
-
-        ctx.fillStyle = '#F7F3EE';
-        ctx.fillRect(0, 0, size, size);
-
-        // Draw crisp vector paths matching the geometric Feast wordmark + stemless leaf atop 't'
-        const scale = (size * 0.78) / 128;
-        const offsetX = (size - 128 * scale) / 2;
-        const offsetY = (size - 54 * scale) / 2;
-
-        ctx.save();
-        ctx.translate(offsetX, offsetY);
-        ctx.scale(scale, scale);
-
-        ctx.fillStyle = '#C84B31';
-        const wordmarkPaths = [
-          'M4 13H24.5V19.8H11.8V28.4H22.2V35.2H11.8V49H4V13Z',
-          'M39 22.4C46.5 22.4 51.2 27.8 51.2 35.8V38.2H33.4C34.1 42.1 36.8 44.3 40.8 44.3C43.8 44.3 45.8 43 47.2 41.3L51.5 45.4C49 48.5 45.2 50.4 40.1 50.4C31.6 50.4 26 44.7 26 36.4C26 28 31.6 22.4 39 22.4ZM33.5 33.4H43.9C43.4 30 41.5 28.2 38.8 28.2C36 28.2 34.1 30.1 33.5 33.4Z',
-          'M65.2 22.4C72.7 22.4 77.2 26.4 77.2 33.4V49H70V45.9C68.3 48.3 65.5 49.7 62.1 49.7C56.9 49.7 53.5 46.4 53.5 41.6C53.5 36.4 57.5 33.6 64.3 33L69.8 32.5V31.6C69.8 28.8 67.9 27.2 64.9 27.2C62.1 27.2 60.3 28.4 59.4 30.3L53.9 27.6C55.8 23.8 59.8 22.4 65.2 22.4ZM69.8 37.3L65.2 37.7C62.1 38 60.6 39.3 60.6 41.3C60.6 43.3 62.2 44.5 64.5 44.5C67.7 44.5 69.8 42.4 69.8 39.3V37.3Z',
-          'M90.5 22.4C95.8 22.4 99.6 24.7 101.1 28.4L95.5 30.8C94.6 28.8 92.9 27.8 90.5 27.8C88.3 27.8 86.9 28.7 86.9 30.2C86.9 31.6 88.2 32.4 91.2 33.1L94.4 33.8C99.5 35 102 37.7 102 42.1C102 47.4 97.3 50.4 90.4 50.4C84.4 50.4 80.2 47.8 78.8 43.8L84.6 41.3C85.6 43.7 87.6 45 90.6 45C93.1 45 94.6 44 94.6 42.4C94.6 40.9 93.4 40.1 90.4 39.4L87.1 38.7C82.3 37.6 79.7 34.9 79.7 30.6C79.7 25.5 84.1 22.4 90.5 22.4Z',
-          'M107.2 15.8H114.6V23H119.8V28.9H114.6V40.4C114.6 43.1 115.8 44.3 118.4 44.3H120V49.8H117C110.6 49.8 107.2 46.8 107.2 40.6V28.9H103.6V23H107.2V15.8Z'
-        ];
-        wordmarkPaths.forEach(d => ctx.fill(new Path2D(d)));
-
-        ctx.fillStyle = '#1D8A5A';
-        ctx.fill(new Path2D('M111.1 14.8C109.9 8.2 115.4 2.7 123.3 1.7C122.9 9.7 117.8 15.1 111.1 14.8Z'));
-
-        ctx.strokeStyle = '#F7F3EE';
-        ctx.lineWidth = 1.65;
-        ctx.lineCap = 'round';
-        ctx.stroke(new Path2D('M111.8 14.1C114.9 10.6 118.3 7.3 122.1 3.1'));
-
-        ctx.restore();
-        return canvas.toDataURL('image/png');
-      }
-
-      try {
-        const icon180 = renderFeastWordmarkPng(180);
-        const icon192 = renderFeastWordmarkPng(192);
-        const icon512 = renderFeastWordmarkPng(512);
-
-        if (icon180) {
-          const appleTouch = document.createElement('link');
-          appleTouch.rel = 'apple-touch-icon';
-          appleTouch.sizes = '180x180';
-          appleTouch.href = icon180;
-          document.head.appendChild(appleTouch);
-        }
-
-        if (icon192 && icon512) {
-          const pngFavicon = document.createElement('link');
-          pngFavicon.rel = 'icon';
-          pngFavicon.type = 'image/png';
-          pngFavicon.sizes = '192x192';
-          pngFavicon.href = icon192;
-          document.head.appendChild(pngFavicon);
-
-          const manifest = {
-            name: 'Feast',
-            short_name: 'Feast',
-            description: 'Fast, clean campus dining recommendations.',
-            start_url: '/',
-            display: 'standalone',
-            background_color: '#F7F3EE',
-            theme_color: '#F7F3EE',
-            icons: [
-              { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any' },
-              { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-            ]
-          };
-
-          const manifestLink = document.createElement('link');
-          manifestLink.rel = 'manifest';
-          manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
-          document.head.appendChild(manifestLink);
-        }
-      } catch (e) {}
-    })();
-
-    const STORAGE_KEY = 'feast_purdue_prefs_v13';
-    const SWIPE_HINT_KEY = 'feast_swipe_hint_dismissed';
-    const ONBOARDING_KEY = 'feast_onboarding_seen_v1';
-
-    const state = {
-      health_intensity: 'High',
-      pure_health_mode: false,
-      dietary_filters: [],
-      dri_enabled: false,
-      meal_goal: 'Balanced Maintenance',
-      sex: '',
-      age: '',
-      weight_lbs: '',
-      height_ft: '',
-      height_in_rem: '',
-      activity_level: '',
-      meals_per_day: '',
-      sim_time: ''
-    };
-
+    let activeMode = 'High';
+    let selectedHall = 'ALL';
     let lastRecommendations = [];
-    let selectedHall = null;
-    let hasPlayedInitialNudge = false;
-    const comboIndexByLoc = {};
-    const animatingLoc = {};
-    let dragState = null;
+    let activeComboIndices = {};
+    let isInitialLoad = true;
     let swipeHintTimer = null;
 
-    /* Onboarding & Spotlight Tour */
-    let tourStepIndex = 0;
-
-    function hasSeenOnboarding() {
-      try {
-        return localStorage.getItem(ONBOARDING_KEY) === '1';
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function markOnboardingSeen() {
-      try {
-        localStorage.setItem(ONBOARDING_KEY, '1');
-      } catch (e) {}
-    }
-
-    function maybeShowWelcomeModal() {
-      if (!lastRecommendations.length) return;
-      if (hasSeenOnboarding()) {
-        triggerFirstCardSwipeCue();
-        return;
-      }
-      document.getElementById('welcomeOverlay').classList.add('open');
-    }
-
-    function dismissWelcomeModal() {
-      markOnboardingSeen();
-      document.getElementById('welcomeOverlay').classList.remove('open');
-      triggerFirstCardSwipeCue();
-    }
-
-    function triggerFirstCardSwipeCue() {
-      if (hasPlayedInitialNudge) return;
-      const firstCard = document.querySelector('.meal-card');
-      if (firstCard) {
-        hasPlayedInitialNudge = true;
-        firstCard.classList.remove('nudge-once');
-        void firstCard.offsetWidth;
-        firstCard.classList.add('nudge-once');
-      }
-      scheduleSwipeHint();
-    }
-
-    function getTourSteps() {
-      const steps = [];
-      const hallWrap = document.getElementById('hallSwitcherWrap');
-      if (hallWrap && hallWrap.classList.contains('visible')) {
-        steps.push({
-          target: '#hallSwitcherWrap',
-          title: 'Pick a Dining Hall',
-          desc: 'We start you on one open dining hall so it’s easy to scan. Tap any pill here to switch halls or see All.',
-          placement: 'below'
-        });
-      }
-      steps.push({
-        target: '.card-stage',
-        title: 'Swipe for More Plates',
-        desc: 'Swipe left or right on any meal card to flip through backup combos. Tap any dish for extra macro details.',
-        placement: 'auto'
-      });
-      steps.push({
-        target: '#bottomDock',
-        title: 'Set Vibe & Allergies',
-        desc: 'Switch between Healthy, Balanced, or Yummy, or tap the sliders icon for dietary filters, Pure Health Mode, and meal goals.',
-        placement: 'above'
-      });
-      return steps;
-    }
-
-    function startSpotlightTour() {
-      markOnboardingSeen();
-      document.getElementById('welcomeOverlay').classList.remove('open');
-      dismissSwipeHint(false);
-      tourStepIndex = 0;
-      document.getElementById('tourLayer').classList.add('open');
-      renderTourStep();
-    }
-
-    function replayTutorialFromPrefs() {
-      document.getElementById('drawerBackdrop').classList.remove('open');
-      document.getElementById('prefsDrawer').classList.remove('open');
-      setTimeout(() => {
-        tourStepIndex = 0;
-        document.getElementById('tourLayer').classList.add('open');
-        renderTourStep();
-      }, 220);
-    }
-
-    function nextTourStep() {
-      const steps = getTourSteps();
-      if (tourStepIndex + 1 >= steps.length) {
-        endSpotlightTour();
-        return;
-      }
-      tourStepIndex += 1;
-      renderTourStep();
-    }
-
-    function endSpotlightTour() {
-      document.getElementById('tourLayer').classList.remove('open');
-      triggerFirstCardSwipeCue();
-    }
-
-    function renderTourStep() {
-      const steps = getTourSteps();
-      const step = steps[tourStepIndex];
-      if (!step) {
-        endSpotlightTour();
-        return;
-      }
-
-      const el = document.querySelector(step.target);
-      if (!el) {
-        endSpotlightTour();
-        return;
-      }
-
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-      requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        const pad = 8;
-        const spotlight = document.getElementById('tourSpotlight');
-        const tooltip = document.getElementById('tourTooltip');
-
-        spotlight.style.top = `${Math.max(4, rect.top - pad)}px`;
-        spotlight.style.left = `${Math.max(4, rect.left - pad)}px`;
-        spotlight.style.width = `${Math.min(window.innerWidth - 8, rect.width + pad * 2)}px`;
-        spotlight.style.height = `${rect.height + pad * 2}px`;
-        spotlight.style.borderRadius = step.target === '#bottomDock' ? '999px' : '22px';
-
-        document.getElementById('tourStepTag').textContent = `Step ${tourStepIndex + 1} of ${steps.length}`;
-        document.getElementById('tourTitle').textContent = step.title;
-        document.getElementById('tourDesc').textContent = step.desc;
-        document.getElementById('tourNextBtn').textContent = tourStepIndex === steps.length - 1 ? 'Got it' : 'Next';
-
-        const viewportH = window.innerHeight;
-        if (step.placement === 'above' || (step.placement === 'auto' && rect.top > viewportH * 0.42)) {
-          tooltip.style.top = 'auto';
-          tooltip.style.bottom = `${Math.max(20, viewportH - rect.top + 18)}px`;
-        } else {
-          tooltip.style.bottom = 'auto';
-          tooltip.style.top = `${Math.min(viewportH - 210, rect.bottom + 18)}px`;
-        }
-      });
-    }
-
-    window.addEventListener('resize', () => {
-      if (document.getElementById('tourLayer').classList.contains('open')) {
-        renderTourStep();
-      }
-    });
+    const DEFAULT_PREFS = {
+      mode: 'High',
+      pure_health_mode: false,
+      dietary: [],
+      dri_enabled: false,
+      goal: 'Balanced Maintenance',
+      sex: '',
+      age: '',
+      weight: '',
+      height: '',
+      activity: '',
+      meals: ''
+    };
 
     function escapeHtml(str) {
       return String(str ?? '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+        .replace(/"/g, '&quot;');
     }
 
-    function locSlug(loc) {
-      return String(loc || '').toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    function pickMotivation(seedStr) {
+      const s = String(seedStr || '');
+      let hash = 0;
+      for (let i = 0; i < s.length; i++) {
+        hash = ((hash << 5) - hash) + s.charCodeAt(i);
+        hash |= 0;
+      }
+      return POSITIVE_MOTIVATIONS[Math.abs(hash) % POSITIVE_MOTIVATIONS.length];
     }
 
-    function isSwipeHintDismissed() {
+    // Generate home screen apple-touch-icon dynamically using the exact updated geometric wordmark SVG
+    function installDynamicAppleTouchIcon() {
       try {
-        return sessionStorage.getItem(SWIPE_HINT_KEY) === '1';
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function dismissSwipeHint(markSeen = true) {
-      if (swipeHintTimer) {
-        clearTimeout(swipeHintTimer);
-        swipeHintTimer = null;
-      }
-      if (markSeen) {
-        try { sessionStorage.setItem(SWIPE_HINT_KEY, '1'); } catch (e) {}
-      }
-      const pill = document.getElementById('swipeHintPill');
-      if (pill) {
-        pill.classList.remove('visible');
-      }
-    }
-
-    function scheduleSwipeHint() {
-      if (swipeHintTimer) {
-        clearTimeout(swipeHintTimer);
-        swipeHintTimer = null;
-      }
-      if (isSwipeHintDismissed()) return;
-      if (document.getElementById('welcomeOverlay').classList.contains('open')) return;
-      if (document.getElementById('tourLayer').classList.contains('open')) return;
-
-      swipeHintTimer = setTimeout(() => {
-        const pill = document.getElementById('swipeHintPill');
-        if (pill && !isSwipeHintDismissed()) {
-          pill.classList.add('visible');
-        }
-      }, 1800);
-    }
-
-    function loadPrefs() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const saved = JSON.parse(raw);
-          Object.assign(state, saved);
-          state.sim_time = '';
-          if (state.health_intensity === 'Extreme') {
-            state.pure_health_mode = true;
-            state.health_intensity = 'High';
+        const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 128 128" fill="none">
+          <rect width="128" height="128" rx="28" fill="#F7F3EE"/>
+          <g transform="translate(0, 34)">
+            <path d="M4 13H24.5V19.8H11.8V28.4H22.2V35.2H11.8V49H4V13Z" fill="#C84B31"/>
+            <path d="M39 22.4C46.5 22.4 51.2 27.8 51.2 35.8V38.2H33.4C34.1 42.1 36.8 44.3 40.8 44.3C43.8 44.3 45.8 43 47.2 41.3L51.5 45.4C49 48.5 45.2 50.4 40.1 50.4C31.6 50.4 26 44.7 26 36.4C26 28 31.6 22.4 39 22.4ZM33.5 33.4H43.9C43.4 30 41.5 28.2 38.8 28.2C36 28.2 34.1 30.1 33.5 33.4Z" fill="#C84B31"/>
+            <path d="M65.2 22.4C72.7 22.4 77.2 26.4 77.2 33.4V49H70V45.9C68.3 48.3 65.5 49.7 62.1 49.7C56.9 49.7 53.5 46.4 53.5 41.6C53.5 36.4 57.5 33.6 64.3 33L69.8 32.5V31.6C69.8 28.8 67.9 27.2 64.9 27.2C62.1 27.2 60.3 28.4 59.4 30.3L53.9 27.6C55.8 23.8 59.8 22.4 65.2 22.4ZM69.8 37.3L65.2 37.7C62.1 38 60.6 39.3 60.6 41.3C60.6 43.3 62.2 44.5 64.5 44.5C67.7 44.5 69.8 42.4 69.8 39.3V37.3Z" fill="#C84B31"/>
+            <path d="M90.5 22.4C95.8 22.4 99.6 24.7 101.1 28.4L95.5 30.8C94.6 28.8 92.9 27.8 90.5 27.8C88.3 27.8 86.9 28.7 86.9 30.2C86.9 31.6 88.2 32.4 91.2 33.1L94.4 33.8C99.5 35 102 37.7 102 42.1C102 47.4 97.3 50.4 90.4 50.4C84.4 50.4 80.2 47.8 78.8 43.8L84.6 41.3C85.6 43.7 87.6 45 90.6 45C93.1 45 94.6 44 94.6 42.4C94.6 40.9 93.4 40.1 90.4 39.4L87.1 38.7C82.3 37.6 79.7 34.9 79.7 30.6C79.7 25.5 84.1 22.4 90.5 22.4Z" fill="#C84B31"/>
+            <path d="M107.2 15.8H114.6V23H119.8V28.9H114.6V40.4C114.6 43.1 115.8 44.3 118.4 44.3H120V49.8H117C110.6 49.8 107.2 46.8 107.2 40.6V28.9H103.6V23H107.2V15.8Z" fill="#C84B31"/>
+            <path d="M111.1 14.8C109.9 8.2 115.4 2.7 123.3 1.7C122.9 9.7 117.8 15.1 111.1 14.8Z" fill="#1D8A5A"/>
+            <path d="M111.8 14.1C114.9 10.6 118.3 7.3 122.1 3.1" stroke="#F7F3EE" stroke-width="1.55" stroke-linecap="round"/>
+          </g>
+        </svg>`;
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, 512, 512);
+          URL.revokeObjectURL(url);
+          const pngUrl = canvas.toDataURL('image/png');
+          let link = document.querySelector("link[rel='apple-touch-icon']");
+          if (!link) {
+            link = document.createElement('link');
+            link.rel = 'apple-touch-icon';
+            document.head.appendChild(link);
           }
-        }
+          link.href = pngUrl;
+        };
+        img.src = url;
       } catch (e) {}
     }
 
-    function savePrefs() {
-      try {
-        const copy = { ...state, sim_time: '' };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(copy));
-      } catch (e) {}
-    }
-
-    function syncUiFromState() {
+    function updateDockUI() {
+      const pureOn = document.getElementById('pure_health_mode').checked;
       const modeDock = document.getElementById('modeDock');
-      modeDock.classList.toggle('pure-overridden', !!state.pure_health_mode);
+      modeDock.classList.toggle('pure-overridden', pureOn);
 
       document.querySelectorAll('.dock-mode-btn').forEach(btn => {
-        btn.classList.toggle('active', !state.pure_health_mode && btn.dataset.mode === state.health_intensity);
+        btn.classList.toggle('active', !pureOn && btn.dataset.mode === activeMode);
       });
+    }
 
-      document.getElementById('pure_health_mode').checked = !!state.pure_health_mode;
-
-      const activeSet = new Set(state.dietary_filters || []);
-      document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]').forEach(cb => {
-        cb.checked = activeSet.has(cb.value);
-      });
-
-      const totalActive = activeSet.size
-        + (state.dri_enabled ? 1 : 0)
-        + (state.sim_time ? 1 : 0)
-        + (state.pure_health_mode ? 1 : 0);
-      const badge = document.getElementById('dockBadge');
-      badge.textContent = String(totalActive);
-      badge.style.display = totalActive > 0 ? 'inline-flex' : 'none';
-
-      document.getElementById('dri_enabled').checked = !!state.dri_enabled;
-      document.getElementById('dri_goal').value = state.meal_goal || 'Balanced Maintenance';
-      document.getElementById('dri_sex').value = state.sex || '';
-      document.getElementById('dri_age').value = state.age || '';
-      document.getElementById('dri_weight').value = state.weight_lbs || '';
-      document.getElementById('dri_ft').value = state.height_ft || '';
-      document.getElementById('dri_in').value = state.height_in_rem || '';
-      document.getElementById('dri_activity').value = state.activity_level || '';
-      document.getElementById('dri_meals').value = state.meals_per_day || '';
-      document.getElementById('sim_time').value = state.sim_time || '';
-      toggleDriPanel();
+    function selectMode(mode) {
+      activeMode = mode;
+      document.getElementById('pure_health_mode').checked = false;
+      updateDockUI();
+      savePreferences();
+      fetchRecommendations();
     }
 
     function toggleDriPanel() {
-      const open = document.getElementById('dri_enabled').checked;
-      document.getElementById('driPanel').classList.toggle('open', open);
+      const on = document.getElementById('dri_enabled').checked;
+      document.getElementById('driPanel').classList.toggle('open', on);
+      updateBadgeCount();
     }
 
     function openDrawer() {
-      syncUiFromState();
       document.getElementById('drawerBackdrop').classList.add('open');
       document.getElementById('prefsDrawer').classList.add('open');
     }
@@ -2253,27 +1929,9 @@
     function closeDrawerAndApply() {
       document.getElementById('drawerBackdrop').classList.remove('open');
       document.getElementById('prefsDrawer').classList.remove('open');
-
-      const selected = [];
-      document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]:checked').forEach(cb => {
-        selected.push(cb.value);
-      });
-
-      state.pure_health_mode = document.getElementById('pure_health_mode').checked;
-      state.dietary_filters = selected;
-      state.dri_enabled = document.getElementById('dri_enabled').checked;
-      state.meal_goal = document.getElementById('dri_goal').value;
-      state.sex = document.getElementById('dri_sex').value;
-      state.age = document.getElementById('dri_age').value;
-      state.weight_lbs = document.getElementById('dri_weight').value;
-      state.height_ft = document.getElementById('dri_ft').value;
-      state.height_in_rem = document.getElementById('dri_in').value;
-      state.activity_level = document.getElementById('dri_activity').value;
-      state.meals_per_day = document.getElementById('dri_meals').value;
-      state.sim_time = document.getElementById('sim_time').value.trim();
-
-      savePrefs();
-      syncUiFromState();
+      updateDockUI();
+      updateBadgeCount();
+      savePreferences();
       fetchRecommendations();
     }
 
@@ -2281,102 +1939,101 @@
       document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
       });
+      updateBadgeCount();
     }
 
-    function resetToNow() {
-      document.getElementById('sim_time').value = '';
+    function applySimTime() {
       closeDrawerAndApply();
     }
 
-    function selectMode(mode) {
-      if (!state.pure_health_mode && state.health_intensity === mode) return;
-      state.pure_health_mode = false;
-      state.health_intensity = mode;
-      savePrefs();
-      syncUiFromState();
-      fetchRecommendations();
+    function getDietaryFilters() {
+      return Array.from(document.querySelectorAll('#dietary_checkboxes input:checked')).map(cb => cb.value);
     }
 
-    function recoverBestAvailableMeals() {
-      state.pure_health_mode = false;
-      if (state.health_intensity !== 'Mid' && state.health_intensity !== 'Low') {
-        state.health_intensity = 'Mid';
-      } else if ((state.dietary_filters || []).length > 0) {
-        state.dietary_filters = [];
+    function updateBadgeCount() {
+      let count = getDietaryFilters().length;
+      if (document.getElementById('dri_enabled').checked) count += 1;
+      if (document.getElementById('pure_health_mode').checked) count += 1;
+      if (document.getElementById('sim_time').value.trim()) count += 1;
+      const badge = document.getElementById('dockBadge');
+      if (count > 0) {
+        badge.textContent = String(count);
+        badge.style.display = 'flex';
       } else {
-        state.health_intensity = 'Low';
+        badge.style.display = 'none';
       }
-      savePrefs();
-      syncUiFromState();
-      fetchRecommendations();
     }
 
-    function selectHall(hallName) {
-      selectedHall = hallName;
-      renderHallSwitcher(lastRecommendations);
-      renderRecommendations(lastRecommendations);
+    function savePreferences() {
+      const data = {
+        mode: activeMode,
+        pure_health_mode: document.getElementById('pure_health_mode').checked,
+        dietary: getDietaryFilters(),
+        dri_enabled: document.getElementById('dri_enabled').checked,
+        goal: document.getElementById('dri_goal').value,
+        sex: document.getElementById('dri_sex').value,
+        age: document.getElementById('dri_age').value,
+        weight: document.getElementById('dri_weight').value,
+        height: document.getElementById('dri_height').value,
+        activity: document.getElementById('dri_activity').value,
+        meals: document.getElementById('dri_meals').value
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {}
     }
 
-    function renderHallSwitcher(recs) {
-      const wrap = document.getElementById('hallSwitcherWrap');
-      const scroller = document.getElementById('hallScroller');
+    function loadPreferences() {
+      let parsed = {};
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) parsed = JSON.parse(raw);
+      } catch (e) {}
 
-      if (!recs || recs.length === 0) {
-        wrap.classList.remove('visible');
-        scroller.innerHTML = '';
-        return;
-      }
+      const p = Object.assign({}, DEFAULT_PREFS, parsed);
+      activeMode = p.mode || 'High';
+      document.getElementById('pure_health_mode').checked = Boolean(p.pure_health_mode);
+      updateDockUI();
 
-      const validLocations = recs.map(r => r.location);
-      if (!selectedHall || (selectedHall !== 'ALL' && !validLocations.includes(selectedHall))) {
-        selectedHall = recs[0].location;
-      }
+      const dietSet = new Set(p.dietary || []);
+      document.querySelectorAll('#dietary_checkboxes input').forEach(cb => {
+        cb.checked = dietSet.has(cb.value);
+      });
 
-      wrap.classList.add('visible');
+      document.getElementById('dri_enabled').checked = Boolean(p.dri_enabled);
+      document.getElementById('dri_goal').value = p.goal || 'Balanced Maintenance';
+      document.getElementById('dri_sex').value = p.sex || '';
+      document.getElementById('dri_age').value = p.age || '';
+      document.getElementById('dri_weight').value = p.weight || '';
+      document.getElementById('dri_height').value = p.height || '';
+      document.getElementById('dri_activity').value = p.activity || '';
+      document.getElementById('dri_meals').value = p.meals || '';
 
-      const hallButtons = recs.map(r => {
-        const isActive = selectedHall === r.location;
-        return `
-          <button type="button"
-                  class="hall-pill ${isActive ? 'active' : ''}"
-                  onclick="selectHall('${escapeHtml(r.location)}')">
-            <span>${escapeHtml(r.location)}</span>
-          </button>
-        `;
-      }).join('');
-
-      const allActive = selectedHall === 'ALL';
-      const allButton = recs.length > 1 ? `
-        <button type="button"
-                class="hall-pill ${allActive ? 'active' : ''}"
-                onclick="selectHall('ALL')">
-          <span>All</span>
-          <span class="hall-pill-count">${recs.length}</span>
-        </button>
-      ` : '';
-
-      scroller.innerHTML = hallButtons + allButton;
+      toggleDriPanel();
+      updateBadgeCount();
     }
 
     function renderActiveStrip(data) {
       const strip = document.getElementById('activeStrip');
       const chips = [];
+      const pureOn = data.health_intensity === 'Extreme';
 
-      if (state.pure_health_mode || data.health_intensity === 'Extreme') {
-        chips.push(`<span class="active-chip pure">Pure Health Mode Active</span>`);
+      if (pureOn) {
+        chips.push(`<span class="active-chip pure">Pure Health Mode</span>`);
       }
 
       if (data.dri_enabled && data.targets && data.targets.per_meal) {
         const pm = data.targets.per_meal;
-        chips.push(`<span class="active-chip accent">Target: ~${Math.round(pm.calories)} kcal · ${Math.round(pm.protein_target)}g protein</span>`);
+        chips.push(`<span class="active-chip accent">Target ~${Math.round(pm.calories)} kcal · ${Math.round(pm.protein_target)}g protein</span>`);
       }
 
       (data.dietary_filters || []).forEach(f => {
         chips.push(`<span class="active-chip">${escapeHtml(f)}</span>`);
       });
 
-      if (state.sim_time) {
-        chips.push(`<span class="active-chip">Time: ${escapeHtml(state.sim_time)}</span>`);
+      const simVal = document.getElementById('sim_time').value.trim();
+      if (simVal) {
+        chips.push(`<span class="active-chip accent">Time: ${escapeHtml(simVal)}</span>`);
       }
 
       if (chips.length > 0) {
@@ -2387,418 +2044,406 @@
       }
     }
 
-    function buildComboCardInnerHtml(court, comboIdx, combosLen, showHintPill) {
-      const combos = court.combos || [];
-      const combo = combos[comboIdx] || combos[0];
-      const bd = combo.score_breakdown || {};
-      const items = combo.items || [];
-      const totals = combo.totals || {};
-      const split = combo.macro_split || { protein_pct: 33, carbs_pct: 34, fat_pct: 33 };
-      const slug = locSlug(court.location);
-      const isPure = state.pure_health_mode || state.health_intensity === 'Extreme';
+    function renderHallSwitcher(recs) {
+      const wrap = document.getElementById('hallSwitcherWrap');
+      const scroller = document.getElementById('hallScroller');
 
-      const dotsHtml = combosLen > 1
-        ? `<div class="pager-dots" aria-label="Combo ${comboIdx + 1} of ${combosLen}">
-            ${combos.map((_, idx) => `
-              <button type="button"
-                      class="pager-dot ${idx === comboIdx ? 'active' : ''}"
-                      onclick="jumpToCombo('${escapeHtml(court.location)}', ${idx})"
-                      aria-label="Show option ${idx + 1}"></button>
-            `).join('')}
+      if (!recs || recs.length === 0) {
+        wrap.classList.remove('visible');
+        return;
+      }
+
+      const validHalls = new Set(recs.map(r => r.location));
+      if (selectedHall !== 'ALL' && !validHalls.has(selectedHall)) {
+        selectedHall = 'ALL';
+      }
+
+      const pills = [
+        `<button type="button" class="hall-pill ${selectedHall === 'ALL' ? 'active' : ''}" onclick="selectHall('ALL')">All <span class="hall-pill-count">(${recs.length})</span></button>`
+      ];
+
+      recs.forEach(r => {
+        const isAct = selectedHall === r.location;
+        pills.push(
+          `<button type="button" class="hall-pill ${isAct ? 'active' : ''}" onclick="selectHall('${escapeHtml(r.location)}')">${escapeHtml(r.location)}</button>`
+        );
+      });
+
+      scroller.innerHTML = pills.join('');
+      wrap.classList.add('visible');
+    }
+
+    function selectHall(hallName) {
+      selectedHall = hallName;
+      renderHallSwitcher(lastRecommendations);
+      renderRecommendations(lastRecommendations);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function getMatchRationaleText(combo) {
+      const breakdown = combo.score_breakdown || {};
+      if (breakdown.match_summary) {
+        return breakdown.match_summary;
+      }
+      const notes = breakdown.compatibility_notes || [];
+      return notes[0] || '';
+    }
+
+    function dismissSwipeHint() {
+      try {
+        localStorage.setItem(SWIPE_HINT_DISMISSED_KEY, '1');
+      } catch (e) {}
+      if (swipeHintTimer) {
+        clearTimeout(swipeHintTimer);
+        swipeHintTimer = null;
+      }
+      document.querySelectorAll('.swipe-hint-pill').forEach(el => {
+        el.classList.remove('visible');
+      });
+    }
+
+    function resetFiltersFromEmptyState() {
+      clearAllDietary();
+      document.getElementById('pure_health_mode').checked = false;
+      activeMode = 'Mid';
+      updateDockUI();
+      updateBadgeCount();
+      savePreferences();
+      fetchRecommendations();
+    }
+
+    function buildSingleCardHtml(rec, comboIdx, isPure, showSwipeAffordance) {
+      const combos = rec.combos && rec.combos.length ? rec.combos : [{
+        combo_name: rec.items?.[0]?.name || 'Recommended Meal',
+        station_tag: rec.items?.[0]?.station || 'Dining Court',
+        score: rec.score,
+        score_breakdown: {},
+        items: rec.items || [],
+        totals: rec.totals || { calories: 0, protein: 0, carbs: 0, fat: 0 },
+        macro_split: { protein_pct: 30, carbs_pct: 40, fat_pct: 30 }
+      }];
+
+      const safeIdx = Math.max(0, Math.min(comboIdx, combos.length - 1));
+      activeComboIndices[rec.location] = safeIdx;
+      const combo = combos[safeIdx];
+      const split = combo.macro_split || { protein_pct: 30, carbs_pct: 40, fat_pct: 30 };
+      const breakdown = combo.score_breakdown || {};
+      const rationaleText = getMatchRationaleText(combo);
+      const isRelaxedNotice = rationaleText === 'Best clean option open now';
+
+      const dotsHtml = combos.length > 1
+        ? `<div class="pager-dots" aria-label="Meal options">
+            ${combos.map((_, i) => `<button type="button" class="pager-dot ${i === safeIdx ? 'active' : ''}" onclick="event.stopPropagation(); setComboIndex('${escapeHtml(rec.location)}', ${i})" aria-label="Option ${i + 1}"></button>`).join('')}
            </div>`
         : '';
 
-      const matchSummary = bd.match_summary || (
-        (bd.compatibility_notes && bd.compatibility_notes.length > 0)
-          ? bd.compatibility_notes[0]
-          : 'Balanced campus plate'
-      );
-      const isNeutralPill = matchSummary.toLowerCase().includes('classic campus favorite') || matchSummary.toLowerCase().includes('best clean option');
-
-      const itemsHtml = items.map(item => `
-        <div class="dish-row" onclick="toggleDishDetails(this, event)">
+      const dishesHtml = combo.items.map(item => `
+        <div class="dish-row" onclick="if(!window.__wasDragging){ this.classList.toggle('expanded'); }">
           <div class="dish-main-line">
             <div class="dish-info">
-              <div class="dish-meta-top">${escapeHtml(item.role || 'Item')} <span>· ${escapeHtml(item.station || '')}</span></div>
+              <div class="dish-meta-top">${escapeHtml(item.role)} <span>· ${escapeHtml(item.station)}</span></div>
               <div class="dish-name">${escapeHtml(item.name)}</div>
             </div>
             <div class="dish-right">
-              <div class="dish-pro">${Math.round(item.protein || 0)}g pro <span class="dish-chevron">&#9662;</span></div>
-              <div class="dish-cal">${Math.round(item.calories || 0)} kcal</div>
+              <div class="dish-pro">${Math.round(item.protein)}g <span style="font-weight:600; font-size:0.75rem; color:var(--text-muted);">pro</span> <span class="dish-chevron">&#9662;</span></div>
+              <div class="dish-cal">${Math.round(item.calories)} kcal</div>
             </div>
           </div>
           <div class="dish-details">
-            ${Math.round(item.carbs || 0)}g carbs · ${Math.round(item.fat || 0)}g fat
-            ${item.reason ? ` · ${escapeHtml(item.reason)}` : ''}
-            ${item.used_fallback ? ' · Est. nutrition' : ''}
+            ${Math.round(item.carbs)}g carbs · ${Math.round(item.fat)}g fat · ${escapeHtml(item.reason || 'Balanced dining court item')}
           </div>
         </div>
       `).join('');
 
-      const hintPillHtml = showHintPill ? `
-        <button type="button"
-                id="swipeHintPill"
-                class="swipe-hint-pill"
-                onclick="triggerHintNextCombo('${escapeHtml(court.location)}', event)">
-          <span>Swipe for ${combosLen - 1} more option${combosLen - 1 > 1 ? 's' : ''}</span>
-          <span class="swipe-hint-arrow" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </span>
-        </button>
-      ` : '';
+      const peekEdgeHtml = (showSwipeAffordance && combos.length > 1)
+        ? `<div class="card-peek-edge" aria-hidden="true"></div>`
+        : '';
+
+      const swipeHintHtml = (showSwipeAffordance && combos.length > 1)
+        ? `<button type="button" class="swipe-hint-pill" id="swipeHintPill" onclick="event.stopPropagation(); dismissSwipeHint(); setComboIndex('${escapeHtml(rec.location)}', 1);" aria-label="Swipe left to see more combos">
+             <span>Swipe left for ${combos.length - 1} more combo${combos.length - 1 > 1 ? 's' : ''}</span>
+             <span class="swipe-hint-arrow" aria-hidden="true">
+               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                 <line x1="5" y1="12" x2="19" y2="12"></line>
+                 <polyline points="12 5 19 12 12 19"></polyline>
+               </svg>
+             </span>
+           </button>`
+        : '';
 
       return `
-        <div>
-          <div class="card-hall-banner ${isPure ? 'pure-mode' : ''}">
-            <h2 class="banner-hall-name">${escapeHtml(court.location)}</h2>
-            <span class="banner-open-pill">
-              <span class="banner-open-dot"></span>
-              <span>${escapeHtml(court.hours_status || 'Open')}</span>
-            </span>
-          </div>
+        <div class="card-stage">
+          ${peekEdgeHtml}
+          <article class="meal-card ${showSwipeAffordance && combos.length > 1 ? 'nudge-once' : ''}" data-location="${escapeHtml(rec.location)}" data-total="${combos.length}">
+            <div>
+              <div class="card-hall-banner ${isPure ? 'pure-mode' : ''}">
+                <div class="banner-hall-name">${escapeHtml(rec.location)}</div>
+                <span class="banner-open-pill"><span class="banner-open-dot"></span>${escapeHtml(rec.hours_status || 'Open now')}</span>
+              </div>
 
-          <div class="card-header">
-            <h3 class="combo-title">${escapeHtml(combo.combo_name || 'Recommended Plate')}</h3>
-            ${dotsHtml}
-          </div>
+              <div class="card-header">
+                <h2 class="combo-title">${escapeHtml(combo.combo_name)}</h2>
+                ${dotsHtml}
+              </div>
 
-          <div class="rationale-box">
-            <span class="rationale-pill ${isNeutralPill ? 'neutral' : ''}">
-              <span>${isNeutralPill ? '&#9733;' : '&#10003;'}</span>
-              <span>${escapeHtml(matchSummary)}</span>
-            </span>
-          </div>
+              ${rationaleText ? `
+                <div class="rationale-box">
+                  <span class="rationale-pill ${isRelaxedNotice ? 'neutral' : ''}">
+                    <span>${isRelaxedNotice ? '&#8226;' : '&#10003;'}</span>
+                    <span>${escapeHtml(rationaleText)}</span>
+                  </span>
+                </div>
+              ` : ''}
 
-          <div class="items-list">
-            ${itemsHtml}
-          </div>
-        </div>
-
-        <div class="card-bottom" id="bottom-${slug}">
-          <div class="card-summary-bar">
-            <div class="headline-macros">
-              <span>${Math.round(totals.protein || 0)}g protein</span>
-              <span class="headline-sep">·</span>
-              <span>${Math.round(totals.calories || 0)} kcal</span>
+              <div class="items-list">${dishesHtml}</div>
             </div>
-            <button type="button"
-                    class="details-toggle-btn"
-                    onclick="toggleCardExtra('bottom-${slug}', event)">
-              <span>Details</span>
-              <span class="chev">&#9662;</span>
-            </button>
-          </div>
 
-          <div class="card-extra-panel">
-            <div class="extra-macros-row">
-              <span class="m-pill">${Math.round(totals.carbs || 0)}g Carbs</span>
-              <span class="m-pill">${Math.round(totals.fat || 0)}g Fat</span>
-              <span class="m-pill">${Math.round(totals.sugar || 0)}g Sugar</span>
+            <div class="card-bottom">
+              <div class="card-summary-bar">
+                <div class="headline-macros">
+                  <span>${Math.round(combo.totals.calories)} kcal</span>
+                  <span class="headline-sep">·</span>
+                  <span>${Math.round(combo.totals.protein)}g pro</span>
+                </div>
+                <button type="button" class="details-toggle-btn" onclick="event.stopPropagation(); this.closest('.card-bottom').classList.toggle('expanded')">
+                  <span>Macros</span>
+                  <span class="chev">&#9662;</span>
+                </button>
+              </div>
+
+              <div class="card-extra-panel">
+                <div class="extra-macros-row">
+                  <span class="m-pill">${Math.round(combo.totals.carbs)}g carbs</span>
+                  <span class="m-pill">${Math.round(combo.totals.fat)}g fat</span>
+                </div>
+                <div class="macro-bar-track">
+                  <div class="seg-p" style="width:${split.protein_pct}%"></div>
+                  <div class="seg-c" style="width:${split.carbs_pct}%"></div>
+                  <div class="seg-f" style="width:${split.fat_pct}%"></div>
+                </div>
+                <div class="macro-pct-line">
+                  <span>Protein ${split.protein_pct}%</span>
+                  <span>Carbs ${split.carbs_pct}%</span>
+                  <span>Fat ${split.fat_pct}%</span>
+                </div>
+                ${breakdown.food_quality !== undefined ? `
+                  <div class="pillar-row">
+                    ${!isPure ? `<span class="pillar-tag">Pairing ${Math.round(breakdown.culinary_compatibility || 0)}%</span>` : ''}
+                    <span class="pillar-tag">${isPure ? 'Nutrient Density' : 'Quality'} ${Math.round(breakdown.food_quality)}%</span>
+                    <span class="pillar-tag">Balance ${Math.round(breakdown.nutrition_balance)}%</span>
+                  </div>
+                ` : ''}
+              </div>
             </div>
-            <div class="macro-bar-track">
-              <div class="seg-p" style="width:${split.protein_pct}%"></div>
-              <div class="seg-c" style="width:${split.carbs_pct}%"></div>
-              <div class="seg-f" style="width:${split.fat_pct}%"></div>
-            </div>
-            <div class="macro-pct-line">
-              <span>Protein ${split.protein_pct}%</span>
-              <span>Carbs ${split.carbs_pct}%</span>
-              <span>Fat ${split.fat_pct}%</span>
-            </div>
-            <div class="pillar-row">
-              <span class="pillar-tag">Match ${Math.round(combo.score || 0)}%</span>
-              ${!isPure ? `<span class="pillar-tag">Pairing ${Math.round(bd.culinary_compatibility || 0)}%</span>` : ''}
-              <span class="pillar-tag">Quality ${Math.round(bd.food_quality || 0)}%</span>
-            </div>
-          </div>
-        </div>
-        ${hintPillHtml}
-      `;
-    }
-
-    function triggerHintNextCombo(location, event) {
-      if (event) event.stopPropagation();
-      dismissSwipeHint(true);
-      stepCombo(location, 1);
-    }
-
-    function toggleDishDetails(rowEl, event) {
-      if (dragState && dragState.moved) return;
-      rowEl.classList.toggle('expanded');
-    }
-
-    function toggleCardExtra(bottomId, event) {
-      if (event) event.stopPropagation();
-      const el = document.getElementById(bottomId);
-      if (el) el.classList.toggle('expanded');
-    }
-
-    function buildEmptyStateHtml() {
-      const isPure = state.pure_health_mode || state.health_intensity === 'Extreme';
-      const hasFilters = (state.dietary_filters || []).length > 0;
-
-      let title = 'No strict clean-ingredient meals are open right now';
-      let desc = 'Available dishes at open dining halls didn’t meet the strict filter and minimum protein threshold for this window.';
-
-      if (isPure) {
-        title = 'Not enough pure whole foods open right now';
-        desc = 'Pure Health Mode requires 3–4 unprocessed whole foods with clean ingredients in the same dining hall.';
-      } else if (hasFilters) {
-        title = 'No open meals match all active filters';
-        desc = 'Strict dietary filters combined with our protein minimum left zero open plates in this dining window.';
-      }
-
-      return `
-        <div class="empty-state-card">
-          <div class="empty-state-icon" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-          </div>
-          <h3>${escapeHtml(title)}</h3>
-          <p>${escapeHtml(desc)}</p>
-          <button type="button" class="empty-recovery-btn" onclick="recoverBestAvailableMeals()">
-            <span>Show Best Available Meals</span>
-            <span aria-hidden="true">&rarr;</span>
-          </button>
+          </article>
+          ${swipeHintHtml}
         </div>
       `;
     }
 
     function renderRecommendations(recs) {
       const container = document.getElementById('cardsContainer');
+      const isPure = document.getElementById('pure_health_mode').checked;
+
       if (!recs || recs.length === 0) {
-        dismissSwipeHint(false);
-        container.innerHTML = buildEmptyStateHtml();
+        container.innerHTML = `
+          <div class="empty-state-card">
+            <div class="empty-state-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <h3>No plates matched your exact filters</h3>
+            <p>No open dining courts had items matching all active dietary restrictions right now.</p>
+            <button type="button" class="empty-recovery-btn" onclick="resetFiltersFromEmptyState()">
+              Reset Filters &amp; Show Balanced Plates
+            </button>
+          </div>
+        `;
         return;
       }
 
-      const visibleRecs = (selectedHall && selectedHall !== 'ALL')
-        ? recs.filter(r => r.location === selectedHall)
-        : recs;
+      const visibleRecs = selectedHall === 'ALL'
+        ? recs
+        : recs.filter(r => r.location === selectedHall);
 
-      const isSingleFocus = visibleRecs.length === 1;
+      let hintDismissed = false;
+      try {
+        hintDismissed = localStorage.getItem(SWIPE_HINT_DISMISSED_KEY) === '1';
+      } catch (e) {}
 
-      container.innerHTML = `<div class="cards-grid ${isSingleFocus ? 'single-focus' : ''}">${
-        visibleRecs.map((court, cardIdx) => {
-          const combos = court.combos || [];
-          if (!combos.length) return '';
-          const totalCombos = combos.length;
-          const currentIdx = ((comboIndexByLoc[court.location] || 0) % totalCombos + totalCombos) % totalCombos;
-          comboIndexByLoc[court.location] = currentIdx;
-          const slug = locSlug(court.location);
-          const showHintPill = (cardIdx === 0 && totalCombos > 1 && !isSwipeHintDismissed());
+      const gridClass = visibleRecs.length === 1 ? 'cards-grid single-focus' : 'cards-grid';
 
-          return `
-            <article class="court-card-wrap">
-              <div class="card-stage">
-                ${totalCombos > 1 ? '<div class="card-peek-edge" aria-hidden="true"></div>' : ''}
-                <div class="meal-card"
-                     id="card-${slug}"
-                     data-location="${escapeHtml(court.location)}">
-                  ${buildComboCardInnerHtml(court, currentIdx, totalCombos, showHintPill)}
-                </div>
-              </div>
-            </article>
-          `;
-        }).join('')
-      }</div>`;
+      container.innerHTML = `<div class="${gridClass}">${visibleRecs.map((rec, idx) => {
+        const currentIdx = activeComboIndices[rec.location] || 0;
+        const showAffordance = !hintDismissed && idx === 0;
+        return `<div class="court-card-wrap" data-wrap-location="${escapeHtml(rec.location)}">${buildSingleCardHtml(rec, currentIdx, isPure, showAffordance)}</div>`;
+      }).join('')}</div>`;
 
-      attachSwipeHandlers();
+      attachCardTouchGestures();
 
-      if (hasSeenOnboarding()) {
-        triggerFirstCardSwipeCue();
+      if (!hintDismissed) {
+        const hintEl = document.getElementById('swipeHintPill');
+        if (hintEl) {
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              hintEl.classList.add('visible');
+            }, 350);
+          });
+          if (swipeHintTimer) clearTimeout(swipeHintTimer);
+          swipeHintTimer = setTimeout(() => {
+            hintEl.classList.remove('visible');
+          }, 5500);
+        }
       }
     }
 
-    function stepCombo(location, delta) {
-      const court = lastRecommendations.find(c => c.location === location);
-      if (!court || !court.combos || court.combos.length <= 1) return;
-      if (animatingLoc[location]) return;
+    function setComboIndex(location, newIdx, slideDir = 0) {
+      const rec = lastRecommendations.find(r => r.location === location);
+      if (!rec) return;
+      const combos = rec.combos || [];
+      if (combos.length <= 1) return;
 
-      const slug = locSlug(location);
-      const cardEl = document.getElementById(`card-${slug}`);
-      const len = court.combos.length;
-      const nextIdx = (((comboIndexByLoc[location] || 0) + delta) % len + len) % len;
-      comboIndexByLoc[location] = nextIdx;
+      dismissSwipeHint();
 
-      if (!cardEl) {
-        renderRecommendations(lastRecommendations);
-        return;
+      const total = combos.length;
+      const wrapped = ((newIdx % total) + total) % total;
+      activeComboIndices[location] = wrapped;
+
+      const wrap = document.querySelector(`.court-card-wrap[data-wrap-location="${CSS.escape(location)}"]`);
+      if (!wrap) return;
+      const isPure = document.getElementById('pure_health_mode').checked;
+
+      wrap.innerHTML = buildSingleCardHtml(rec, wrapped, isPure, false);
+      attachCardTouchGestures();
+
+      const newCard = wrap.querySelector('.meal-card');
+      if (newCard && slideDir !== 0) {
+        newCard.style.transition = 'none';
+        newCard.style.transform = `translateX(${slideDir > 0 ? 48 : -48}px)`;
+        newCard.style.opacity = '0.45';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            newCard.style.transition = 'transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease';
+            newCard.style.transform = 'translateX(0)';
+            newCard.style.opacity = '1';
+          });
+        });
       }
-
-      animatingLoc[location] = true;
-      const exitX = delta > 0 ? -70 : 70;
-      const enterX = delta > 0 ? 70 : -70;
-
-      cardEl.classList.remove('dragging', 'nudge-once');
-      cardEl.style.transition = 'transform 0.17s ease-in, opacity 0.16s ease-in';
-      cardEl.style.transform = `translate3d(${exitX}px, 0, 0) rotate(${exitX * 0.03}deg)`;
-      cardEl.style.opacity = '0.18';
-
-      setTimeout(() => {
-        cardEl.innerHTML = buildComboCardInnerHtml(court, nextIdx, len, false);
-        cardEl.style.transition = 'none';
-        cardEl.style.transform = `translate3d(${enterX}px, 0, 0)`;
-        cardEl.style.opacity = '0.2';
-
-        void cardEl.offsetWidth;
-
-        cardEl.style.transition = 'transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease-out';
-        cardEl.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
-        cardEl.style.opacity = '1';
-
-        setTimeout(() => {
-          cardEl.style.transition = '';
-          cardEl.style.transform = '';
-          cardEl.style.opacity = '';
-          animatingLoc[location] = false;
-        }, 250);
-      }, 165);
     }
 
-    function jumpToCombo(location, targetIdx) {
-      const currentIdx = comboIndexByLoc[location] || 0;
-      if (targetIdx === currentIdx) return;
-      dismissSwipeHint(true);
-      stepCombo(location, targetIdx - currentIdx);
-    }
-
-    function attachSwipeHandlers() {
+    function attachCardTouchGestures() {
       document.querySelectorAll('.meal-card').forEach(card => {
-        card.addEventListener('pointerdown', onCardPointerDown);
+        if (card.dataset.swipeBound === '1') return;
+        card.dataset.swipeBound = '1';
+
+        const total = parseInt(card.dataset.total || '1', 10);
+        if (total <= 1) return;
+
+        let startX = 0;
+        let startY = 0;
+        let deltaX = 0;
+        let isHorizontalSwipe = null;
+
+        card.addEventListener('touchstart', (e) => {
+          if (e.touches.length !== 1) return;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          deltaX = 0;
+          isHorizontalSwipe = null;
+          window.__wasDragging = false;
+        }, { passive: true });
+
+        card.addEventListener('touchmove', (e) => {
+          if (e.touches.length !== 1) return;
+          const dx = e.touches[0].clientX - startX;
+          const dy = e.touches[0].clientY - startY;
+
+          if (isHorizontalSwipe === null) {
+            if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+              isHorizontalSwipe = Math.abs(dx) > Math.abs(dy);
+              if (isHorizontalSwipe) {
+                card.classList.add('dragging');
+                window.__wasDragging = true;
+              }
+            }
+          }
+
+          if (isHorizontalSwipe) {
+            if (e.cancelable) e.preventDefault();
+            deltaX = dx;
+            const damped = deltaX * 0.42;
+            const rot = damped * 0.025;
+            card.style.transform = `translateX(${damped}px) rotate(${rot}deg)`;
+          }
+        }, { passive: false });
+
+        card.addEventListener('touchend', () => {
+          card.classList.remove('dragging');
+          if (!isHorizontalSwipe) return;
+
+          const loc = card.dataset.location;
+          const cur = activeComboIndices[loc] || 0;
+
+          if (deltaX <= -48) {
+            card.style.transform = 'translateX(-115%) rotate(-3deg)';
+            card.style.opacity = '0';
+            setTimeout(() => setComboIndex(loc, cur + 1, 1), 150);
+          } else if (deltaX >= 48) {
+            card.style.transform = 'translateX(115%) rotate(3deg)';
+            card.style.opacity = '0';
+            setTimeout(() => setComboIndex(loc, cur - 1, -1), 150);
+          } else {
+            card.style.transform = 'translateX(0) rotate(0deg)';
+          }
+
+          setTimeout(() => { window.__wasDragging = false; }, 60);
+        }, { passive: true });
       });
     }
 
-    function onCardPointerDown(e) {
-      if (e.button !== undefined && e.button !== 0) return;
-      if (e.target.closest('button')) return;
-
-      const card = e.currentTarget;
-      const location = card.dataset.location;
-      const court = lastRecommendations.find(c => c.location === location);
-      if (!court || !court.combos || court.combos.length <= 1) return;
-      if (animatingLoc[location]) return;
-
-      card.classList.remove('nudge-once');
-
-      dragState = {
-        card,
-        location,
-        pointerId: e.pointerId,
-        startX: e.clientX,
-        startY: e.clientY,
-        dx: 0,
-        lockedAxis: null,
-        moved: false
-      };
-
-      card.addEventListener('pointermove', onCardPointerMove);
-      card.addEventListener('pointerup', onCardPointerUp);
-      card.addEventListener('pointercancel', onCardPointerCancel);
-    }
-
-    function onCardPointerMove(e) {
-      if (!dragState || e.pointerId !== dragState.pointerId) return;
-      const dx = e.clientX - dragState.startX;
-      const dy = e.clientY - dragState.startY;
-
-      if (!dragState.lockedAxis) {
-        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-        if (Math.abs(dx) > Math.abs(dy) * 1.15) {
-          dragState.lockedAxis = 'x';
-          dragState.card.classList.add('dragging');
-          try { dragState.card.setPointerCapture(e.pointerId); } catch (err) {}
-        } else {
-          dragState.lockedAxis = 'y';
-          cleanupDragListeners(dragState.card);
-          dragState = null;
-          return;
-        }
-      }
-
-      if (dragState.lockedAxis === 'x') {
-        e.preventDefault();
-        dragState.dx = dx;
-        dragState.moved = true;
-        const clamped = Math.max(-140, Math.min(140, dx));
-        const rot = clamped * 0.025;
-        dragState.card.style.transform = `translate3d(${clamped}px, 0, 0) rotate(${rot}deg)`;
-      }
-    }
-
-    function onCardPointerUp(e) {
-      if (!dragState || e.pointerId !== dragState.pointerId) return;
-      const { card, location, dx, lockedAxis } = dragState;
-      cleanupDragListeners(card);
-      card.classList.remove('dragging');
-      dragState = null;
-
-      if (lockedAxis === 'x') {
-        if (Math.abs(dx) >= 48) {
-          dismissSwipeHint(true);
-          stepCombo(location, dx < 0 ? 1 : -1);
-        } else {
-          card.style.transition = 'transform 0.24s cubic-bezier(0.22, 1, 0.36, 1)';
-          card.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
-          setTimeout(() => {
-            card.style.transition = '';
-            card.style.transform = '';
-          }, 250);
-        }
-      }
-    }
-
-    function onCardPointerCancel(e) {
-      if (!dragState || e.pointerId !== dragState.pointerId) return;
-      const { card } = dragState;
-      cleanupDragListeners(card);
-      card.classList.remove('dragging');
-      card.style.transition = 'transform 0.2s ease';
-      card.style.transform = 'translate3d(0, 0, 0)';
-      dragState = null;
-    }
-
-    function cleanupDragListeners(card) {
-      card.removeEventListener('pointermove', onCardPointerMove);
-      card.removeEventListener('pointerup', onCardPointerUp);
-      card.removeEventListener('pointercancel', onCardPointerCancel);
-    }
-
     async function fetchRecommendations() {
-      const errBanner = document.getElementById('errorBanner');
-      errBanner.style.display = 'none';
-      dismissSwipeHint(false);
+      const errorBanner = document.getElementById('errorBanner');
+      errorBanner.style.display = 'none';
 
-      document.getElementById('cardsContainer').innerHTML = `
-        <div class="skeleton-grid">
-          <div class="skeleton-card"></div>
-        </div>
-      `;
+      const statusTextEl = document.getElementById('liveStatusText');
+      statusTextEl.textContent = isInitialLoad ? 'Loading menus...' : 'Updating...';
 
-      let heightInches = null;
-      if (state.dri_enabled && state.height_ft !== '' && state.height_in_rem !== '') {
-        heightInches = (Number(state.height_ft) * 12) + Number(state.height_in_rem);
+      // Render free-tier cold-start reassurance timer after 3 seconds on initial load
+      let coldStartTimer = null;
+      if (isInitialLoad) {
+        coldStartTimer = setTimeout(() => {
+          if (statusTextEl.textContent === 'Loading menus...') {
+            statusTextEl.textContent = 'Waking kitchen & loading menus...';
+          }
+        }, 3000);
       }
+
+      if (isInitialLoad) {
+        document.getElementById('cardsContainer').innerHTML = `
+          <div class="skeleton-grid">
+            <div class="skeleton-card"></div>
+          </div>
+        `;
+      }
+
+      const driEnabled = document.getElementById('dri_enabled').checked;
+      const pureHealthMode = document.getElementById('pure_health_mode').checked;
 
       const payload = {
-        health_intensity: state.pure_health_mode ? 'Extreme' : state.health_intensity,
-        pure_health_mode: !!state.pure_health_mode,
-        dietary_filters: state.dietary_filters || [],
-        dri_enabled: !!state.dri_enabled,
-        meal_goal: state.meal_goal || 'Balanced Maintenance',
-        sex: state.sex,
-        age: state.age,
-        weight_lbs: state.weight_lbs,
-        height_in: heightInches,
-        activity_level: state.activity_level,
-        meals_per_day: state.meals_per_day,
-        sim_time: state.sim_time || ''
+        health_intensity: activeMode,
+        pure_health_mode: pureHealthMode,
+        dietary_filters: getDietaryFilters(),
+        dri_enabled: driEnabled,
+        meal_goal: document.getElementById('dri_goal').value,
+        sex: document.getElementById('dri_sex').value,
+        age: document.getElementById('dri_age').value,
+        weight_lbs: document.getElementById('dri_weight').value,
+        height_in: document.getElementById('dri_height').value,
+        activity_level: document.getElementById('dri_activity').value,
+        meals_per_day: document.getElementById('dri_meals').value,
+        sim_time: document.getElementById('sim_time').value.trim()
       };
 
       try {
@@ -2810,70 +2455,172 @@
         const data = await res.json();
 
         if (!res.ok) {
-          errBanner.textContent = data.error || 'Unable to load meal recommendations.';
-          errBanner.style.display = 'block';
-          document.getElementById('cardsContainer').innerHTML = '';
+          errorBanner.textContent = data.error || 'Could not load meals.';
+          errorBanner.style.display = 'block';
+          statusTextEl.textContent = 'Check settings';
           return;
         }
 
-        const timeLabel = data.timestamp ? data.timestamp.split(' ').slice(1).join(' ') : 'Live';
-        document.getElementById('liveStatusText').textContent = state.sim_time
-          ? `Sim · ${timeLabel}`
-          : `Live · ${timeLabel}`;
+        document.getElementById('greetingTitle').textContent = pickMotivation(data.timestamp);
+        const count = data.open_locations_count || 0;
+        statusTextEl.textContent = count > 0 ? `${count} open now` : 'Courts closed';
 
         renderActiveStrip(data);
-
         lastRecommendations = data.recommendations || [];
-        lastRecommendations.forEach(r => { comboIndexByLoc[r.location] = 0; });
         renderHallSwitcher(lastRecommendations);
         renderRecommendations(lastRecommendations);
-        maybeShowWelcomeModal();
+        isInitialLoad = false;
       } catch (err) {
-        errBanner.textContent = 'Connection error while fetching live campus dining menus.';
-        errBanner.style.display = 'block';
-        document.getElementById('cardsContainer').innerHTML = '';
+        errorBanner.textContent = 'Connection issue loading menus.';
+        errorBanner.style.display = 'block';
+        statusTextEl.textContent = 'Offline';
+      } finally {
+        if (coldStartTimer) {
+          clearTimeout(coldStartTimer);
+          coldStartTimer = null;
+        }
       }
     }
 
     async function submitFeedback() {
-      const statusEl = document.getElementById('fbStatus');
-      const message = document.getElementById('fb_message').value.trim();
-      const category = document.getElementById('fb_category').value;
-      const contact = document.getElementById('fb_contact').value.trim();
-
-      if (!message) {
-        statusEl.style.color = '#A63A23';
-        statusEl.textContent = 'Please write a note first.';
-        return;
-      }
-
-      statusEl.style.color = '#6E665D';
-      statusEl.textContent = 'Sending...';
+      const msg = document.getElementById('fb_message').value.trim();
+      const status = document.getElementById('fbStatus');
+      if (!msg) return;
 
       try {
         const res = await fetch('/api/feedback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ category, message, contact })
+          body: JSON.stringify({
+            category: document.getElementById('fb_category').value,
+            message: msg
+          })
         });
         const data = await res.json();
-        if (!res.ok) {
-          statusEl.style.color = '#A63A23';
-          statusEl.textContent = data.error || 'Could not send.';
-          return;
+        if (res.ok) {
+          status.textContent = data.message || 'Sent!';
+          status.style.display = 'block';
+          document.getElementById('fb_message').value = '';
         }
-        statusEl.style.color = '#1D8A5A';
-        statusEl.textContent = data.message || 'Sent!';
-        document.getElementById('fb_message').value = '';
-      } catch (e) {
-        statusEl.style.color = '#A63A23';
-        statusEl.textContent = 'Network error.';
+      } catch (e) {}
+    }
+
+    /* ==========================================================================
+       ONBOARDING WELCOME MODAL & INTERACTIVE SPOTLIGHT TUTORIAL
+       ========================================================================== */
+    let currentTourStep = 0;
+
+    function getTourSteps() {
+      return [
+        {
+          targetSelector: '#hallSwitcherWrap.visible, header',
+          title: 'Pick a Dining Hall',
+          desc: 'Tap any pill at the top to jump straight to one dining hall or view all open courts together.'
+        },
+        {
+          targetSelector: '.meal-card, #cardsContainer',
+          title: 'Swipe Meal Combos & Tap Dishes',
+          desc: 'Swipe left or right on any card to browse top meal combos. Tap a dish to inspect its carbs, fat, and score.'
+        },
+        {
+          targetSelector: '#bottomDock',
+          title: 'Switch Styles & Filters',
+          desc: 'Choose Healthy, Balanced, or Yummy—or tap the sliders icon for Pure Health Mode, allergies, and macro targets.'
+        }
+      ];
+    }
+
+    function maybeShowFirstVisitModal() {
+      try {
+        if (localStorage.getItem(TOUR_SEEN_KEY) === '1') return;
+      } catch (e) {}
+      document.getElementById('welcomeOverlay').classList.add('open');
+    }
+
+    function dismissWelcomeModal() {
+      document.getElementById('welcomeOverlay').classList.remove('open');
+      try {
+        localStorage.setItem(TOUR_SEEN_KEY, '1');
+      } catch (e) {}
+    }
+
+    function startSpotlightTour() {
+      document.getElementById('welcomeOverlay').classList.remove('open');
+      try {
+        localStorage.setItem(TOUR_SEEN_KEY, '1');
+      } catch (e) {}
+      currentTourStep = 0;
+      document.getElementById('tourLayer').classList.add('open');
+      renderTourStep(0);
+    }
+
+    function replayTourFromDrawer() {
+      document.getElementById('drawerBackdrop').classList.remove('open');
+      document.getElementById('prefsDrawer').classList.remove('open');
+      currentTourStep = 0;
+      document.getElementById('tourLayer').classList.add('open');
+      renderTourStep(0);
+    }
+
+    function endSpotlightTour() {
+      document.getElementById('tourLayer').classList.remove('open');
+    }
+
+    function nextTourStep() {
+      const steps = getTourSteps();
+      if (currentTourStep + 1 >= steps.length) {
+        endSpotlightTour();
+        return;
+      }
+      currentTourStep += 1;
+      renderTourStep(currentTourStep);
+    }
+
+    function renderTourStep(idx) {
+      const steps = getTourSteps();
+      const step = steps[idx];
+      const target = document.querySelector(step.targetSelector) || document.body;
+      const rect = target.getBoundingClientRect();
+      const spotlight = document.getElementById('tourSpotlight');
+      const tooltip = document.getElementById('tourTooltip');
+
+      const pad = 6;
+      const top = Math.max(6, rect.top - pad);
+      const left = Math.max(6, rect.left - pad);
+      const width = Math.min(window.innerWidth - 12, rect.width + pad * 2);
+      const height = Math.min(window.innerHeight - 12, rect.height + pad * 2);
+
+      spotlight.style.top = `${top}px`;
+      spotlight.style.left = `${left}px`;
+      spotlight.style.width = `${width}px`;
+      spotlight.style.height = `${height}px`;
+
+      document.getElementById('tourStepTag').textContent = `Step ${idx + 1} of ${steps.length}`;
+      document.getElementById('tourTitle').textContent = step.title;
+      document.getElementById('tourDesc').textContent = step.desc;
+      document.getElementById('tourNextBtn').textContent = idx === steps.length - 1 ? 'Got it' : 'Next';
+
+      if (rect.top > window.innerHeight * 0.45) {
+        tooltip.style.top = 'auto';
+        tooltip.style.bottom = `${Math.max(20, window.innerHeight - top + 14)}px`;
+      } else {
+        tooltip.style.bottom = 'auto';
+        tooltip.style.top = `${Math.min(window.innerHeight - 190, top + height + 14)}px`;
       }
     }
 
-    loadPrefs();
-    syncUiFromState();
-    fetchRecommendations();
+    window.addEventListener('resize', () => {
+      if (document.getElementById('tourLayer').classList.contains('open')) {
+        renderTourStep(currentTourStep);
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      installDynamicAppleTouchIcon();
+      loadPreferences();
+      fetchRecommendations();
+      setTimeout(maybeShowFirstVisitModal, 450);
+    });
   </script>
 </body>
 </html>
