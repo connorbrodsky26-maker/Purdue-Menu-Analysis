@@ -2,36 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#111111" />
-  <title>Feast</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#FBF9F5" />
+  <title>Feast — Campus Dining Companion</title>
   <style>
     :root {
-      --feast-red: #EF4444;
-      --feast-red-dark: #DC2626;
-      --leaf-green: #22C55E;
-      --leaf-vein: #15803D;
-      --gold: #CFB991;
-      --gold-soft: #FAF6EE;
-      --obsidian: #111111;
-      --obsidian-2: #1E1E1E;
-      --bg: #F4F4F2;
+      --cream: #FBF9F5;
       --surface: #FFFFFF;
-      --surface-alt: #F9F9F8;
-      --border: #E5E4DF;
-      --text: #161615;
-      --muted: #66645E;
-      --green: #15803D;
-      --green-bg: #DCFCE7;
-      --protein-bg: #DBEAFE;
-      --protein-fg: #1E40AF;
-      --carb-bg: #FEF3C7;
-      --carb-fg: #92400E;
-      --side-bg: #DCFCE7;
-      --side-fg: #166534;
-      --radius: 18px;
-      --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-      --float-shadow: 0 10px 30px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+      --surface-alt: #F4F0E8;
+      --border: #E7E1D6;
+      --obsidian: #161513;
+      --obsidian-soft: #282622;
+      --text-main: #161513;
+      --text-muted: #6E695F;
+      --terracotta: #E05648;
+      --terracotta-dark: #C84639;
+      --terracotta-soft: #FDF2F1;
+      --leaf: #1D8A5A;
+      --leaf-bright: #10B981;
+      --leaf-soft: #E8F6EF;
+      --amber: #D97706;
+      --radius: 22px;
+      --shadow: 0 10px 30px rgba(22, 21, 19, 0.05);
+      --float-shadow: 0 14px 36px rgba(22, 21, 19, 0.14);
     }
 
     * {
@@ -41,35 +34,42 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Inter, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.4;
-      padding-bottom: calc(92px + env(safe-area-inset-bottom));
+    html, body {
+      touch-action: manipulation;
+      overscroll-behavior-y: none;
     }
 
-    /* Ultra-Slim Top App Bar */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--cream);
+      color: var(--text-main);
+      line-height: 1.45;
+      padding-bottom: calc(104px + env(safe-area-inset-bottom));
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sticky Cream Editorial Header */
     .topbar {
       position: sticky;
       top: 0;
       z-index: 30;
-      background: var(--obsidian);
-      color: #FFFFFF;
-      padding: 0.6rem 1rem;
-      border-bottom: 1px solid #262624;
+      background: rgba(251, 249, 245, 0.9);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 0.75rem 1.1rem;
+      border-bottom: 1px solid var(--border);
     }
 
     .topbar-inner {
-      max-width: 600px;
+      max-width: 580px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.5rem;
+      gap: 0.6rem;
     }
 
-    /* "Feast" Red Wordmark with Green Leaf at the '-' of the 't' */
+    /* Feast Wordmark with Two Solid Emerald Leaves on the 't' */
     .brand-logo {
       display: inline-flex;
       align-items: baseline;
@@ -78,50 +78,95 @@
     }
 
     .brand-text {
-      font-size: 1.55rem;
+      font-size: 1.7rem;
       font-weight: 900;
-      letter-spacing: -0.035em;
-      color: var(--feast-red);
+      letter-spacing: -0.04em;
+      color: var(--terracotta);
     }
 
     .brand-t {
-      width: 19px;
-      height: 24px;
+      width: 24px;
+      height: 30px;
       margin-left: -1px;
-      transform: translateY(3px);
+      transform: translateY(4px);
       overflow: visible;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .fav-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-radius: 999px;
+      padding: 0.36rem 0.72rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .fav-pill-btn svg {
+      color: var(--terracotta);
     }
 
     .status-chip {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      background: var(--obsidian-2);
-      border: 1px solid #33322E;
-      color: #E7E5E4;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-main);
       border-radius: 999px;
-      padding: 0.3rem 0.7rem;
-      font-size: 0.75rem;
+      padding: 0.36rem 0.78rem;
+      font-size: 0.76rem;
       font-weight: 600;
       cursor: pointer;
     }
 
     .status-chip strong {
-      color: #FFFFFF;
+      color: var(--terracotta);
     }
 
     main {
-      max-width: 600px;
-      margin: 0.8rem auto 0;
-      padding: 0 0.85rem;
+      max-width: 580px;
+      margin: 0.95rem auto 0;
+      padding: 0 1rem;
     }
 
-    /* Active Filter Summary Strip */
+    /* Time-Aware Welcoming Greeting */
+    .greeting-banner {
+      margin-bottom: 0.95rem;
+      padding: 0.15rem 0.2rem;
+    }
+
+    .greeting-title {
+      font-size: 1.38rem;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      color: var(--obsidian);
+      line-height: 1.2;
+    }
+
+    .greeting-sub {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+      font-weight: 500;
+    }
+
+    /* Active Filter Strip */
     .active-pills-row {
       display: none;
       flex-wrap: wrap;
       gap: 0.4rem;
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.85rem;
     }
 
     .active-pills-row.visible {
@@ -133,54 +178,55 @@
       color: #FFFFFF;
       font-size: 0.72rem;
       font-weight: 700;
-      padding: 0.22rem 0.6rem;
+      padding: 0.24rem 0.65rem;
       border-radius: 999px;
     }
 
     .mini-badge.light {
       background: var(--surface);
-      color: var(--obsidian);
+      color: var(--text-main);
       border: 1px solid var(--border);
     }
 
-    /* Alert Banner */
+    /* Friendly Notice / Validation Box */
     .alert-box {
-      background: #FEF2F2;
-      border: 1.5px solid #FECACA;
-      color: #991B1B;
-      border-radius: 14px;
-      padding: 0.75rem 0.9rem;
-      font-size: 0.84rem;
+      background: var(--terracotta-soft);
+      border: 1px solid #F5C2BC;
+      color: #8F2D23;
+      border-radius: 16px;
+      padding: 0.85rem 1rem;
+      font-size: 0.85rem;
       font-weight: 600;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.9rem;
     }
 
-    /* Hero #1 Card & Runner-Up Cards */
+    /* Dining Court Cards */
     .rec-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      margin-bottom: 0.95rem;
+      margin-bottom: 1.15rem;
       box-shadow: var(--shadow);
+      transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
     .rec-card.rank-1 {
       border: 2px solid var(--obsidian);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 14px 36px rgba(22, 21, 19, 0.08);
     }
 
     .hero-head {
       background: var(--obsidian);
       color: #FFFFFF;
-      padding: 0.95rem 1.05rem;
+      padding: 1.1rem 1.2rem 1rem;
     }
 
     .rec-card:not(.rank-1) .hero-head {
       background: var(--surface-alt);
-      color: var(--text);
+      color: var(--text-main);
       border-bottom: 1px solid var(--border);
-      padding: 0.85rem 1rem;
+      padding: 0.95rem 1.15rem;
     }
 
     .hero-top-row {
@@ -188,69 +234,157 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.5rem;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.45rem;
     }
 
     .rank-pill {
-      font-size: 0.7rem;
+      font-size: 0.69rem;
       font-weight: 800;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      padding: 0.2rem 0.55rem;
+      padding: 0.22rem 0.62rem;
       border-radius: 999px;
-      background: var(--gold);
-      color: var(--obsidian);
+      background: var(--terracotta);
+      color: #FFFFFF;
     }
 
     .rec-card:not(.rank-1) .rank-pill {
-      background: #E5E4DF;
-      color: var(--text);
+      background: var(--border);
+      color: var(--text-muted);
     }
 
     .live-hours {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.38rem;
       font-size: 0.74rem;
       font-weight: 700;
-      padding: 0.2rem 0.58rem;
+      padding: 0.22rem 0.64rem;
       border-radius: 999px;
-      background: rgba(22, 163, 74, 0.22);
-      color: #86EFAC;
+      background: rgba(16, 185, 129, 0.18);
+      color: #6EE7B7;
     }
 
     .rec-card:not(.rank-1) .live-hours {
-      background: var(--green-bg);
-      color: var(--green);
+      background: var(--leaf-soft);
+      color: var(--leaf);
     }
 
     .pulse-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #22C55E;
+      background: var(--leaf-bright);
       flex-shrink: 0;
     }
 
+    .court-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+
     .court-name {
-      font-size: 1.85rem;
+      font-size: 1.75rem;
       font-weight: 900;
       letter-spacing: -0.03em;
       line-height: 1.1;
     }
 
     .rec-card:not(.rank-1) .court-name {
-      font-size: 1.35rem;
+      font-size: 1.38rem;
     }
 
-    /* Menu-Board Plate List */
+    .bookmark-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .rec-card:not(.rank-1) .bookmark-btn {
+      border-color: var(--border);
+      background: var(--surface);
+      color: var(--text-main);
+    }
+
+    .bookmark-btn:active {
+      transform: scale(0.92);
+    }
+
+    .bookmark-btn.saved {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: #FFFFFF;
+    }
+
+    /* Multi-Combo Switcher Pills inside Card */
+    .combo-switcher {
+      display: flex;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding: 0.7rem 1.1rem 0;
+      scrollbar-width: none;
+    }
+
+    .combo-switcher::-webkit-scrollbar {
+      display: none;
+    }
+
+    .combo-tab {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 0.34rem 0.72rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .combo-tab.active {
+      background: var(--obsidian);
+      border-color: var(--obsidian);
+      color: #FFFFFF;
+    }
+
+    /* Combo Header Info */
+    .combo-banner {
+      padding: 0.75rem 1.15rem 0.25rem;
+    }
+
+    .combo-name {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--obsidian);
+      letter-spacing: -0.015em;
+    }
+
+    .chef-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* Menu Item Rows */
     .plate-board {
-      padding: 0.45rem 0.85rem;
+      padding: 0.35rem 1.15rem 0.5rem;
     }
 
     .menu-row {
       border-bottom: 1px solid var(--border);
-      padding: 0.68rem 0.15rem;
+      padding: 0.72rem 0;
       cursor: pointer;
       user-select: none;
     }
@@ -263,7 +397,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.65rem;
+      gap: 0.75rem;
       min-height: 44px;
     }
 
@@ -277,53 +411,31 @@
     .tag-line {
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
     }
 
-    .role-tag {
-      font-size: 0.65rem;
+    .station-pill {
+      font-size: 0.67rem;
       font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      padding: 0.12rem 0.42rem;
-      border-radius: 5px;
-    }
-
-    .role-tag.protein {
-      background: var(--protein-bg);
-      color: var(--protein-fg);
-    }
-
-    .role-tag.carb {
-      background: var(--carb-bg);
-      color: var(--carb-fg);
-    }
-
-    .role-tag.side {
-      background: var(--side-bg);
-      color: var(--side-fg);
-    }
-
-    .mult-tag {
-      font-size: 0.68rem;
-      font-weight: 800;
-      padding: 0.1rem 0.4rem;
-      border-radius: 5px;
-      background: var(--obsidian);
-      color: var(--gold);
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: 0.14rem 0.48rem;
+      border-radius: 6px;
     }
 
     .food-title {
       font-size: 0.98rem;
       font-weight: 700;
-      color: var(--text);
+      color: var(--text-main);
       line-height: 1.25;
     }
 
     .menu-right {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.55rem;
       flex-shrink: 0;
       text-align: right;
     }
@@ -335,7 +447,7 @@
     }
 
     .protein-stat {
-      font-size: 0.95rem;
+      font-size: 0.94rem;
       font-weight: 800;
       color: var(--obsidian);
     }
@@ -343,107 +455,113 @@
     .cal-stat {
       font-size: 0.74rem;
       font-weight: 600;
-      color: var(--muted);
+      color: var(--text-muted);
     }
 
     .chevron {
-      width: 18px;
-      height: 18px;
-      color: var(--muted);
-      transition: transform 0.18s ease;
+      width: 17px;
+      height: 17px;
+      color: var(--text-muted);
+      transition: transform 0.2s ease;
     }
 
     .menu-row.expanded .chevron {
       transform: rotate(180deg);
     }
 
-    /* Hidden Item Detail Drawer */
     .item-details {
       display: none;
       margin-top: 0.55rem;
-      padding: 0.6rem 0.7rem;
+      padding: 0.6rem 0.75rem;
       background: var(--surface-alt);
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 0.8rem;
-      color: var(--muted);
+      color: var(--text-muted);
     }
 
     .menu-row.expanded .item-details {
       display: block;
     }
 
-    .detail-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem 0.85rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 0.25rem;
-    }
-
-    /* Plate Totals Footer */
+    /* Clean Plate Footer & Proportional Macro Split Bar */
     .plate-footer {
       background: var(--surface-alt);
       border-top: 1px solid var(--border);
-      padding: 0.72rem 1rem;
+      padding: 0.85rem 1.15rem;
     }
 
-    .totals-row {
+    .totals-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.84rem;
+      gap: 0.5rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .cal-pill {
+      background: var(--obsidian);
+      color: #FFFFFF;
+      font-size: 0.78rem;
       font-weight: 800;
+      padding: 0.22rem 0.65rem;
+      border-radius: 999px;
     }
 
-    .totals-macros {
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 0.8rem;
-    }
-
-    .dri-bars {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.55rem 0.85rem;
-      margin-top: 0.65rem;
-      padding-top: 0.65rem;
-      border-top: 1px dashed var(--border);
-    }
-
-    .bar-head {
+    .macro-pills {
       display: flex;
-      justify-content: space-between;
-      font-size: 0.72rem;
-      font-weight: 700;
-      margin-bottom: 0.2rem;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
     }
 
-    .bar-track {
-      height: 6px;
-      background: #E5E4DF;
+    .m-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 0.2rem 0.52rem;
+      border-radius: 999px;
+    }
+
+    .split-bar-track {
+      height: 8px;
+      background: var(--border);
       border-radius: 999px;
       overflow: hidden;
+      display: flex;
+      gap: 2px;
     }
 
-    .bar-fill {
-      height: 100%;
-      background: var(--obsidian);
-      border-radius: 999px;
+    .split-seg-p { background: var(--obsidian); height: 100%; border-radius: 999px; }
+    .split-seg-c { background: var(--terracotta); height: 100%; border-radius: 999px; }
+    .split-seg-f { background: var(--leaf); height: 100%; border-radius: 999px; }
+
+    .split-legend {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.38rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
     }
 
-    .bar-fill.hit {
-      background: var(--green);
+    .legend-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 4px;
     }
 
-    /* Floating Gemini-Style Bottom Pill + Side Filter Button */
+    /* Floating Bottom Dock */
     .floating-dock {
       position: fixed;
       left: 0;
       right: 0;
-      bottom: calc(14px + env(safe-area-inset-bottom));
+      bottom: calc(16px + env(safe-area-inset-bottom));
       z-index: 40;
-      padding: 0 0.85rem;
+      padding: 0 1rem;
       pointer-events: none;
     }
 
@@ -452,7 +570,7 @@
       margin: 0 auto;
       display: flex;
       align-items: center;
-      gap: 0.55rem;
+      gap: 0.6rem;
       pointer-events: auto;
     }
 
@@ -461,10 +579,10 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      padding: 0.3rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(22, 21, 19, 0.08);
+      padding: 0.34rem;
       border-radius: 999px;
       gap: 0.2rem;
       box-shadow: var(--float-shadow);
@@ -473,10 +591,10 @@
     .seg-btn {
       border: none;
       background: transparent;
-      color: var(--muted);
-      font-size: 0.83rem;
+      color: var(--text-muted);
+      font-size: 0.84rem;
       font-weight: 700;
-      min-height: 42px;
+      min-height: 44px;
       border-radius: 999px;
       cursor: pointer;
       transition: all 0.16s ease;
@@ -485,18 +603,18 @@
     .seg-btn.active {
       background: var(--obsidian);
       color: #FFFFFF;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 3px 10px rgba(22, 21, 19, 0.2);
     }
 
     .side-filter-btn {
       position: relative;
-      width: 50px;
-      height: 50px;
+      width: 52px;
+      height: 52px;
       border-radius: 999px;
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(22, 21, 19, 0.08);
       background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       color: var(--obsidian);
       display: inline-flex;
       align-items: center;
@@ -504,11 +622,11 @@
       cursor: pointer;
       flex-shrink: 0;
       box-shadow: var(--float-shadow);
-      transition: transform 0.15s ease, background 0.15s ease;
+      transition: transform 0.15s ease;
     }
 
     .side-filter-btn:active {
-      transform: scale(0.95);
+      transform: scale(0.94);
     }
 
     .side-filter-btn.has-filters {
@@ -520,12 +638,12 @@
       position: absolute;
       top: -2px;
       right: -2px;
-      background: var(--feast-red);
+      background: var(--terracotta);
       color: #FFFFFF;
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       font-weight: 800;
-      min-width: 19px;
-      height: 19px;
+      min-width: 20px;
+      height: 20px;
       padding: 0 4px;
       border-radius: 999px;
       border: 2px solid #FFFFFF;
@@ -534,15 +652,15 @@
       justify-content: center;
     }
 
-    /* Right-Side Filter Drawer */
+    /* Slide-In Side Drawer */
     .sheet-backdrop {
       position: fixed;
       inset: 0;
       z-index: 50;
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(22, 21, 19, 0.42);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.22s ease;
+      transition: opacity 0.24s ease;
     }
 
     .sheet-backdrop.open {
@@ -556,14 +674,14 @@
       right: 0;
       bottom: 0;
       z-index: 60;
-      width: min(370px, 88vw);
+      width: min(385px, 90vw);
       overflow-y: auto;
       background: var(--surface);
-      border-radius: 22px 0 0 22px;
-      padding: calc(1rem + env(safe-area-inset-top)) 1.05rem calc(1.5rem + env(safe-area-inset-bottom));
+      border-radius: 24px 0 0 24px;
+      padding: calc(1.1rem + env(safe-area-inset-top)) 1.15rem calc(1.8rem + env(safe-area-inset-bottom));
       transform: translateX(105%);
-      transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
-      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.22);
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: -12px 0 38px rgba(22, 21, 19, 0.22);
     }
 
     .side-drawer.open {
@@ -574,14 +692,15 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 0.75rem;
+      padding-bottom: 0.8rem;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 0.95rem;
+      margin-bottom: 1.05rem;
     }
 
     .sheet-header h2 {
-      font-size: 1.08rem;
-      font-weight: 800;
+      font-size: 1.12rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
     }
 
     .done-btn {
@@ -589,86 +708,125 @@
       color: #FFFFFF;
       border: none;
       border-radius: 999px;
-      padding: 0.45rem 1rem;
+      padding: 0.48rem 1.05rem;
       font-size: 0.84rem;
       font-weight: 800;
       cursor: pointer;
     }
 
     .sheet-section {
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.35rem;
     }
 
     .sec-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.55rem;
+      margin-bottom: 0.58rem;
     }
 
     .sec-title {
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--muted);
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
     }
 
     .clear-link {
       background: none;
       border: none;
-      color: var(--feast-red-dark);
+      color: var(--terracotta-dark);
       font-size: 0.78rem;
       font-weight: 700;
       text-decoration: underline;
       cursor: pointer;
     }
 
-    /* Tactile Filter Chips */
+    /* Go-To Favorites inside Drawer */
+    .fav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .fav-item-card {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0.7rem 0.8rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .fav-item-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--obsidian);
+    }
+
+    .fav-item-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .remove-fav-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0.1rem 0.3rem;
+    }
+
+    /* Filter Chips */
     .filter-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.45rem;
+      gap: 0.48rem;
     }
 
     .pill-check {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
-      min-height: 44px;
-      padding: 0.5rem 0.75rem;
+      gap: 0.58rem;
+      min-height: 45px;
+      padding: 0.5rem 0.8rem;
       border: 1.5px solid var(--border);
-      border-radius: 12px;
-      font-size: 0.86rem;
+      border-radius: 13px;
+      font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
       background: var(--surface-alt);
     }
 
     .pill-check:has(input:checked) {
-      background: #FEF2F2;
-      border-color: var(--feast-red);
+      background: var(--terracotta-soft);
+      border-color: var(--terracotta);
       font-weight: 800;
     }
 
     .pill-check input {
-      accent-color: var(--feast-red);
+      accent-color: var(--terracotta);
       width: 17px;
       height: 17px;
     }
 
-    /* Switch Row */
     .switch-card {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      padding: 0.75rem 0.85rem;
+      padding: 0.78rem 0.9rem;
       background: var(--surface-alt);
       border: 1.5px solid var(--border);
       border-radius: 14px;
       cursor: pointer;
-      min-height: 50px;
+      min-height: 52px;
     }
 
     .switch-card span {
@@ -682,11 +840,11 @@
       height: 20px;
     }
 
-    /* Biometrics Grid inside Drawer */
+    /* Biometrics Box */
     .bio-box {
       display: none;
       margin-top: 0.75rem;
-      padding: 0.85rem;
+      padding: 0.9rem;
       background: var(--surface-alt);
       border: 1px solid var(--border);
       border-radius: 14px;
@@ -716,30 +874,33 @@
       font-size: 0.7rem;
       font-weight: 800;
       text-transform: uppercase;
-      color: var(--muted);
+      color: var(--text-muted);
     }
 
     .field input,
-    .field select {
-      min-height: 42px;
-      padding: 0.45rem 0.6rem;
+    .field select,
+    .fb-input,
+    .fb-textarea {
+      min-height: 44px;
+      padding: 0.5rem 0.68rem;
       border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-size: 0.9rem;
+      border-radius: 11px;
+      font-size: 16px;
+      font-family: inherit;
       background: #FFFFFF;
-      color: var(--text);
+      color: var(--text-main);
     }
 
     .height-split {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.35rem;
+      gap: 0.38rem;
     }
 
     .apply-btn {
       width: 100%;
-      min-height: 44px;
-      margin-top: 0.8rem;
+      min-height: 46px;
+      margin-top: 0.85rem;
       background: var(--obsidian);
       color: #FFFFFF;
       border: none;
@@ -756,40 +917,97 @@
 
     .time-row input {
       flex: 1;
-      min-height: 44px;
-      padding: 0.5rem 0.7rem;
+      min-height: 46px;
+      padding: 0.5rem 0.72rem;
       border: 1.5px solid var(--border);
       border-radius: 12px;
-      font-size: 0.88rem;
+      font-size: 16px;
     }
 
     .time-row button {
-      min-height: 44px;
-      padding: 0 0.95rem;
+      min-height: 46px;
+      padding: 0 1rem;
       border-radius: 12px;
       border: none;
       background: var(--obsidian);
       color: #FFFFFF;
       font-weight: 800;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       cursor: pointer;
+    }
+
+    /* Send Feedback Box inside Drawer */
+    .feedback-card {
+      background: var(--surface-alt);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .fb-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .fb-chip {
+      border: 1px solid var(--border);
+      background: #FFFFFF;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 0.28rem 0.6rem;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .fb-chip.active {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: #FFFFFF;
+    }
+
+    .fb-textarea {
+      min-height: 78px;
+      resize: vertical;
+    }
+
+    .fb-submit-btn {
+      min-height: 44px;
+      border: none;
+      border-radius: 11px;
+      background: var(--terracotta);
+      color: #FFFFFF;
+      font-size: 0.86rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .fb-status {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--leaf);
+      display: none;
     }
 
     /* Loading Skeleton */
     .skeleton-card {
       background: var(--surface);
       border-radius: var(--radius);
-      padding: 1.1rem;
+      padding: 1.25rem;
       border: 1px solid var(--border);
     }
 
     .skel-line {
       height: 16px;
       border-radius: 8px;
-      background: linear-gradient(90deg, #ECEBE6 25%, #F7F6F2 50%, #ECEBE6 75%);
+      background: linear-gradient(90deg, #EDE8DF 25%, #F7F4EE 50%, #EDE8DF 75%);
       background-size: 200% 100%;
       animation: shimmer 1.2s infinite;
-      margin-bottom: 0.7rem;
+      margin-bottom: 0.75rem;
     }
 
     @keyframes shimmer {
@@ -799,30 +1017,47 @@
   </style>
 </head>
 <body>
-  <!-- Ultra-Slim Top Header -->
+  <!-- Sticky Editorial Header -->
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand-logo" aria-label="Feast">
-        <span class="brand-text">Feas</span><svg class="brand-t" viewBox="0 0 22 28" aria-hidden="true">
-          <!-- Red vertical stem of the 't' -->
-          <path d="M9.2 3.2 V20.2 C9.2 22.6 10.6 23.8 13.0 23.8 C14.3 23.8 15.4 23.5 16.2 23.1" fill="none" stroke="#EF4444" stroke-width="3.7" stroke-linecap="round"/>
-          <!-- Little green leaf forming the '-' crossbar of the 't' -->
-          <path d="M3.2 11.2 C6.4 7.4 13.6 7.2 19.0 10.5 C14.7 14.3 7.6 14.4 3.2 11.2 Z" fill="#22C55E"/>
-          <path d="M5.0 11.1 Q11.2 10.3 17.3 10.6" fill="none" stroke="#15803D" stroke-width="1.15" stroke-linecap="round"/>
+        <span class="brand-text">Feas</span><svg class="brand-t" viewBox="0 0 26 32" aria-hidden="true">
+          <!-- Terracotta 't' stem & clean horizontal crossbar -->
+          <path d="M11.2 11.5 V23.8 C11.2 26.2 12.6 27.4 15.0 27.4 C16.3 27.4 17.4 27.1 18.2 26.7" fill="none" stroke="#E05648" stroke-width="3.8" stroke-linecap="round"/>
+          <line x1="6.2" y1="14.2" x2="18.5" y2="14.2" stroke="#E05648" stroke-width="3.6" stroke-linecap="round"/>
+          <!-- Left solid emerald leaf sprouting above the crossbar -->
+          <path d="M11.0 11.8 C6.8 11.6 3.5 8.8 3.6 5.2 C7.3 5.0 10.6 7.8 11.0 11.8 Z" fill="#1D8A5A"/>
+          <!-- Right solid emerald leaf sprouting above the crossbar -->
+          <path d="M12.2 11.8 C12.8 7.5 16.5 4.4 20.6 4.7 C20.4 8.6 16.8 11.6 12.2 11.8 Z" fill="#1D8A5A"/>
         </svg>
       </div>
 
-      <button type="button" class="status-chip" id="open_time_sheet" title="Tap to change meal time">
-        <span id="status_text">Loading live...</span>
-      </button>
+      <div class="top-actions">
+        <button type="button" class="fav-pill-btn" id="open_favs_btn" title="Saved Go-To Plates">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span id="fav_count_label">Saved</span>
+        </button>
+
+        <button type="button" class="status-chip" id="open_time_sheet" title="Tap to change meal time">
+          <span id="status_text">Loading live...</span>
+        </button>
+      </div>
     </div>
   </header>
 
   <main>
-    <!-- Active Filters / DRI Indicator Strip -->
+    <!-- Time-Aware Campus Greeting -->
+    <section class="greeting-banner">
+      <h1 class="greeting-title" id="greeting_title">Finding what’s fresh on campus...</h1>
+      <p class="greeting-sub" id="greeting_sub">Curating cohesive plates from live dining court lines.</p>
+    </section>
+
+    <!-- Active Filters Indicator Strip -->
     <div class="active-pills-row" id="active_pills_row"></div>
 
-    <!-- Validation / Error Banner -->
+    <!-- Validation / Friendly Notice Banner -->
     <div id="validation_banner" class="alert-box" style="display:none;"></div>
 
     <!-- Main Recommendation Feed -->
@@ -830,13 +1065,13 @@
       <div class="skeleton-card">
         <div class="skel-line" style="width:35%;"></div>
         <div class="skel-line" style="width:65%; height:28px;"></div>
-        <div class="skel-line" style="width:100%; height:48px; margin-top:1rem;"></div>
-        <div class="skel-line" style="width:100%; height:48px;"></div>
+        <div class="skel-line" style="width:100%; height:50px; margin-top:1rem;"></div>
+        <div class="skel-line" style="width:100%; height:50px;"></div>
       </div>
     </div>
   </main>
 
-  <!-- Floating Gemini-Style Bottom Pill + Side Filter Button -->
+  <!-- Floating Frosted Bottom Pill + Side Filter Button -->
   <nav class="floating-dock" aria-label="Meal Mode and Filters">
     <div class="dock-inner">
       <div class="floating-pill" role="radiogroup" aria-label="Meal Style Mode">
@@ -862,23 +1097,34 @@
     </div>
   </nav>
 
-  <!-- Slide-In Side Drawer for Allergies, DRI Biometrics & Time -->
+  <!-- Slide-In Side Drawer -->
   <div class="sheet-backdrop" id="sheet_backdrop"></div>
-  <aside class="side-drawer" id="control_sheet" aria-modal="true" role="dialog" aria-label="Filters and Preferences">
+  <aside class="side-drawer" id="control_sheet" aria-modal="true" role="dialog" aria-label="Filters, Saved Plates, and Feedback">
     <div class="sheet-header">
-      <h2>Filters &amp; Portions</h2>
+      <h2>Your Dining Preferences</h2>
       <button type="button" class="done-btn" id="close_sheet_btn">Done</button>
     </div>
 
     <div id="sheet_validation" class="alert-box" style="display:none;"></div>
 
-    <!-- 1. Allergies & Dietary -->
+    <!-- 0. Saved Go-To Plates -->
+    <div class="sheet-section" id="saved_plates_section" style="display:none;">
+      <div class="sec-head">
+        <span class="sec-title">My Go-To Plates</span>
+        <button type="button" class="clear-link" id="clear_favs_btn">Clear</button>
+      </div>
+      <div class="fav-list" id="saved_plates_list"></div>
+    </div>
+
+    <!-- 1. Allergies & Dietary (Including Vegan) -->
     <div class="sheet-section">
       <div class="sec-head">
-        <span class="sec-title">Allergies &amp; Dietary</span>
+        <span class="sec-title">Dietary &amp; Allergies</span>
         <button type="button" class="clear-link" id="clear_filters_btn">Clear all</button>
       </div>
       <div class="filter-grid" id="dietary_checkboxes">
+        <label class="pill-check"><input type="checkbox" value="vegetarian" /> Vegetarian</label>
+        <label class="pill-check"><input type="checkbox" value="vegan" /> Vegan</label>
         <label class="pill-check"><input type="checkbox" value="gluten-free" /> Gluten-Free</label>
         <label class="pill-check"><input type="checkbox" value="dairy-free" /> Dairy-Free</label>
         <label class="pill-check"><input type="checkbox" value="egg-free" /> Egg-Free</label>
@@ -886,34 +1132,33 @@
         <label class="pill-check"><input type="checkbox" value="peanut-free" /> Peanut-Free</label>
         <label class="pill-check"><input type="checkbox" value="tree-nut-free" /> Tree-Nut-Free</label>
         <label class="pill-check"><input type="checkbox" value="shellfish-free" /> Shellfish-Free</label>
-        <label class="pill-check"><input type="checkbox" value="vegetarian" /> Vegetarian</label>
       </div>
     </div>
 
     <!-- 2. Quick Bites Locations -->
     <div class="sheet-section">
       <label class="switch-card">
-        <span>Include Quick Bites</span>
+        <span>Include Quick Bites (1bowl, Pete’s Za)</span>
         <input type="checkbox" id="include_quick_bites" />
       </label>
     </div>
 
-    <!-- 3. USDA DRI Biometric Portion Sizing -->
+    <!-- 3. Personalize Meal Goals -->
     <div class="sheet-section">
       <label class="switch-card">
-        <span>Personalize Portions (DRI)</span>
+        <span>Tailor Plates to My Goals</span>
         <input type="checkbox" id="dri_toggle" />
       </label>
 
       <div class="bio-box" id="dri_drawer">
         <div class="sec-head">
-          <span class="sec-title">Your Body &amp; Targets</span>
+          <span class="sec-title">Your Body &amp; Goal</span>
           <button type="button" class="clear-link" id="clear_biometrics_btn">Reset</button>
         </div>
 
         <div class="bio-grid">
           <div class="field full">
-            <label for="meal_goal">Nutrition Goal</label>
+            <label for="meal_goal">Dining Focus</label>
             <select id="meal_goal">
               <option value="Balanced Maintenance">Balanced Maintenance</option>
               <option value="High Protein / Muscle Gain">High Protein / Muscle Gain</option>
@@ -993,25 +1238,45 @@
           </div>
         </div>
 
-        <button type="button" class="apply-btn" id="calculate_dri_btn">Apply Portions</button>
+        <button type="button" class="apply-btn" id="calculate_dri_btn">Apply Goal</button>
       </div>
     </div>
 
-    <!-- 4. Campus Clock Override -->
-    <div class="sheet-section" style="margin-bottom:0;">
+    <!-- 4. Check Another Time -->
+    <div class="sheet-section">
       <div class="sec-head">
         <span class="sec-title">Check Another Time</span>
         <button type="button" class="clear-link" id="reset_time_btn">Use NOW</button>
       </div>
       <div class="time-row">
-        <input type="text" id="sim_time" placeholder="e.g. 12:30 PM or 18:00" />
+        <input type="text" id="sim_time" placeholder="e.g. 12:30 PM or 6:00 PM" />
         <button type="button" id="apply_time_btn">Set</button>
+      </div>
+    </div>
+
+    <!-- 5. Send Feedback -->
+    <div class="sheet-section" style="margin-bottom:0;">
+      <div class="sec-head">
+        <span class="sec-title">Send Feedback</span>
+      </div>
+      <div class="feedback-card">
+        <div class="fb-chips" id="fb_category_chips">
+          <button type="button" class="fb-chip active" data-cat="Dish Request">Dish Request</button>
+          <button type="button" class="fb-chip" data-cat="Meal Pairing">Meal Pairing</button>
+          <button type="button" class="fb-chip" data-cat="Bug Report">Bug Report</button>
+          <button type="button" class="fb-chip" data-cat="Idea">Idea</button>
+        </div>
+        <textarea class="fb-textarea" id="fb_message" placeholder="Tell us what meals you'd love to see or how we can make Feast better..."></textarea>
+        <input type="text" class="fb-input" id="fb_contact" placeholder="Optional: your email or @handle" />
+        <button type="button" class="fb-submit-btn" id="fb_submit_btn">Send Note</button>
+        <div class="fb-status" id="fb_status"></div>
       </div>
     </div>
   </aside>
 
   <script>
-    const STORAGE_KEY = 'purdue_dining_optimizer_prefs_v2';
+    const STORAGE_KEY = 'feast_dining_prefs_v4';
+    const FAVS_KEY = 'feast_saved_plates_v1';
 
     const state = {
       health_intensity: 'High',
@@ -1029,25 +1294,103 @@
       sim_time: ''
     };
 
+    let currentRecommendations = [];
+    let selectedComboIndexByLoc = {};
+    let savedPlates = [];
+    let feedbackCategory = 'Dish Request';
+
     function loadPreferences() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
-        const saved = JSON.parse(raw);
-        Object.assign(state, saved);
-        state.sim_time = '';
-      } catch (e) {
-        console.warn('Could not read saved preferences:', e);
-      }
+        if (raw) {
+          Object.assign(state, JSON.parse(raw));
+          state.sim_time = '';
+        }
+        const favRaw = localStorage.getItem(FAVS_KEY);
+        if (favRaw) {
+          savedPlates = JSON.parse(favRaw) || [];
+        }
+      } catch (e) {}
     }
 
     function savePreferences() {
       try {
         const toSave = { ...state, sim_time: '' };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-      } catch (e) {
-        console.warn('Could not save preferences:', e);
+      } catch (e) {}
+    }
+
+    function saveFavoritesToStorage() {
+      try {
+        localStorage.setItem(FAVS_KEY, JSON.stringify(savedPlates));
+      } catch (e) {}
+      renderSavedPlatesUI();
+    }
+
+    function isComboSaved(location, comboName) {
+      return savedPlates.some(p => p.location === location && p.combo_name === comboName);
+    }
+
+    function toggleSaveCombo(locIndex) {
+      const rec = currentRecommendations[locIndex];
+      if (!rec) return;
+      const comboIdx = selectedComboIndexByLoc[rec.location] || 0;
+      const combo = (rec.combos && rec.combos[comboIdx]) || {
+        combo_name: 'Chef Plate',
+        items: rec.items,
+        totals: rec.totals
+      };
+
+      const existingIdx = savedPlates.findIndex(
+        p => p.location === rec.location && p.combo_name === combo.combo_name
+      );
+
+      if (existingIdx >= 0) {
+        savedPlates.splice(existingIdx, 1);
+      } else {
+        savedPlates.unshift({
+          location: rec.location,
+          combo_name: combo.combo_name,
+          items: combo.items.map(i => i.name),
+          calories: Math.round(combo.totals.calories),
+          protein: Math.round(combo.totals.protein)
+        });
+        if (savedPlates.length > 12) savedPlates.pop();
       }
+
+      saveFavoritesToStorage();
+      renderCardsOnly();
+    }
+
+    function removeSavedPlate(idx) {
+      savedPlates.splice(idx, 1);
+      saveFavoritesToStorage();
+      renderCardsOnly();
+    }
+
+    function renderSavedPlatesUI() {
+      const countEl = document.getElementById('fav_count_label');
+      const secEl = document.getElementById('saved_plates_section');
+      const listEl = document.getElementById('saved_plates_list');
+
+      countEl.textContent = savedPlates.length > 0 ? `Saved (${savedPlates.length})` : 'Saved';
+
+      if (savedPlates.length === 0) {
+        secEl.style.display = 'none';
+        listEl.innerHTML = '';
+        return;
+      }
+
+      secEl.style.display = 'block';
+      listEl.innerHTML = savedPlates.map((p, idx) => `
+        <div class="fav-item-card">
+          <div>
+            <div class="fav-item-title">${escapeHtml(p.location)} &bull; ${escapeHtml(p.combo_name)}</div>
+            <div class="fav-item-sub">${escapeHtml(p.items.join(' + '))} (${p.calories} kcal, ${p.protein}g P)</div>
+          </div>
+          <button type="button" class="remove-fav-btn" onclick="removeSavedPlate(${idx})" aria-label="Remove saved plate">&times;</button>
+        </div>
+      `).join('');
     }
 
     function openSheet() {
@@ -1092,7 +1435,7 @@
       const pillsRow = document.getElementById('active_pills_row');
       const pills = [];
       if (state.dri_enabled) {
-        pills.push(`<span class="mini-badge">DRI: ${escapeHtml(state.meal_goal)}</span>`);
+        pills.push(`<span class="mini-badge">Goal: ${escapeHtml(state.meal_goal)}</span>`);
       }
       if (state.include_quick_bites) {
         pills.push(`<span class="mini-badge light">+ Quick Bites</span>`);
@@ -1118,6 +1461,7 @@
       document.getElementById('height_in').value = state.height_in !== '' ? state.height_in : '';
       document.getElementById('activity_level').value = state.activity_level || '';
       document.getElementById('meals_per_day').value = state.meals_per_day || '';
+      renderSavedPlatesUI();
     }
 
     function readBiometricsFromDOM() {
@@ -1150,7 +1494,6 @@
       mainBox.style.display = 'none';
       sheetBox.style.display = 'none';
       if (!msg) return;
-
       const target = inSheet ? sheetBox : mainBox;
       target.textContent = msg;
       target.style.display = 'block';
@@ -1164,81 +1507,70 @@
         .replace(/"/g, '&quot;');
     }
 
-    function formatRoleBadge(rawRole) {
-      const lower = String(rawRole || '').toLowerCase();
-      if (lower.includes('protein')) return { cls: 'protein', label: 'PROTEIN' };
-      if (lower.includes('carb') || lower.includes('grain')) return { cls: 'carb', label: 'CARB' };
-      return { cls: 'side', label: 'SIDE' };
+    function switchLocationCombo(location, comboIdx) {
+      selectedComboIndexByLoc[location] = comboIdx;
+      renderCardsOnly();
     }
 
-    function renderMacroProgress(totals, perMeal) {
-      if (!perMeal) return '';
-      const metrics = [
-        { label: 'Calories', val: totals.calories, target: perMeal.calories, unit: '' },
-        { label: 'Protein', val: totals.protein, target: perMeal.protein_target, unit: 'g' },
-        { label: 'Carbs', val: totals.carbs, target: perMeal.carbs_target, unit: 'g' },
-        { label: 'Fat', val: totals.fat, target: perMeal.fat_target, unit: 'g' },
-      ];
-
-      const bars = metrics.map(m => {
-        const pct = Math.min(100, Math.round((m.val / Math.max(m.target, 1)) * 100));
-        const isHit = pct >= 80 && pct <= 120;
-        return `
-          <div>
-            <div class="bar-head">
-              <span>${m.label}</span>
-              <span>${Math.round(m.val)}${m.unit} / ${Math.round(m.target)}${m.unit}</span>
-            </div>
-            <div class="bar-track">
-              <div class="bar-fill ${isHit ? 'hit' : ''}" style="width:${pct}%"></div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      return `<div class="dri-bars">${bars}</div>`;
-    }
-
-    function renderRecommendations(data) {
+    function renderCardsOnly() {
       const resultsEl = document.getElementById('results_container');
-      const statusEl = document.getElementById('status_text');
+      const recs = currentRecommendations || [];
 
-      const timePart = (data.timestamp || '').split(' ').slice(1).join(' ') || 'NOW';
-      statusEl.innerHTML = `<strong>${escapeHtml(timePart)}</strong> &bull; ${data.open_locations_count} Open`;
-
-      const recs = data.recommendations || [];
       if (recs.length === 0) {
         resultsEl.innerHTML = `
           <article class="rec-card">
             <div class="hero-head">
-              <h2 class="court-name" style="font-size:1.3rem;">No Matching Plates Open</h2>
+              <h2 class="court-name" style="font-size:1.3rem;">Kitchen lines are taking a breather</h2>
+              <p style="font-size:0.86rem; color:#D6D1C7; margin-top:0.35rem;">
+                No open plates matched those exact filters right now. Try loosening a dietary filter or checking another meal time!
+              </p>
             </div>
           </article>
         `;
         return;
       }
 
-      const perMeal = data.dri_enabled && data.targets ? data.targets.per_meal : null;
-
       resultsEl.innerHTML = recs.map((rec, idx) => {
         const isFirst = idx === 0;
-        const rankLabel = isFirst ? '#1 Best Pick' : `#${idx + 1} Backup`;
+        const combos = (rec.combos && rec.combos.length > 0)
+          ? rec.combos
+          : [{
+              combo_name: 'Signature Plate',
+              station_tag: 'Main Line',
+              vibe_tag: isFirst ? "Chef's Top Pick" : `Option #${idx + 1}`,
+              chef_note: 'Balanced dining court plate curated from live menus.',
+              items: rec.items,
+              totals: rec.totals,
+              macro_split: { protein_pct: 30, carbs_pct: 45, fat_pct: 25 }
+            }];
 
-        const itemsHtml = rec.items.map(it => {
-          const role = formatRoleBadge(it.role);
-          const showMult = data.dri_enabled || (it.servings && it.servings !== 1);
-          const multBadge = showMult ? `<span class="mult-tag">${it.servings}x</span>` : '';
+        const activeComboIdx = Math.min(selectedComboIndexByLoc[rec.location] || 0, combos.length - 1);
+        const combo = combos[activeComboIdx];
+        const saved = isComboSaved(rec.location, combo.combo_name);
+
+        const comboTabsHtml = combos.length > 1
+          ? `<div class="combo-switcher">
+              ${combos.map((c, cIdx) => `
+                <button type="button"
+                  class="combo-tab ${cIdx === activeComboIdx ? 'active' : ''}"
+                  onclick="switchLocationCombo('${escapeHtml(rec.location)}', ${cIdx})">
+                  ${cIdx === 0 ? 'Chef Pick' : `Option ${cIdx + 1}`}: ${escapeHtml(c.station_tag)}
+                </button>
+              `).join('')}
+            </div>`
+          : '';
+
+        const itemsHtml = combo.items.map(it => {
           const allergenStr = (it.allergens && it.allergens.length > 0)
             ? `Contains: ${it.allergens.join(', ')}`
             : 'No major allergens flagged';
 
           return `
-            <div class="menu-row" onclick="this.classList.toggle('expanded')" role="button" tabindex="0" aria-label="Tap for ${escapeHtml(it.name)} details">
+            <div class="menu-row" onclick="this.classList.toggle('expanded')" role="button" tabindex="0">
               <div class="menu-row-main">
                 <div class="menu-left">
                   <div class="tag-line">
-                    <span class="role-tag ${role.cls}">${role.label}</span>
-                    ${multBadge}
+                    <span class="station-pill">${escapeHtml(it.station)}</span>
                   </div>
                   <div class="food-title">${escapeHtml(it.name)}</div>
                 </div>
@@ -1253,38 +1585,86 @@
                 </div>
               </div>
               <div class="item-details">
-                <div class="detail-grid">
-                  <span>Station: ${escapeHtml(it.station)}</span>
-                  <span>${it.protein}g P &bull; ${it.carbs}g C &bull; ${it.fat}g F</span>
-                </div>
-                <div>${escapeHtml(it.reason)} &bull; ${escapeHtml(allergenStr)}</div>
+                <div><strong>${Math.round(it.protein)}g Protein</strong> &bull; ${Math.round(it.carbs)}g Carbs &bull; ${Math.round(it.fat)}g Fat</div>
+                <div style="margin-top:0.2rem;">${escapeHtml(it.reason)} &bull; ${escapeHtml(allergenStr)}</div>
               </div>
             </div>
           `;
         }).join('');
 
+        const split = combo.macro_split || { protein_pct: 30, carbs_pct: 45, fat_pct: 25 };
+
         return `
           <article class="rec-card ${isFirst ? 'rank-1' : ''}">
             <div class="hero-head">
               <div class="hero-top-row">
-                <span class="rank-pill">${rankLabel}</span>
+                <span class="rank-pill">${isFirst ? "Chef's Top Pick" : `#${idx + 1} Spot`}</span>
                 <span class="live-hours"><span class="pulse-dot"></span>${escapeHtml(rec.hours_status)}</span>
               </div>
-              <h2 class="court-name">${escapeHtml(rec.location)}</h2>
+              <div class="court-title-row">
+                <h2 class="court-name">${escapeHtml(rec.location)}</h2>
+                <button type="button"
+                  class="bookmark-btn ${saved ? 'saved' : ''}"
+                  onclick="toggleSaveCombo(${idx})"
+                  title="${saved ? 'Saved to Go-To Plates' : 'Save Plate'}"
+                  aria-label="Save plate">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="${saved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            ${comboTabsHtml}
+
+            <div class="combo-banner">
+              <div class="combo-name">${escapeHtml(combo.combo_name)}</div>
+              <div class="chef-note">${escapeHtml(combo.chef_note)}</div>
             </div>
 
             <div class="plate-board">${itemsHtml}</div>
 
             <div class="plate-footer">
-              <div class="totals-row">
-                <span>Plate Total: ${Math.round(rec.totals.calories)} kcal</span>
-                <span class="totals-macros">${Math.round(rec.totals.protein)}g P &bull; ${Math.round(rec.totals.carbs)}g C &bull; ${Math.round(rec.totals.fat)}g F</span>
+              <div class="totals-header">
+                <span class="cal-pill">${Math.round(combo.totals.calories)} kcal</span>
+                <div class="macro-pills">
+                  <span class="m-pill">${Math.round(combo.totals.protein)}g Protein</span>
+                  <span class="m-pill">${Math.round(combo.totals.carbs)}g Carbs</span>
+                  <span class="m-pill">${Math.round(combo.totals.fat)}g Fat</span>
+                </div>
               </div>
-              ${renderMacroProgress(rec.totals, perMeal)}
+
+              <div class="split-bar-track" aria-label="Macro balance">
+                <div class="split-seg-p" style="width:${split.protein_pct}%"></div>
+                <div class="split-seg-c" style="width:${split.carbs_pct}%"></div>
+                <div class="split-seg-f" style="width:${split.fat_pct}%"></div>
+              </div>
+              <div class="split-legend">
+                <span><i class="legend-dot" style="background:var(--obsidian)"></i>Protein ${split.protein_pct}%</span>
+                <span><i class="legend-dot" style="background:var(--terracotta)"></i>Carbs ${split.carbs_pct}%</span>
+                <span><i class="legend-dot" style="background:var(--leaf)"></i>Fat ${split.fat_pct}%</span>
+              </div>
             </div>
           </article>
         `;
       }).join('');
+    }
+
+    function renderRecommendations(data) {
+      const statusEl = document.getElementById('status_text');
+      const timePart = (data.timestamp || '').split(' ').slice(1).join(' ') || 'NOW';
+      statusEl.innerHTML = `<strong>${escapeHtml(timePart)}</strong> &bull; ${data.open_locations_count} Open`;
+
+      if (data.greeting_title) {
+        document.getElementById('greeting_title').textContent = data.greeting_title;
+      }
+      if (data.greeting_sub) {
+        document.getElementById('greeting_sub').textContent = data.greeting_sub;
+      }
+
+      currentRecommendations = data.recommendations || [];
+      selectedComboIndexByLoc = {};
+      renderCardsOnly();
     }
 
     async function fetchRecommendations() {
@@ -1305,7 +1685,7 @@
         if (missing.length > 0) {
           openSheet();
           document.getElementById('dri_drawer').classList.add('open');
-          showValidation(`Enter ${missing.join(', ')} and tap "Apply Portions".`, true);
+          showValidation(`Enter ${missing.join(', ')} and tap "Apply Goal".`, true);
           return;
         }
         const totalInches = (parseInt(state.height_ft, 10) * 12) + parseInt(state.height_in, 10);
@@ -1318,7 +1698,7 @@
         payload.meals_per_day = parseInt(state.meals_per_day, 10);
       }
 
-      document.getElementById('status_text').textContent = 'Updating...';
+      document.getElementById('status_text').textContent = 'Curating...';
 
       try {
         const res = await fetch('/api/recommend', {
@@ -1328,12 +1708,61 @@
         });
         const data = await res.json();
         if (!res.ok) {
-          showValidation(data.error || 'Could not load recommendations.');
+          showValidation(data.error || 'Could not load dining menus.');
           return;
         }
         renderRecommendations(data);
       } catch (err) {
-        showValidation('Network error connecting to Purdue menus.');
+        showValidation('Network hiccup connecting to campus menus.');
+      }
+    }
+
+    async function submitFeedback() {
+      const msgEl = document.getElementById('fb_message');
+      const contactEl = document.getElementById('fb_contact');
+      const statusEl = document.getElementById('fb_status');
+      const btn = document.getElementById('fb_submit_btn');
+
+      const message = msgEl.value.trim();
+      if (!message) {
+        statusEl.style.color = 'var(--terracotta-dark)';
+        statusEl.textContent = 'Write a quick note first!';
+        statusEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        const res = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            category: feedbackCategory,
+            message: message,
+            contact: contactEl.value.trim()
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msgEl.value = '';
+          contactEl.value = '';
+          statusEl.style.color = 'var(--leaf)';
+          statusEl.textContent = data.message || 'Sent to the Feast team — thank you!';
+          statusEl.style.display = 'block';
+        } else {
+          statusEl.style.color = 'var(--terracotta-dark)';
+          statusEl.textContent = data.error || 'Could not send feedback.';
+          statusEl.style.display = 'block';
+        }
+      } catch (e) {
+        statusEl.style.color = 'var(--terracotta-dark)';
+        statusEl.textContent = 'Network error sending note.';
+        statusEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Note';
       }
     }
 
@@ -1351,8 +1780,15 @@
 
       document.getElementById('open_sheet_btn').addEventListener('click', openSheet);
       document.getElementById('open_time_sheet').addEventListener('click', openSheet);
+      document.getElementById('open_favs_btn').addEventListener('click', openSheet);
       document.getElementById('close_sheet_btn').addEventListener('click', closeSheet);
       document.getElementById('sheet_backdrop').addEventListener('click', closeSheet);
+
+      document.getElementById('clear_favs_btn').addEventListener('click', () => {
+        savedPlates = [];
+        saveFavoritesToStorage();
+        renderCardsOnly();
+      });
 
       document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
@@ -1388,7 +1824,7 @@
           if (missing.length === 0) {
             fetchRecommendations();
           } else {
-            showValidation(`Enter ${missing.join(', ')} to size portions.`, true);
+            showValidation(`Enter ${missing.join(', ')} to tailor plates.`, true);
           }
         }
       });
@@ -1412,7 +1848,7 @@
         state.meal_goal = 'Balanced Maintenance';
         syncUIToState();
         savePreferences();
-        showValidation('Stats cleared. Fill in your fields to recalculate.', true);
+        showValidation('Stats cleared. Fill in your fields to tailor plates.', true);
       });
 
       ['meal_goal', 'sex', 'age', 'weight_lbs', 'height_ft', 'height_in', 'activity_level', 'meals_per_day'].forEach(id => {
@@ -1432,6 +1868,16 @@
         closeSheet();
         fetchRecommendations();
       });
+
+      document.querySelectorAll('#fb_category_chips .fb-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('#fb_category_chips .fb-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          feedbackCategory = chip.dataset.cat;
+        });
+      });
+
+      document.getElementById('fb_submit_btn').addEventListener('click', submitFeedback);
 
       fetchRecommendations();
     });
