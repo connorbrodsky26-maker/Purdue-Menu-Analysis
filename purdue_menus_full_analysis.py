@@ -30,40 +30,7 @@ DEFAULT_MEAL_WINDOWS = {
     'dinner': ('17:00:00', '20:30:00'),
 }
 
-# Hardcoded USDA per-serving macro estimates for custom/self-serve staples
 FALLBACK_MACROS = {
-    'hard-boiled egg': {
-        'calories': 155.0, 'protein': 12.6, 'carbs': 1.1, 'fat': 10.6, 'sugar': 1.1,
-        'ingredients': 'Hard-Boiled Eggs (2 large)'
-    },
-    'hard-boiled eggs': {
-        'calories': 155.0, 'protein': 12.6, 'carbs': 1.1, 'fat': 10.6, 'sugar': 1.1,
-        'ingredients': 'Hard-Boiled Eggs (2 large)'
-    },
-    'garbanzo beans': {
-        'calories': 135.0, 'protein': 7.3, 'carbs': 22.5, 'fat': 2.1, 'sugar': 4.0,
-        'ingredients': 'Garbanzo Beans, Water, Salt (1/2 cup)'
-    },
-    'chickpeas': {
-        'calories': 135.0, 'protein': 7.3, 'carbs': 22.5, 'fat': 2.1, 'sugar': 4.0,
-        'ingredients': 'Chickpeas, Water, Salt (1/2 cup)'
-    },
-    'extra virgin olive oil': {
-        'calories': 119.0, 'protein': 0.0, 'carbs': 0.0, 'fat': 13.5, 'sugar': 0.0,
-        'ingredients': 'Extra Virgin Olive Oil (1 tbsp)'
-    },
-    'olive oil': {
-        'calories': 119.0, 'protein': 0.0, 'carbs': 0.0, 'fat': 13.5, 'sugar': 0.0,
-        'ingredients': 'Extra Virgin Olive Oil (1 tbsp)'
-    },
-    'fresh spinach': {
-        'calories': 14.0, 'protein': 1.7, 'carbs': 2.2, 'fat': 0.2, 'sugar': 0.3,
-        'ingredients': 'Fresh Spinach Leaves (2 cups)'
-    },
-    'leafy greens': {
-        'calories': 15.0, 'protein': 1.5, 'carbs': 2.5, 'fat': 0.2, 'sugar': 0.4,
-        'ingredients': 'Mixed Leafy Greens (2 cups)'
-    },
     'plain white rice': {
         'calories': 205.0, 'protein': 4.3, 'carbs': 44.5, 'fat': 0.4, 'sugar': 0.1,
         'ingredients': 'Long Grain White Rice, Water (1 cup cooked)'
@@ -95,7 +62,25 @@ FALLBACK_MACROS = {
 }
 
 ORDERED_KEYWORD_MACROS = [
-    # 1. Desserts, pastries, and baked sweets
+    # 1. Standalone buns, breads, and bakery items (must come BEFORE hamburger/hot dog/sausage!)
+    ('hamburger bun', (130.0, 4.0, 24.0, 2.0, 3.0)),
+    ('hot dog bun', (120.0, 4.0, 22.0, 2.0, 3.0)),
+    ('brioche bun', (150.0, 4.5, 26.0, 3.0, 4.0)),
+    ('sub roll', (180.0, 6.0, 34.0, 2.0, 3.0)),
+    ('hoagie roll', (180.0, 6.0, 34.0, 2.0, 3.0)),
+    ('dinner roll', (110.0, 3.5, 20.0, 2.0, 2.0)),
+    ('english muffin', (130.0, 5.0, 25.0, 1.0, 2.0)),
+    ('bagel', (250.0, 9.0, 48.0, 1.5, 5.0)),
+    ('croissant', (230.0, 5.0, 26.0, 12.0, 6.0)),
+    ('biscuit', (210.0, 4.0, 25.0, 10.0, 3.0)),
+    ('pita', (165.0, 5.5, 33.0, 1.0, 1.0)),
+    ('naan', (260.0, 8.0, 45.0, 5.0, 3.0)),
+    ('tortilla', (140.0, 4.0, 24.0, 3.0, 1.0)),
+    ('bread', (140.0, 5.0, 26.0, 2.0, 3.0)),
+    ('bun', (130.0, 4.0, 24.0, 2.0, 3.0)),
+    ('roll', (130.0, 4.0, 24.0, 2.0, 2.0)),
+
+    # 2. Desserts, pastries, and baked sweets
     ('apple pie', (320.0, 2.5, 46.0, 14.0, 24.0)),
     ('peach cobbler', (310.0, 3.0, 48.0, 12.0, 26.0)),
     ('cherry pie', (325.0, 2.5, 47.0, 14.5, 25.0)),
@@ -109,7 +94,7 @@ ORDERED_KEYWORD_MACROS = [
     ('ice cream', (230.0, 4.0, 28.0, 12.0, 22.0)),
     ('pudding', (180.0, 3.0, 30.0, 5.0, 20.0)),
 
-    # 2. Dips, sauces, and spreads
+    # 3. Dips, sauces, and spreads
     ('queso dip', (220.0, 8.0, 10.0, 16.0, 2.0)),
     ('queso', (210.0, 8.0, 9.0, 16.0, 2.0)),
     ('spinach dip', (230.0, 6.0, 11.0, 18.0, 2.0)),
@@ -117,7 +102,7 @@ ORDERED_KEYWORD_MACROS = [
     ('gravy', (90.0, 2.0, 8.0, 5.5, 1.0)),
     ('sauce', (80.0, 1.5, 10.0, 4.0, 5.0)),
 
-    # 3. Composite sandwiches, bowls, stir-fries, and dressed salads
+    # 4. Composite sandwiches, bowls, stir-fries, and dressed salads
     ('banh mi', (490.0, 24.0, 56.0, 17.0, 7.0)),
     ('burrito', (540.0, 24.0, 62.0, 20.0, 4.0)),
     ('quesadilla', (460.0, 22.0, 38.0, 24.0, 3.0)),
@@ -139,11 +124,7 @@ ORDERED_KEYWORD_MACROS = [
     ('egg salad', (280.0, 14.0, 6.0, 22.0, 3.0)),
     ('potato salad', (220.0, 4.0, 26.0, 11.0, 5.0)),
 
-    # 4. Single whole-food fats and proteins
-    ('extra virgin olive oil', (119.0, 0.0, 0.0, 13.5, 0.0)),
-    ('olive oil', (119.0, 0.0, 0.0, 13.5, 0.0)),
-    ('hard-boiled egg', (155.0, 12.6, 1.1, 10.6, 1.1)),
-    ('hard boiled egg', (155.0, 12.6, 1.1, 10.6, 1.1)),
+    # 5. Single proteins
     ('scrambled egg', (180.0, 12.0, 2.0, 13.5, 1.0)),
     ('egg', (155.0, 12.5, 1.1, 10.6, 1.0)),
     ('grilled chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
@@ -152,6 +133,7 @@ ORDERED_KEYWORD_MACROS = [
     ('turkey', (200.0, 28.0, 1.0, 8.0, 0.5)),
     ('carne asada', (250.0, 27.0, 2.0, 14.0, 0.5)),
     ('steak', (265.0, 29.0, 0.0, 16.0, 0.0)),
+    ('hamburger patty', (250.0, 26.0, 1.0, 15.0, 0.0)),
     ('hamburger', (250.0, 26.0, 1.0, 15.0, 0.0)),
     ('ground beef', (250.0, 26.0, 1.0, 15.0, 0.0)),
     ('beef', (250.0, 26.0, 1.5, 15.0, 0.5)),
@@ -168,7 +150,7 @@ ORDERED_KEYWORD_MACROS = [
     ('tofu', (160.0, 16.0, 4.0, 9.0, 1.0)),
     ('paneer', (260.0, 18.0, 4.0, 20.0, 2.0)),
 
-    # 5. Legumes, grains, and complex carbohydrates
+    # 6. Legumes, grains, and complex carbohydrates
     ('garbanzo', (135.0, 7.3, 22.5, 2.1, 4.0)),
     ('chickpea', (135.0, 7.3, 22.5, 2.1, 4.0)),
     ('black bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
@@ -188,11 +170,8 @@ ORDERED_KEYWORD_MACROS = [
     ('noodle', (210.0, 7.0, 42.0, 1.2, 1.5)),
     ('oatmeal', (160.0, 5.5, 28.0, 3.0, 1.0)),
     ('oat', (160.0, 5.5, 28.0, 3.0, 1.0)),
-    ('tortilla', (140.0, 4.0, 24.0, 3.0, 1.0)),
-    ('bread', (140.0, 5.0, 26.0, 2.0, 3.0)),
-    ('roll', (140.0, 4.5, 26.0, 2.0, 3.0)),
 
-    # 6. Vegetables and whole fruits
+    # 7. Vegetables and whole fruits
     ('spinach', (15.0, 1.7, 2.2, 0.2, 0.3)),
     ('leafy greens', (15.0, 1.5, 2.5, 0.2, 0.4)),
     ('greens', (15.0, 1.5, 2.5, 0.2, 0.4)),
@@ -248,18 +227,32 @@ DESSERT_KEYWORDS = [
     'ice cream', 'donut', 'muffin', 'pastry', 'tart', 'cupcake', 'gelato'
 ]
 DIP_SAUCE_KEYWORDS = [
-    'dip', 'queso', 'salsa', 'gravy', 'dressing', 'mayonnaise', 'aioli'
+    'dip', 'queso', 'salsa', 'guacamole', 'hummus', 'tzatziki',
+    'gravy', 'dressing', 'ranch', 'vinaigrette', 'mayonnaise', 'mayo',
+    'aioli', 'ketchup', 'mustard', 'bbq sauce', 'hot sauce', 'soy sauce',
+    'teriyaki sauce', 'marinara', 'alfredo sauce', 'pesto', 'tartar sauce',
+    'cocktail sauce', 'sour cream', 'cream cheese', 'spread', 'chutney',
+    'relish', 'au jus', 'syrup', 'jam', 'jelly', 'condiment', 'topping'
+]
+STANDALONE_BAKERY_KEYWORDS = [
+    'bun', 'buns', 'bread', 'roll', 'rolls', 'bagel', 'tortilla', 'pita',
+    'naan', 'croissant', 'biscuit', 'toast', 'english muffin', 'flatbread',
+    'focaccia', 'ciabatta', 'brioche', 'breadstick', 'crackers', 'chips',
+    'crouton', 'panko'
+]
+FILLED_ENTREE_OVERRIDES = [
+    'burger', 'cheeseburger', 'sandwich', 'panini', 'wrap', 'burrito',
+    'quesadilla', 'taco', 'gyro', 'sub', 'hoagie', 'pizza', 'calzone',
+    'french toast', 'avocado toast'
 ]
 
 VERIFIED_NA_WHOLE_FOODS = [
     'plain white rice', 'long grain rice', 'jasmine rice', 'basmati rice',
     'plain brown rice', 'brown rice', 'steamed rice', 'steamed white rice',
     'steamed brown rice', 'baked potato', 'plain potato', 'baked sweet potato',
-    'sweet potato', 'hard-boiled egg', 'hard boiled egg', 'hard-boiled eggs',
-    'steamed broccoli', 'steamed vegetables', 'fresh spinach', 'leafy greens',
+    'sweet potato', 'steamed broccoli', 'steamed vegetables',
     'garbanzo beans', 'chickpeas', 'black beans', 'kidney beans',
-    'extra virgin olive oil', 'olive oil', 'plain grilled chicken breast',
-    'grilled chicken breast'
+    'plain grilled chicken breast', 'grilled chicken breast'
 ]
 
 SPECIAL_ORDER_STATION_MARKERS = [
@@ -306,10 +299,6 @@ def _parse_numeric_value(raw_val) -> float:
 
 
 def _extract_allergens_and_diet(detail_data: Optional[dict]) -> tuple[list[str], Optional[bool], Optional[bool]]:
-    """
-    Extracts normalized allergen names, vegetarian status, and vegan status
-    from a Purdue HFS item detail payload.
-    """
     if not detail_data:
         return [], None, None
 
@@ -358,18 +347,9 @@ def _match_fallback_macro(item_name: str) -> Optional[dict]:
 
 
 def _unpack_composite_items(base_item: dict) -> list[dict]:
-    station_lower = base_item['station'].lower()
-    name_lower = base_item['name'].lower().strip()
-    ingredients_lower = (base_item['ingredients'] or '').lower().strip()
-
-    is_composite = any(
-        kw in station_lower or kw in name_lower
-        for kw in ['salad bar', 'toppings', 'condiments']
-    )
-
-    if not is_composite:
-        return [base_item]
-
+    """
+    Keeps real menu items intact without synthesizing raw DIY salad-bar plates.
+    """
     direct_match = _match_fallback_macro(base_item['name'])
     if direct_match:
         item_copy = dict(base_item)
@@ -383,48 +363,7 @@ def _unpack_composite_items(base_item: dict) -> list[dict]:
                 'used_fallback': True,
             })
         return [item_copy]
-
-    staple_aliases = [
-        ('Fresh Spinach', 'fresh spinach', [], True, True),
-        ('Hard-Boiled Eggs', 'hard-boiled eggs', ['eggs'], True, False),
-        ('Garbanzo Beans', 'garbanzo beans', [], True, True),
-        ('Extra Virgin Olive Oil', 'extra virgin olive oil', [], True, True),
-        ('Plain Grilled Chicken Breast', 'plain grilled chicken breast', [], False, False),
-        ('Plain Brown Rice', 'plain brown rice', [], True, True),
-    ]
-
-    unpacked = []
-    expose_default_bar = (
-        ingredients_lower in ('', 'n/a')
-        and ('salad bar' in name_lower or 'salad bar' in station_lower)
-    )
-
-    for display_name, fallback_key, staple_allergens, staple_veg, staple_vegan in staple_aliases:
-        matched_in_ing = (
-            fallback_key in ingredients_lower or display_name.lower() in ingredients_lower
-        )
-        default_staple = expose_default_bar and fallback_key in {
-            'fresh spinach', 'hard-boiled eggs', 'garbanzo beans', 'extra virgin olive oil'
-        }
-        if matched_in_ing or default_staple:
-            macros = FALLBACK_MACROS[fallback_key]
-            sub_item = dict(base_item)
-            sub_item.update({
-                'name': f"{display_name} ({base_item['name']})",
-                'calories': macros['calories'],
-                'protein': macros['protein'],
-                'carbs': macros['carbs'],
-                'fat': macros['fat'],
-                'sugar': macros['sugar'],
-                'ingredients': macros['ingredients'],
-                'allergens': list(staple_allergens),
-                'is_vegetarian': staple_veg,
-                'is_vegan': staple_vegan,
-                'used_fallback': True,
-            })
-            unpacked.append(sub_item)
-
-    return unpacked if unpacked else [base_item]
+    return [base_item]
 
 
 def hydrate_missing_macros(items: list[dict]) -> list[dict]:
@@ -838,27 +777,27 @@ def _build_time_greeting(now: datetime) -> tuple[str, str]:
     if 5.0 <= hour < 10.5:
         return (
             "Morning fuel, ready.",
-            "Fresh breakfast plates on the lines before morning lectures."
+            "Fresh breakfast plates open across campus right now."
         )
     elif 10.5 <= hour < 14.5:
         return (
             "Between classes?",
-            "Here are the best cohesive plates open right now."
+            "Here are the best meal combinations open right now."
         )
     elif 14.5 <= hour < 17.0:
         return (
             "Afternoon recharge.",
-            "Light midday options and early dinner lines across campus."
+            "Light midday options and early dinner lines."
         )
     elif 17.0 <= hour < 21.0:
         return (
-            "Winding down for dinner.",
-            "Chef-paired plates built from what’s hot on the line tonight."
+            "Dinner lineup.",
+            "Balanced plates built from tonight's open dining courts."
         )
     else:
         return (
             "Late-night study mode.",
-            "Here is the next meal lineup ready when dining courts open."
+            "Here is the next meal lineup ready when courts open."
         )
 
 
@@ -896,7 +835,7 @@ def filter_open_locations(
 
         if start_dt <= now < end_dt:
             updated = dict(item)
-            updated['hours_status'] = f'Serving {meal_period} until {formatted_end}'
+            updated['hours_status'] = f'{meal_period} until {formatted_end}'
             updated['closing_time'] = formatted_end
             open_items.append(updated)
         elif start_dt > now:
@@ -904,10 +843,10 @@ def filter_open_locations(
             updated = dict(item)
             updated['closing_time'] = formatted_end
             if seconds_until_open <= 1800:
-                updated['hours_status'] = f'Opening Soon at {formatted_start}'
+                updated['hours_status'] = f'Opens at {formatted_start}'
                 open_items.append(updated)
             else:
-                updated['hours_status'] = f'Next Meal: {meal_period} ({formatted_start} - {formatted_end})'
+                updated['hours_status'] = f'{meal_period} ({formatted_start}–{formatted_end})'
                 upcoming_items.append((start_dt, updated))
 
     if open_items:
@@ -921,7 +860,7 @@ def filter_open_locations(
 
 
 # ==============================================================================
-# MODULE 4: DIETARY FILTERS (INCLUDING VEGAN) & 3-TIER HEALTH SCORING
+# MODULE 4: DIETARY FILTERS & 3-TIER HEALTH SCORING
 # ==============================================================================
 
 def _is_special_order_item(item: dict) -> bool:
@@ -936,11 +875,6 @@ def _is_special_order_item(item: dict) -> bool:
 
 
 def _passes_dietary_filters(item: dict, dietary_filters: list[str]) -> bool:
-    """
-    Checks an item against selected allergen and dietary filters:
-      gluten-free, dairy-free, egg-free, soy-free, peanut-free,
-      tree-nut-free, shellfish-free, vegetarian, vegan
-    """
     if not dietary_filters:
         return True
 
@@ -1028,16 +962,34 @@ def _is_whole_fruit(name_lower: str) -> bool:
     return any(fr in name_lower for fr in WHOLE_FRUIT_KEYWORDS)
 
 
+def _is_dip_or_condiment(item: dict) -> bool:
+    name_lower = (item.get('name') or '').lower().strip()
+    station_lower = (item.get('station') or '').lower().strip()
+
+    if any(k in station_lower for k in ['condiment', 'topping', 'dressing']):
+        return True
+
+    # Allow actual sandwiches like "French Dip Sandwich"
+    if any(ent in name_lower for ent in ['sandwich', 'panini', 'wrap', 'burrito']):
+        return False
+
+    return any(re.search(rf'\b{re.escape(ds)}s?\b', name_lower) for ds in DIP_SAUCE_KEYWORDS)
+
+
+def _is_standalone_bakery(item: dict) -> bool:
+    name_lower = (item.get('name') or '').lower().strip()
+
+    # Do not flag filled entrees as standalone breads
+    if any(ov in name_lower for ov in FILLED_ENTREE_OVERRIDES):
+        # Exception: "hamburger bun" or "hot dog bun" is strictly a standalone bun
+        if not any(b in name_lower for b in ['bun', 'buns', 'roll', 'rolls', 'bread']):
+            return False
+
+    return any(re.search(rf'\b{re.escape(bk)}\b', name_lower) for bk in STANDALONE_BAKERY_KEYWORDS)
+
+
 def _is_verified_na_whole_food(item: dict) -> bool:
     name_lower = item['name'].lower().strip()
-    station_lower = item['station'].lower().strip()
-
-    if 'salad bar' in station_lower or '(salad bar)' in name_lower:
-        if any(
-            st in name_lower
-            for st in ['spinach', 'greens', 'hard-boiled egg', 'garbanzo', 'chickpea', 'olive oil', 'grilled chicken', 'brown rice']
-        ):
-            return True
 
     if _is_whole_fruit(name_lower):
         return True
@@ -1063,6 +1015,12 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
         return False, -100.0, 'Excluded: custom ticket'
     if name_lower in STATION_HEADER_NAMES:
         return False, -100.0, 'Excluded: station header'
+    if _is_dip_or_condiment(item):
+        return False, -100.0, 'Excluded: standalone dip, sauce, or condiment'
+
+    # Never serve plain hamburger buns / hot dog buns as standalone items
+    if any(b in name_lower for b in ['hamburger bun', 'hot dog bun', 'sesame bun', 'wheat bun', 'white bun']):
+        return False, -100.0, 'Excluded: standalone burger bun'
 
     zero_cal_items = ('water', 'ice', 'salt', 'black pepper', 'tea', 'black coffee', 'mustard', 'vinegar')
     if any(z == name_lower or f' {z}' in name_lower for z in zero_cal_items):
@@ -1073,7 +1031,6 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
     is_deep_fried = any(f in combined_text for f in DEEP_FRIED_MARKERS)
     has_artificial = any(a in combined_text for a in ARTIFICIAL_ADDITIVES)
     is_dessert = any(d in name_lower for d in DESSERT_KEYWORDS)
-    is_dip_or_sauce = any(ds in name_lower for ds in DIP_SAUCE_KEYWORDS)
     whole_fruit = _is_whole_fruit(name_lower)
 
     if tier == 'high':
@@ -1085,8 +1042,8 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
             return False, -100.0, 'Excluded: deep-fried'
         if has_artificial:
             return False, -100.0, 'Excluded: artificial dyes or preservatives'
-        if is_dessert or is_dip_or_sauce:
-            return False, -100.0, 'Excluded: dessert or heavy sauce'
+        if is_dessert:
+            return False, -100.0, 'Excluded: dessert'
         if has_high_sugar or (item['sugar'] > 10.0 and not whole_fruit):
             return False, -100.0, 'Excluded: added sugar'
 
@@ -1115,18 +1072,15 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
         return True, round(clean_bonus + protein_bonus, 1), reason
 
     else:  # 'low' -> Yummiest
-        if is_dip_or_sauce and item['protein'] < 5.0:
-            return False, -100.0, 'Excluded standalone condiment'
         bonus = min(item['protein'] * 0.55, 22.0) + min(item['calories'] * 0.015, 8.0)
         return True, round(bonus, 1), 'Rich flavor & crowd-favorite comfort pick'
 
 
 # ==============================================================================
-# MODULE 5: CULINARY COHESION ENGINE & MULTI-COMBO CHEF CURATOR
+# MODULE 5: CULINARY COHESION ENGINE & MULTI-COMBO CURATOR
 # ==============================================================================
 
 def _detect_cuisine_profile(item: dict) -> str:
-    """Tags a menu item with its natural culinary family so plates make real-world sense."""
     text = f"{item.get('name', '')} {item.get('station', '')}".lower()
 
     if any(k in text for k in [
@@ -1155,9 +1109,9 @@ def _detect_cuisine_profile(item: dict) -> str:
         return 'italian'
 
     if any(k in text for k in [
-        'gyro', 'tzatziki', 'hummus', 'falafel', 'pita', 'couscous', 'quinoa',
-        'greek', 'feta', 'olive', 'chickpea', 'garbanzo', 'tahini', 'shawarma',
-        'kebab', 'kabob', 'tabbouleh', 'oregano', 'lemon herb', 'mediterranean'
+        'gyro', 'pita', 'couscous', 'quinoa', 'greek', 'feta', 'olive',
+        'chickpea', 'garbanzo', 'shawarma', 'kebab', 'kabob', 'tabbouleh',
+        'oregano', 'lemon herb', 'mediterranean', 'falafel'
     ]):
         return 'mediterranean'
 
@@ -1184,7 +1138,6 @@ def _is_composed_salad(item: dict) -> bool:
     name_lower = item['name'].lower()
     if 'salad' not in name_lower:
         return False
-    # Deli protein salads like Chicken Salad / Tuna Salad behave differently from dressed leafy salads
     if any(k in name_lower for k in ['chicken salad', 'tuna salad', 'egg salad']):
         return False
     return True
@@ -1194,21 +1147,27 @@ def _classify_item_role(item: dict) -> str:
     """
     Categorizes a menu item into 'protein' (main entree), 'carb' (grain/starch base),
     or 'side' (vegetable, composed salad, or fruit).
+    Strictly blocks standalone buns, breads, and dips from being primary proteins.
     """
     name_lower = item['name'].lower().strip()
 
     if (
         name_lower in STATION_HEADER_NAMES
         or any(d in name_lower for d in DESSERT_KEYWORDS)
-        or any(ds in name_lower for ds in DIP_SAUCE_KEYWORDS)
+        or _is_dip_or_condiment(item)
     ):
-        return 'side'
+        return 'exclude'
 
-    # Composed salads (e.g., Goat Cheese, Apple, Walnut Spinach Salad) are always sides, never grain-bowl entrees
+    # Standalone breads/buns/rolls are carbs (or excluded if plain burger buns), NEVER proteins
+    if _is_standalone_bakery(item):
+        if any(b in name_lower for b in ['bun', 'buns']):
+            return 'exclude'
+        return 'carb'
+
     if _is_composed_salad(item):
         return 'side'
 
-    if any(k in name_lower for k in ['olive oil', 'spinach', 'greens', 'broccoli', 'asparagus', 'brussels', 'vegetable', 'edamame', 'cauliflower', 'zucchini', 'carrots']):
+    if any(k in name_lower for k in ['spinach', 'greens', 'broccoli', 'asparagus', 'brussels', 'vegetable', 'edamame', 'cauliflower', 'zucchini', 'carrots', 'green beans', 'corn']):
         return 'side'
 
     if _is_whole_fruit(name_lower):
@@ -1217,11 +1176,17 @@ def _classify_item_role(item: dict) -> str:
     entree_protein_hints = [
         'chicken', 'beef', 'steak', 'pork', 'salmon', 'fish', 'shrimp',
         'turkey', 'tofu', 'tempeh', 'seitan', 'egg', 'gyro', 'burger',
-        'meatball', 'carnitas', 'barbacoa', 'tilapia', 'cod', 'ham'
+        'meatball', 'carnitas', 'barbacoa', 'tilapia', 'cod', 'ham', 'tuna'
     ]
-    if item['protein'] >= 11.0 and (
-        item['protein'] >= item['carbs'] * 0.55
-        or any(h in name_lower for h in entree_protein_hints)
+    has_protein_word = any(
+        re.search(rf'\b{re.escape(h)}(?:s|es)?\b', name_lower)
+        for h in entree_protein_hints
+    )
+
+    # Require >= 12g protein and non-bakery status so buns/starches never masquerade as proteins
+    if item['protein'] >= 12.0 and (
+        item['protein'] >= item['carbs'] * 0.65
+        or has_protein_word
     ):
         return 'protein'
 
@@ -1232,34 +1197,28 @@ def _classify_item_role(item: dict) -> str:
 
 
 def _are_items_culinarily_compatible(p_item: dict, c_item: Optional[dict], s_item: Optional[dict]) -> tuple[bool, float]:
-    """
-    Validates that items on a plate genuinely belong together as a meal and
-    returns (is_valid, synergy_bonus).
-    """
     items = [x for x in (p_item, c_item, s_item) if x is not None]
     if not items:
         return False, 0.0
 
-    # 1. Never pair a composed fruit/cheese/nut salad with rice or pasta
+    # Never pair a composed fruit/cheese/nut salad with rice or pasta
     if s_item and _is_composed_salad(s_item) and c_item:
         c_name = c_item['name'].lower()
         if any(g in c_name for g in ['rice', 'pasta', 'noodle', 'lo mein', 'spaghetti', 'penne', 'mac']):
             return False, -50.0
 
-    # 2. Never pair Salad Bar hard-boiled eggs with rice as a meal combo
-    if p_item and 'hard-boiled egg' in p_item['name'].lower() and c_item:
-        if 'rice' in c_item['name'].lower() or 'pasta' in c_item['name'].lower():
+    # Never pair plain bread/rolls with rice or pasta (double starch)
+    if c_item and _is_standalone_bakery(c_item):
+        p_name = p_item['name'].lower()
+        if any(g in p_name for g in ['pasta', 'spaghetti', 'penne', 'rice', 'pizza', 'burrito', 'sandwich', 'burger']):
             return False, -50.0
 
-    # 3. Check cuisine clashes across non-neutral items
     cuisines = [it['_cuisine'] for it in items if it['_cuisine'] != 'neutral']
     distinct_cuisines = set(cuisines)
 
-    # Breakfast items shouldn't mix with Asian/Latin/Italian dinner starches
     if 'breakfast' in distinct_cuisines and len(distinct_cuisines) > 1:
         return False, -50.0
 
-    # Asian and Italian or Latin and Italian shouldn't collide on one plate
     incompatible_pairs = [
         {'asian', 'italian'},
         {'latin', 'italian'},
@@ -1270,18 +1229,15 @@ def _are_items_culinarily_compatible(p_item: dict, c_item: Optional[dict], s_ite
 
     synergy = 0.0
 
-    # Same station bonus (items served together at the same station are designed as a meal)
-    stations = [it['station'].lower().strip() for it in items if 'salad bar' not in it['station'].lower()]
+    stations = [it['station'].lower().strip() for it in items]
     if len(stations) >= 2 and len(set(stations)) == 1:
         synergy += 14.0
     elif len(stations) >= 2 and len(set(stations)) < len(stations):
         synergy += 7.0
 
-    # Matching cuisine family bonus
     if len(cuisines) >= 2 and len(distinct_cuisines) == 1:
         synergy += 10.0
 
-    # Clean rice + lean grill/asian/latin protein synergy
     if c_item and 'rice' in c_item['name'].lower():
         if p_item['_cuisine'] in ('asian', 'latin', 'mediterranean', 'grill_comfort'):
             synergy += 5.0
@@ -1297,32 +1253,20 @@ def _clean_food_short_name(name: str) -> str:
 def _generate_combo_title(items: list[dict], cuisine: str) -> str:
     main_name = _clean_food_short_name(items[0]['name'])
     if len(items) == 1:
-        return f"{main_name} Plate"
+        return main_name
 
     second_name = _clean_food_short_name(items[1]['name'])
     if cuisine == 'asian':
         return f"{main_name} & {second_name} Bowl"
     if cuisine == 'latin':
-        return f"{main_name} & {second_name} Fiesta Plate"
+        return f"{main_name} & {second_name}"
     if cuisine == 'mediterranean':
-        return f"Mediterranean {main_name} & {second_name}"
+        return f"{main_name} & {second_name}"
     if cuisine == 'italian':
-        return f"Trattoria {main_name} Plate"
+        return f"{main_name} & {second_name}"
     if cuisine == 'breakfast':
-        return f"Morning {main_name} & {second_name}"
-    return f"{main_name} & {second_name} Plate"
-
-
-def _build_chef_note(items: list[dict], cuisine: str, health_intensity: str) -> str:
-    stations = list(dict.fromkeys(it['station'] for it in items if 'salad bar' not in it['station'].lower()))
-    station_str = stations[0] if stations else items[0]['station']
-    tier = health_intensity.strip().lower()
-
-    if tier == 'high':
-        return f"Clean, seed-oil-free pairing built around {station_str} staples for steady energy."
-    if tier == 'mid':
-        return f"Well-rounded {station_str} combination balancing lean protein, complex carbs, and flavor."
-    return f"Satisfying {station_str} favorite packed with rich flavor and hearty protein."
+        return f"{main_name} & {second_name}"
+    return f"{main_name} & {second_name}"
 
 
 def _compute_macro_split(protein_g: float, carbs_g: float, fat_g: float) -> dict:
@@ -1357,11 +1301,6 @@ def build_optimal_plates(
     dietary_filters: Optional[list[str]] = None,
     top_n: int = 3,
 ) -> list[dict]:
-    """
-    Builds multiple cohesive, restaurant-style Chef Combos per open dining location.
-    Every combo pairs culinarily compatible items (Entree + Grain/Carb + Side)
-    without repetitive rows or unnatural mismatches.
-    """
     active_filters = dietary_filters or []
     per_meal = (meal_targets or {}).get('per_meal') if dri_enabled else None
     goal_norm = meal_goal.strip().lower()
@@ -1374,11 +1313,14 @@ def build_optimal_plates(
         allowed, health_bonus, reason = evaluate_item_health(item, health_intensity)
         if not allowed:
             continue
+        role = _classify_item_role(item)
+        if role == 'exclude':
+            continue
         enriched = dict(item)
         enriched['_health_bonus'] = health_bonus
         enriched['_health_reason'] = reason
         enriched['_cuisine'] = _detect_cuisine_profile(enriched)
-        enriched['_role'] = _classify_item_role(enriched)
+        enriched['_role'] = role
         enriched['_is_fruit'] = _is_whole_fruit(enriched['name'].lower())
         by_location.setdefault(item['location'], []).append(enriched)
 
@@ -1409,7 +1351,14 @@ def build_optimal_plates(
 
         if not proteins:
             fallback_mains = sorted(
-                [i for i in pool if i['protein'] >= 6.0 and i['calories'] >= 100.0 and not _is_composed_salad(i)],
+                [
+                    i for i in pool
+                    if i['protein'] >= 9.0
+                    and i['calories'] >= 120.0
+                    and not _is_composed_salad(i)
+                    and not _is_standalone_bakery(i)
+                    and not _is_dip_or_condiment(i)
+                ],
                 key=lambda x: (x['_health_bonus'] + x['protein']),
                 reverse=True,
             )[:6]
@@ -1488,7 +1437,6 @@ def build_optimal_plates(
 
         candidate_combos.sort(key=lambda x: x[0], reverse=True)
 
-        # Select up to 3 distinct Chef Combos per dining location (each anchored by a different main entree)
         selected_combos = []
         used_mains = set()
 
@@ -1500,7 +1448,6 @@ def build_optimal_plates(
             slot_items = [it for _, it in slots]
             dominant_cuisine = p_item['_cuisine']
             combo_name = _generate_combo_title(slot_items, dominant_cuisine)
-            chef_note = _build_chef_note(slot_items, dominant_cuisine, health_intensity)
             macro_split = _compute_macro_split(
                 totals_obj['protein'], totals_obj['carbs'], totals_obj['fat']
             )
@@ -1520,22 +1467,10 @@ def build_optimal_plates(
                     'reason': it['_health_reason'],
                 })
 
-            vibe_tag = (
-                "Chef's Top Pick"
-                if len(selected_combos) == 0
-                else (
-                    "High-Protein Option"
-                    if totals_obj['protein'] >= 32
-                    else "Alternative Plate"
-                )
-            )
-
             selected_combos.append({
                 'combo_id': f"{location.lower().replace(' ', '_')}_{len(selected_combos) + 1}",
                 'combo_name': combo_name,
                 'station_tag': p_item['station'],
-                'vibe_tag': vibe_tag,
-                'chef_note': chef_note,
                 'score': round(score_val, 1),
                 'items': formatted_items,
                 'totals': totals_obj,

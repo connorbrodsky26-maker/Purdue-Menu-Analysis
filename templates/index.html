@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#FBF9F5" />
-  <title>Feast — Campus Dining Companion</title>
+  <title>Feast — Campus Dining</title>
   <style>
     :root {
       --cream: #FBF9F5;
@@ -12,7 +12,6 @@
       --surface-alt: #F4F0E8;
       --border: #E7E1D6;
       --obsidian: #161513;
-      --obsidian-soft: #282622;
       --text-main: #161513;
       --text-muted: #6E695F;
       --terracotta: #E05648;
@@ -21,9 +20,8 @@
       --leaf: #1D8A5A;
       --leaf-bright: #10B981;
       --leaf-soft: #E8F6EF;
-      --amber: #D97706;
       --radius: 22px;
-      --shadow: 0 10px 30px rgba(22, 21, 19, 0.05);
+      --shadow: 0 8px 26px rgba(22, 21, 19, 0.045);
       --float-shadow: 0 14px 36px rgba(22, 21, 19, 0.14);
     }
 
@@ -35,7 +33,10 @@
     }
 
     html, body {
-      touch-action: manipulation;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      touch-action: pan-y;
       overscroll-behavior-y: none;
     }
 
@@ -48,12 +49,12 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Sticky Cream Editorial Header */
+    /* Sticky Cream Header */
     .topbar {
       position: sticky;
       top: 0;
       z-index: 30;
-      background: rgba(251, 249, 245, 0.9);
+      background: rgba(251, 249, 245, 0.92);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       padding: 0.75rem 1.1rem;
@@ -61,7 +62,7 @@
     }
 
     .topbar-inner {
-      max-width: 580px;
+      max-width: 560px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -69,7 +70,6 @@
       gap: 0.6rem;
     }
 
-    /* Feast Wordmark with Two Solid Emerald Leaves on the 't' */
     .brand-logo {
       display: inline-flex;
       align-items: baseline;
@@ -92,30 +92,6 @@
       overflow: visible;
     }
 
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-    }
-
-    .fav-pill-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      border-radius: 999px;
-      padding: 0.36rem 0.72rem;
-      font-size: 0.76rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .fav-pill-btn svg {
-      color: var(--terracotta);
-    }
-
     .status-chip {
       display: inline-flex;
       align-items: center;
@@ -124,8 +100,8 @@
       border: 1px solid var(--border);
       color: var(--text-main);
       border-radius: 999px;
-      padding: 0.36rem 0.78rem;
-      font-size: 0.76rem;
+      padding: 0.38rem 0.85rem;
+      font-size: 0.77rem;
       font-weight: 600;
       cursor: pointer;
     }
@@ -135,19 +111,20 @@
     }
 
     main {
-      max-width: 580px;
-      margin: 0.95rem auto 0;
+      width: 100%;
+      max-width: 560px;
+      margin: 1rem auto 0;
       padding: 0 1rem;
     }
 
-    /* Time-Aware Welcoming Greeting */
+    /* Clean Greeting */
     .greeting-banner {
-      margin-bottom: 0.95rem;
-      padding: 0.15rem 0.2rem;
+      margin-bottom: 1rem;
+      padding: 0 0.15rem;
     }
 
     .greeting-title {
-      font-size: 1.38rem;
+      font-size: 1.36rem;
       font-weight: 900;
       letter-spacing: -0.025em;
       color: var(--obsidian);
@@ -155,9 +132,9 @@
     }
 
     .greeting-sub {
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
-      margin-top: 0.2rem;
+      margin-top: 0.18rem;
       font-weight: 500;
     }
 
@@ -188,7 +165,6 @@
       border: 1px solid var(--border);
     }
 
-    /* Friendly Notice / Validation Box */
     .alert-box {
       background: var(--terracotta-soft);
       border: 1px solid #F5C2BC;
@@ -200,74 +176,41 @@
       margin-bottom: 0.9rem;
     }
 
-    /* Dining Court Cards */
-    .rec-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 1.15rem;
-      box-shadow: var(--shadow);
-      transition: transform 0.2s ease, opacity 0.2s ease;
+    /* Minimalist Dining Court Wrapper */
+    .court-section {
+      width: 100%;
+      max-width: 100%;
+      margin-bottom: 1.5rem;
     }
 
-    .rec-card.rank-1 {
-      border: 2px solid var(--obsidian);
-      box-shadow: 0 14px 36px rgba(22, 21, 19, 0.08);
-    }
-
-    .hero-head {
-      background: var(--obsidian);
-      color: #FFFFFF;
-      padding: 1.1rem 1.2rem 1rem;
-    }
-
-    .rec-card:not(.rank-1) .hero-head {
-      background: var(--surface-alt);
-      color: var(--text-main);
-      border-bottom: 1px solid var(--border);
-      padding: 0.95rem 1.15rem;
-    }
-
-    .hero-top-row {
+    .court-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.5rem;
-      margin-bottom: 0.45rem;
+      gap: 0.6rem;
+      padding: 0 0.2rem 0.55rem;
     }
 
-    .rank-pill {
-      font-size: 0.69rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.22rem 0.62rem;
-      border-radius: 999px;
-      background: var(--terracotta);
-      color: #FFFFFF;
-    }
-
-    .rec-card:not(.rank-1) .rank-pill {
-      background: var(--border);
-      color: var(--text-muted);
+    .court-name {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--obsidian);
+      line-height: 1.15;
     }
 
     .live-hours {
       display: inline-flex;
       align-items: center;
-      gap: 0.38rem;
-      font-size: 0.74rem;
+      gap: 0.36rem;
+      font-size: 0.73rem;
       font-weight: 700;
-      padding: 0.22rem 0.64rem;
+      padding: 0.24rem 0.65rem;
       border-radius: 999px;
-      background: rgba(16, 185, 129, 0.18);
-      color: #6EE7B7;
-    }
-
-    .rec-card:not(.rank-1) .live-hours {
       background: var(--leaf-soft);
       color: var(--leaf);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .pulse-dot {
@@ -278,115 +221,172 @@
       flex-shrink: 0;
     }
 
-    .court-title-row {
+    /* Flashcard Stack Deck */
+    .deck-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      padding-bottom: 10px;
+    }
+
+    .flashcard-deck {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      touch-action: pan-y;
+      user-select: none;
+    }
+
+    /* Subtle stacked cards peeking beneath active card */
+    .deck-underlay-1,
+    .deck-underlay-2 {
+      position: absolute;
+      inset: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      pointer-events: none;
+      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease;
+    }
+
+    .deck-underlay-1 {
+      z-index: 1;
+      transform: translateY(6px) scale(0.975);
+      background: #FCFBF8;
+    }
+
+    .deck-underlay-2 {
+      z-index: 0;
+      transform: translateY(12px) scale(0.95);
+      background: var(--surface-alt);
+    }
+
+    .flashcard {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      will-change: transform, opacity;
+      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease;
+    }
+
+    .flashcard.dragging {
+      transition: none;
+      cursor: grabbing;
+    }
+
+    .flashcard.shuffle-out-left {
+      transform: translateX(-112%) rotate(-7deg) !important;
+      opacity: 0;
+    }
+
+    .flashcard.shuffle-out-right {
+      transform: translateX(112%) rotate(7deg) !important;
+      opacity: 0;
+    }
+
+    @keyframes cardDealIn {
+      0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.97);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .flashcard.deal-in {
+      animation: cardDealIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Delayed Swipe Tutorial Overlay (3s delay, fade in & out) */
+    .swipe-hint-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
       display: flex;
       align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.65s ease;
+    }
+
+    .swipe-hint-overlay.visible {
+      opacity: 1;
+    }
+
+    .swipe-hint-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(22, 21, 19, 0.86);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #FFFFFF;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.48rem 0.9rem;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(22, 21, 19, 0.22);
+      animation: nudgeArrow 1.3s ease-in-out infinite;
+    }
+
+    .swipe-hint-pill svg {
+      color: var(--terracotta);
+    }
+
+    @keyframes nudgeArrow {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-7px); }
+    }
+
+    /* Combo Title Header inside Card */
+    .combo-head {
+      padding: 1.05rem 1.15rem 0.35rem;
+      display: flex;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 0.6rem;
     }
 
-    .court-name {
-      font-size: 1.75rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-    }
-
-    .rec-card:not(.rank-1) .court-name {
-      font-size: 1.38rem;
-    }
-
-    .bookmark-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(255, 255, 255, 0.08);
-      color: #FFFFFF;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.15s ease, background 0.15s ease;
-    }
-
-    .rec-card:not(.rank-1) .bookmark-btn {
-      border-color: var(--border);
-      background: var(--surface);
-      color: var(--text-main);
-    }
-
-    .bookmark-btn:active {
-      transform: scale(0.92);
-    }
-
-    .bookmark-btn.saved {
-      background: var(--terracotta);
-      border-color: var(--terracotta);
-      color: #FFFFFF;
-    }
-
-    /* Multi-Combo Switcher Pills inside Card */
-    .combo-switcher {
-      display: flex;
-      gap: 0.4rem;
-      overflow-x: auto;
-      padding: 0.7rem 1.1rem 0;
-      scrollbar-width: none;
-    }
-
-    .combo-switcher::-webkit-scrollbar {
-      display: none;
-    }
-
-    .combo-tab {
-      border: 1px solid var(--border);
-      background: var(--surface-alt);
-      color: var(--text-muted);
-      font-size: 0.76rem;
-      font-weight: 700;
-      padding: 0.34rem 0.72rem;
-      border-radius: 999px;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .combo-tab.active {
-      background: var(--obsidian);
-      border-color: var(--obsidian);
-      color: #FFFFFF;
-    }
-
-    /* Combo Header Info */
-    .combo-banner {
-      padding: 0.75rem 1.15rem 0.25rem;
-    }
-
     .combo-name {
-      font-size: 1.02rem;
+      font-size: 1.06rem;
       font-weight: 800;
       color: var(--obsidian);
       letter-spacing: -0.015em;
+      line-height: 1.25;
+      min-width: 0;
+      word-break: break-word;
     }
 
-    .chef-note {
-      font-size: 0.8rem;
+    .card-counter {
+      font-size: 0.72rem;
+      font-weight: 800;
       color: var(--text-muted);
-      margin-top: 0.15rem;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.56rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* Menu Item Rows */
     .plate-board {
-      padding: 0.35rem 1.15rem 0.5rem;
+      padding: 0.25rem 1.15rem 0.45rem;
     }
 
     .menu-row {
       border-bottom: 1px solid var(--border);
       padding: 0.72rem 0;
       cursor: pointer;
-      user-select: none;
     }
 
     .menu-row:last-child {
@@ -406,16 +406,12 @@
       flex-direction: column;
       gap: 0.22rem;
       min-width: 0;
-    }
-
-    .tag-line {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
+      flex: 1;
     }
 
     .station-pill {
-      font-size: 0.67rem;
+      align-self: flex-start;
+      font-size: 0.66rem;
       font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -426,16 +422,17 @@
     }
 
     .food-title {
-      font-size: 0.98rem;
+      font-size: 0.97rem;
       font-weight: 700;
       color: var(--text-main);
-      line-height: 1.25;
+      line-height: 1.28;
+      word-break: break-word;
     }
 
     .menu-right {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
+      gap: 0.5rem;
       flex-shrink: 0;
       text-align: right;
     }
@@ -483,7 +480,7 @@
       display: block;
     }
 
-    /* Clean Plate Footer & Proportional Macro Split Bar */
+    /* Plate Totals Footer */
     .plate-footer {
       background: var(--surface-alt);
       border-top: 1px solid var(--border);
@@ -495,6 +492,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.5rem;
+      flex-wrap: wrap;
       margin-bottom: 0.55rem;
     }
 
@@ -518,14 +516,14 @@
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-main);
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       font-weight: 700;
-      padding: 0.2rem 0.52rem;
+      padding: 0.2rem 0.5rem;
       border-radius: 999px;
     }
 
     .split-bar-track {
-      height: 8px;
+      height: 7px;
       background: var(--border);
       border-radius: 999px;
       overflow: hidden;
@@ -541,7 +539,7 @@
       display: flex;
       justify-content: space-between;
       margin-top: 0.38rem;
-      font-size: 0.72rem;
+      font-size: 0.71rem;
       font-weight: 700;
       color: var(--text-muted);
     }
@@ -552,6 +550,31 @@
       height: 7px;
       border-radius: 50%;
       margin-right: 4px;
+    }
+
+    /* Clean Deck Pagination Dots */
+    .deck-dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.42rem;
+      margin-top: 0.85rem;
+    }
+
+    .deck-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      border: none;
+      background: #D5CEC0;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+
+    .deck-dot.active {
+      width: 22px;
+      background: var(--terracotta);
     }
 
     /* Floating Bottom Dock */
@@ -566,7 +589,7 @@
     }
 
     .dock-inner {
-      max-width: 560px;
+      max-width: 540px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -674,7 +697,7 @@
       right: 0;
       bottom: 0;
       z-index: 60;
-      width: min(385px, 90vw);
+      width: min(380px, 90vw);
       overflow-y: auto;
       background: var(--surface);
       border-radius: 24px 0 0 24px;
@@ -743,47 +766,6 @@
       cursor: pointer;
     }
 
-    /* Go-To Favorites inside Drawer */
-    .fav-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .fav-item-card {
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 0.7rem 0.8rem;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.5rem;
-    }
-
-    .fav-item-title {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--obsidian);
-    }
-
-    .fav-item-sub {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 0.15rem;
-    }
-
-    .remove-fav-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 0.1rem 0.3rem;
-    }
-
-    /* Filter Chips */
     .filter-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -840,7 +822,6 @@
       height: 20px;
     }
 
-    /* Biometrics Box */
     .bio-box {
       display: none;
       margin-top: 0.75rem;
@@ -936,7 +917,6 @@
       cursor: pointer;
     }
 
-    /* Send Feedback Box inside Drawer */
     .feedback-card {
       background: var(--surface-alt);
       border: 1.5px solid var(--border);
@@ -993,7 +973,6 @@
       display: none;
     }
 
-    /* Loading Skeleton */
     .skeleton-card {
       background: var(--surface);
       border-radius: var(--radius);
@@ -1017,41 +996,29 @@
   </style>
 </head>
 <body>
-  <!-- Sticky Editorial Header -->
+  <!-- Sticky Cream Header -->
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand-logo" aria-label="Feast">
         <span class="brand-text">Feas</span><svg class="brand-t" viewBox="0 0 26 32" aria-hidden="true">
-          <!-- Terracotta 't' stem & clean horizontal crossbar -->
           <path d="M11.2 11.5 V23.8 C11.2 26.2 12.6 27.4 15.0 27.4 C16.3 27.4 17.4 27.1 18.2 26.7" fill="none" stroke="#E05648" stroke-width="3.8" stroke-linecap="round"/>
           <line x1="6.2" y1="14.2" x2="18.5" y2="14.2" stroke="#E05648" stroke-width="3.6" stroke-linecap="round"/>
-          <!-- Left solid emerald leaf sprouting above the crossbar -->
           <path d="M11.0 11.8 C6.8 11.6 3.5 8.8 3.6 5.2 C7.3 5.0 10.6 7.8 11.0 11.8 Z" fill="#1D8A5A"/>
-          <!-- Right solid emerald leaf sprouting above the crossbar -->
           <path d="M12.2 11.8 C12.8 7.5 16.5 4.4 20.6 4.7 C20.4 8.6 16.8 11.6 12.2 11.8 Z" fill="#1D8A5A"/>
         </svg>
       </div>
 
-      <div class="top-actions">
-        <button type="button" class="fav-pill-btn" id="open_favs_btn" title="Saved Go-To Plates">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-          <span id="fav_count_label">Saved</span>
-        </button>
-
-        <button type="button" class="status-chip" id="open_time_sheet" title="Tap to change meal time">
-          <span id="status_text">Loading live...</span>
-        </button>
-      </div>
+      <button type="button" class="status-chip" id="open_time_sheet" title="Tap to change meal time">
+        <span id="status_text">Loading live...</span>
+      </button>
     </div>
   </header>
 
   <main>
-    <!-- Time-Aware Campus Greeting -->
+    <!-- Clean Time-Aware Greeting -->
     <section class="greeting-banner">
-      <h1 class="greeting-title" id="greeting_title">Finding what’s fresh on campus...</h1>
-      <p class="greeting-sub" id="greeting_sub">Curating cohesive plates from live dining court lines.</p>
+      <h1 class="greeting-title" id="greeting_title">Finding what’s open on campus...</h1>
+      <p class="greeting-sub" id="greeting_sub">Balanced meal options from live dining court menus.</p>
     </section>
 
     <!-- Active Filters Indicator Strip -->
@@ -1099,24 +1066,15 @@
 
   <!-- Slide-In Side Drawer -->
   <div class="sheet-backdrop" id="sheet_backdrop"></div>
-  <aside class="side-drawer" id="control_sheet" aria-modal="true" role="dialog" aria-label="Filters, Saved Plates, and Feedback">
+  <aside class="side-drawer" id="control_sheet" aria-modal="true" role="dialog" aria-label="Filters and Settings">
     <div class="sheet-header">
-      <h2>Your Dining Preferences</h2>
+      <h2>Preferences</h2>
       <button type="button" class="done-btn" id="close_sheet_btn">Done</button>
     </div>
 
     <div id="sheet_validation" class="alert-box" style="display:none;"></div>
 
-    <!-- 0. Saved Go-To Plates -->
-    <div class="sheet-section" id="saved_plates_section" style="display:none;">
-      <div class="sec-head">
-        <span class="sec-title">My Go-To Plates</span>
-        <button type="button" class="clear-link" id="clear_favs_btn">Clear</button>
-      </div>
-      <div class="fav-list" id="saved_plates_list"></div>
-    </div>
-
-    <!-- 1. Allergies & Dietary (Including Vegan) -->
+    <!-- 1. Allergies & Dietary -->
     <div class="sheet-section">
       <div class="sec-head">
         <span class="sec-title">Dietary &amp; Allergies</span>
@@ -1275,8 +1233,7 @@
   </aside>
 
   <script>
-    const STORAGE_KEY = 'feast_dining_prefs_v4';
-    const FAVS_KEY = 'feast_saved_plates_v1';
+    const STORAGE_KEY = 'feast_dining_prefs_v5';
 
     const state = {
       health_intensity: 'High',
@@ -1296,8 +1253,10 @@
 
     let currentRecommendations = [];
     let selectedComboIndexByLoc = {};
-    let savedPlates = [];
     let feedbackCategory = 'Dish Request';
+    let hasShownSwipeHint = false;
+    let hintShowTimer = null;
+    let hintHideTimer = null;
 
     function loadPreferences() {
       try {
@@ -1305,10 +1264,6 @@
         if (raw) {
           Object.assign(state, JSON.parse(raw));
           state.sim_time = '';
-        }
-        const favRaw = localStorage.getItem(FAVS_KEY);
-        if (favRaw) {
-          savedPlates = JSON.parse(favRaw) || [];
         }
       } catch (e) {}
     }
@@ -1318,79 +1273,6 @@
         const toSave = { ...state, sim_time: '' };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
       } catch (e) {}
-    }
-
-    function saveFavoritesToStorage() {
-      try {
-        localStorage.setItem(FAVS_KEY, JSON.stringify(savedPlates));
-      } catch (e) {}
-      renderSavedPlatesUI();
-    }
-
-    function isComboSaved(location, comboName) {
-      return savedPlates.some(p => p.location === location && p.combo_name === comboName);
-    }
-
-    function toggleSaveCombo(locIndex) {
-      const rec = currentRecommendations[locIndex];
-      if (!rec) return;
-      const comboIdx = selectedComboIndexByLoc[rec.location] || 0;
-      const combo = (rec.combos && rec.combos[comboIdx]) || {
-        combo_name: 'Chef Plate',
-        items: rec.items,
-        totals: rec.totals
-      };
-
-      const existingIdx = savedPlates.findIndex(
-        p => p.location === rec.location && p.combo_name === combo.combo_name
-      );
-
-      if (existingIdx >= 0) {
-        savedPlates.splice(existingIdx, 1);
-      } else {
-        savedPlates.unshift({
-          location: rec.location,
-          combo_name: combo.combo_name,
-          items: combo.items.map(i => i.name),
-          calories: Math.round(combo.totals.calories),
-          protein: Math.round(combo.totals.protein)
-        });
-        if (savedPlates.length > 12) savedPlates.pop();
-      }
-
-      saveFavoritesToStorage();
-      renderCardsOnly();
-    }
-
-    function removeSavedPlate(idx) {
-      savedPlates.splice(idx, 1);
-      saveFavoritesToStorage();
-      renderCardsOnly();
-    }
-
-    function renderSavedPlatesUI() {
-      const countEl = document.getElementById('fav_count_label');
-      const secEl = document.getElementById('saved_plates_section');
-      const listEl = document.getElementById('saved_plates_list');
-
-      countEl.textContent = savedPlates.length > 0 ? `Saved (${savedPlates.length})` : 'Saved';
-
-      if (savedPlates.length === 0) {
-        secEl.style.display = 'none';
-        listEl.innerHTML = '';
-        return;
-      }
-
-      secEl.style.display = 'block';
-      listEl.innerHTML = savedPlates.map((p, idx) => `
-        <div class="fav-item-card">
-          <div>
-            <div class="fav-item-title">${escapeHtml(p.location)} &bull; ${escapeHtml(p.combo_name)}</div>
-            <div class="fav-item-sub">${escapeHtml(p.items.join(' + '))} (${p.calories} kcal, ${p.protein}g P)</div>
-          </div>
-          <button type="button" class="remove-fav-btn" onclick="removeSavedPlate(${idx})" aria-label="Remove saved plate">&times;</button>
-        </div>
-      `).join('');
     }
 
     function openSheet() {
@@ -1461,7 +1343,6 @@
       document.getElementById('height_in').value = state.height_in !== '' ? state.height_in : '';
       document.getElementById('activity_level').value = state.activity_level || '';
       document.getElementById('meals_per_day').value = state.meals_per_day || '';
-      renderSavedPlatesUI();
     }
 
     function readBiometricsFromDOM() {
@@ -1507,38 +1388,170 @@
         .replace(/"/g, '&quot;');
     }
 
-    function switchLocationCombo(location, comboIdx) {
-      selectedComboIndexByLoc[location] = comboIdx;
-      renderCardsOnly();
+    function dismissSwipeHint() {
+      if (hintShowTimer) clearTimeout(hintShowTimer);
+      if (hintHideTimer) clearTimeout(hintHideTimer);
+      document.querySelectorAll('.swipe-hint-overlay').forEach(el => {
+        el.classList.remove('visible');
+      });
     }
 
-    function renderCardsOnly() {
+    function scheduleSwipeHint() {
+      if (hasShownSwipeHint) return;
+      const firstHint = document.querySelector('.swipe-hint-overlay');
+      if (!firstHint) return;
+
+      if (hintShowTimer) clearTimeout(hintShowTimer);
+      if (hintHideTimer) clearTimeout(hintHideTimer);
+
+      hintShowTimer = setTimeout(() => {
+        if (hasShownSwipeHint) return;
+        hasShownSwipeHint = true;
+        firstHint.classList.add('visible');
+
+        hintHideTimer = setTimeout(() => {
+          firstHint.classList.remove('visible');
+        }, 3600);
+      }, 3000);
+    }
+
+    function advanceLocationCard(location, direction = 'left', dealIn = true) {
+      const rec = currentRecommendations.find(r => r.location === location);
+      if (!rec || !rec.combos || rec.combos.length <= 1) return;
+
+      dismissSwipeHint();
+      const total = rec.combos.length;
+      const cur = selectedComboIndexByLoc[location] || 0;
+      const next = direction === 'right'
+        ? (cur - 1 + total) % total
+        : (cur + 1) % total;
+
+      selectedComboIndexByLoc[location] = next;
+      renderCardsOnly(dealIn ? location : null);
+    }
+
+    function setLocationComboIndex(location, idx) {
+      dismissSwipeHint();
+      selectedComboIndexByLoc[location] = idx;
+      renderCardsOnly(location);
+    }
+
+    function attachDeckSwipeListeners() {
+      document.querySelectorAll('.flashcard-deck').forEach(deck => {
+        const location = deck.dataset.location;
+        const count = parseInt(deck.dataset.count || '1', 10);
+        if (count <= 1) return;
+
+        const card = deck.querySelector('.flashcard');
+        if (!card) return;
+
+        let startX = 0;
+        let startY = 0;
+        let deltaX = 0;
+        let isDragging = false;
+        let isHorizontalSwipe = null;
+
+        const onStart = (clientX, clientY) => {
+          startX = clientX;
+          startY = clientY;
+          deltaX = 0;
+          isDragging = true;
+          isHorizontalSwipe = null;
+          card.classList.add('dragging');
+        };
+
+        const onMove = (clientX, clientY, e) => {
+          if (!isDragging) return;
+          const dx = clientX - startX;
+          const dy = clientY - startY;
+
+          if (isHorizontalSwipe === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+            isHorizontalSwipe = Math.abs(dx) > Math.abs(dy);
+          }
+
+          if (!isHorizontalSwipe) return;
+          if (e && e.cancelable) e.preventDefault();
+
+          dismissSwipeHint();
+          deltaX = dx;
+          const rotateDeg = Math.max(-8, Math.min(8, dx * 0.04));
+          card.style.transform = `translateX(${dx}px) rotate(${rotateDeg}deg)`;
+        };
+
+        const onEnd = () => {
+          if (!isDragging) return;
+          isDragging = false;
+          card.classList.remove('dragging');
+
+          if (isHorizontalSwipe && Math.abs(deltaX) > 52) {
+            const dir = deltaX < 0 ? 'left' : 'right';
+            card.classList.add(dir === 'left' ? 'shuffle-out-left' : 'shuffle-out-right');
+            setTimeout(() => {
+              advanceLocationCard(location, dir, true);
+            }, 210);
+          } else {
+            card.style.transform = '';
+          }
+        };
+
+        // Touch events for mobile swipe
+        deck.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 1) {
+            onStart(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        }, { passive: true });
+
+        deck.addEventListener('touchmove', (e) => {
+          if (e.touches.length === 1) {
+            onMove(e.touches[0].clientX, e.touches[0].clientY, e);
+          }
+        }, { passive: false });
+
+        deck.addEventListener('touchend', onEnd);
+        deck.addEventListener('touchcancel', onEnd);
+
+        // Mouse drag support for desktop/laptop testing
+        deck.addEventListener('mousedown', (e) => {
+          if (e.button !== 0) return;
+          onStart(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (isDragging) onMove(e.clientX, e.clientY, e);
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (isDragging) onEnd();
+        });
+      });
+    }
+
+    function renderCardsOnly(animateDealLocation = null) {
       const resultsEl = document.getElementById('results_container');
       const recs = currentRecommendations || [];
 
       if (recs.length === 0) {
         resultsEl.innerHTML = `
-          <article class="rec-card">
-            <div class="hero-head">
-              <h2 class="court-name" style="font-size:1.3rem;">Kitchen lines are taking a breather</h2>
-              <p style="font-size:0.86rem; color:#D6D1C7; margin-top:0.35rem;">
-                No open plates matched those exact filters right now. Try loosening a dietary filter or checking another meal time!
+          <section class="court-section">
+            <div class="flashcard" style="padding:1.25rem;">
+              <h2 class="combo-name">No open meals right now</h2>
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-top:0.35rem;">
+                No open dining options matched those filters. Try adjusting a dietary filter or checking another time.
               </p>
             </div>
-          </article>
+          </section>
         `;
         return;
       }
 
-      resultsEl.innerHTML = recs.map((rec, idx) => {
-        const isFirst = idx === 0;
+      let renderedFirstHint = false;
+
+      resultsEl.innerHTML = recs.map((rec) => {
         const combos = (rec.combos && rec.combos.length > 0)
           ? rec.combos
           : [{
-              combo_name: 'Signature Plate',
+              combo_name: 'Balanced Meal',
               station_tag: 'Main Line',
-              vibe_tag: isFirst ? "Chef's Top Pick" : `Option #${idx + 1}`,
-              chef_note: 'Balanced dining court plate curated from live menus.',
               items: rec.items,
               totals: rec.totals,
               macro_split: { protein_pct: 30, carbs_pct: 45, fat_pct: 25 }
@@ -1546,16 +1559,39 @@
 
         const activeComboIdx = Math.min(selectedComboIndexByLoc[rec.location] || 0, combos.length - 1);
         const combo = combos[activeComboIdx];
-        const saved = isComboSaved(rec.location, combo.combo_name);
+        const hasMultiple = combos.length > 1;
+        const shouldDealIn = animateDealLocation === rec.location;
 
-        const comboTabsHtml = combos.length > 1
-          ? `<div class="combo-switcher">
-              ${combos.map((c, cIdx) => `
+        let hintHtml = '';
+        if (hasMultiple && !hasShownSwipeHint && !renderedFirstHint) {
+          renderedFirstHint = true;
+          hintHtml = `
+            <div class="swipe-hint-overlay" aria-hidden="true">
+              <div class="swipe-hint-pill">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Swipe for more options</span>
+              </div>
+            </div>
+          `;
+        }
+
+        const underlaysHtml = hasMultiple
+          ? `
+            ${combos.length > 2 ? '<div class="deck-underlay-2"></div>' : ''}
+            <div class="deck-underlay-1"></div>
+          `
+          : '';
+
+        const dotsHtml = hasMultiple
+          ? `<div class="deck-dots">
+              ${combos.map((_, cIdx) => `
                 <button type="button"
-                  class="combo-tab ${cIdx === activeComboIdx ? 'active' : ''}"
-                  onclick="switchLocationCombo('${escapeHtml(rec.location)}', ${cIdx})">
-                  ${cIdx === 0 ? 'Chef Pick' : `Option ${cIdx + 1}`}: ${escapeHtml(c.station_tag)}
-                </button>
+                  class="deck-dot ${cIdx === activeComboIdx ? 'active' : ''}"
+                  onclick="setLocationComboIndex('${escapeHtml(rec.location)}', ${cIdx})"
+                  aria-label="Meal option ${cIdx + 1} of ${combos.length}"></button>
               `).join('')}
             </div>`
           : '';
@@ -1569,9 +1605,7 @@
             <div class="menu-row" onclick="this.classList.toggle('expanded')" role="button" tabindex="0">
               <div class="menu-row-main">
                 <div class="menu-left">
-                  <div class="tag-line">
-                    <span class="station-pill">${escapeHtml(it.station)}</span>
-                  </div>
+                  <span class="station-pill">${escapeHtml(it.station)}</span>
                   <div class="food-title">${escapeHtml(it.name)}</div>
                 </div>
                 <div class="menu-right">
@@ -1586,7 +1620,7 @@
               </div>
               <div class="item-details">
                 <div><strong>${Math.round(it.protein)}g Protein</strong> &bull; ${Math.round(it.carbs)}g Carbs &bull; ${Math.round(it.fat)}g Fat</div>
-                <div style="margin-top:0.2rem;">${escapeHtml(it.reason)} &bull; ${escapeHtml(allergenStr)}</div>
+                <div style="margin-top:0.2rem;">${escapeHtml(allergenStr)}</div>
               </div>
             </div>
           `;
@@ -1595,59 +1629,55 @@
         const split = combo.macro_split || { protein_pct: 30, carbs_pct: 45, fat_pct: 25 };
 
         return `
-          <article class="rec-card ${isFirst ? 'rank-1' : ''}">
-            <div class="hero-head">
-              <div class="hero-top-row">
-                <span class="rank-pill">${isFirst ? "Chef's Top Pick" : `#${idx + 1} Spot`}</span>
-                <span class="live-hours"><span class="pulse-dot"></span>${escapeHtml(rec.hours_status)}</span>
-              </div>
-              <div class="court-title-row">
-                <h2 class="court-name">${escapeHtml(rec.location)}</h2>
-                <button type="button"
-                  class="bookmark-btn ${saved ? 'saved' : ''}"
-                  onclick="toggleSaveCombo(${idx})"
-                  title="${saved ? 'Saved to Go-To Plates' : 'Save Plate'}"
-                  aria-label="Save plate">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="${saved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                  </svg>
-                </button>
-              </div>
+          <section class="court-section">
+            <div class="court-header">
+              <h2 class="court-name">${escapeHtml(rec.location)}</h2>
+              <span class="live-hours"><span class="pulse-dot"></span>${escapeHtml(rec.hours_status)}</span>
             </div>
 
-            ${comboTabsHtml}
+            <div class="deck-wrapper">
+              <div class="flashcard-deck" data-location="${escapeHtml(rec.location)}" data-count="${combos.length}">
+                ${underlaysHtml}
+                <article class="flashcard ${shouldDealIn ? 'deal-in' : ''}">
+                  ${hintHtml}
+                  <div class="combo-head">
+                    <div class="combo-name">${escapeHtml(combo.combo_name)}</div>
+                    ${hasMultiple ? `<span class="card-counter">${activeComboIdx + 1} / ${combos.length}</span>` : ''}
+                  </div>
 
-            <div class="combo-banner">
-              <div class="combo-name">${escapeHtml(combo.combo_name)}</div>
-              <div class="chef-note">${escapeHtml(combo.chef_note)}</div>
+                  <div class="plate-board">${itemsHtml}</div>
+
+                  <div class="plate-footer">
+                    <div class="totals-header">
+                      <span class="cal-pill">${Math.round(combo.totals.calories)} kcal</span>
+                      <div class="macro-pills">
+                        <span class="m-pill">${Math.round(combo.totals.protein)}g Protein</span>
+                        <span class="m-pill">${Math.round(combo.totals.carbs)}g Carbs</span>
+                        <span class="m-pill">${Math.round(combo.totals.fat)}g Fat</span>
+                      </div>
+                    </div>
+
+                    <div class="split-bar-track" aria-label="Macro balance">
+                      <div class="split-seg-p" style="width:${split.protein_pct}%"></div>
+                      <div class="split-seg-c" style="width:${split.carbs_pct}%"></div>
+                      <div class="split-seg-f" style="width:${split.fat_pct}%"></div>
+                    </div>
+                    <div class="split-legend">
+                      <span><i class="legend-dot" style="background:var(--obsidian)"></i>Protein ${split.protein_pct}%</span>
+                      <span><i class="legend-dot" style="background:var(--terracotta)"></i>Carbs ${split.carbs_pct}%</span>
+                      <span><i class="legend-dot" style="background:var(--leaf)"></i>Fat ${split.fat_pct}%</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              ${dotsHtml}
             </div>
-
-            <div class="plate-board">${itemsHtml}</div>
-
-            <div class="plate-footer">
-              <div class="totals-header">
-                <span class="cal-pill">${Math.round(combo.totals.calories)} kcal</span>
-                <div class="macro-pills">
-                  <span class="m-pill">${Math.round(combo.totals.protein)}g Protein</span>
-                  <span class="m-pill">${Math.round(combo.totals.carbs)}g Carbs</span>
-                  <span class="m-pill">${Math.round(combo.totals.fat)}g Fat</span>
-                </div>
-              </div>
-
-              <div class="split-bar-track" aria-label="Macro balance">
-                <div class="split-seg-p" style="width:${split.protein_pct}%"></div>
-                <div class="split-seg-c" style="width:${split.carbs_pct}%"></div>
-                <div class="split-seg-f" style="width:${split.fat_pct}%"></div>
-              </div>
-              <div class="split-legend">
-                <span><i class="legend-dot" style="background:var(--obsidian)"></i>Protein ${split.protein_pct}%</span>
-                <span><i class="legend-dot" style="background:var(--terracotta)"></i>Carbs ${split.carbs_pct}%</span>
-                <span><i class="legend-dot" style="background:var(--leaf)"></i>Fat ${split.fat_pct}%</span>
-              </div>
-            </div>
-          </article>
+          </section>
         `;
       }).join('');
+
+      attachDeckSwipeListeners();
+      scheduleSwipeHint();
     }
 
     function renderRecommendations(data) {
@@ -1698,7 +1728,7 @@
         payload.meals_per_day = parseInt(state.meals_per_day, 10);
       }
 
-      document.getElementById('status_text').textContent = 'Curating...';
+      document.getElementById('status_text').textContent = 'Updating...';
 
       try {
         const res = await fetch('/api/recommend', {
@@ -1749,7 +1779,7 @@
           msgEl.value = '';
           contactEl.value = '';
           statusEl.style.color = 'var(--leaf)';
-          statusEl.textContent = data.message || 'Sent to the Feast team — thank you!';
+          statusEl.textContent = data.message || 'Sent — thank you!';
           statusEl.style.display = 'block';
         } else {
           statusEl.style.color = 'var(--terracotta-dark)';
@@ -1780,15 +1810,8 @@
 
       document.getElementById('open_sheet_btn').addEventListener('click', openSheet);
       document.getElementById('open_time_sheet').addEventListener('click', openSheet);
-      document.getElementById('open_favs_btn').addEventListener('click', openSheet);
       document.getElementById('close_sheet_btn').addEventListener('click', closeSheet);
       document.getElementById('sheet_backdrop').addEventListener('click', closeSheet);
-
-      document.getElementById('clear_favs_btn').addEventListener('click', () => {
-        savedPlates = [];
-        saveFavoritesToStorage();
-        renderCardsOnly();
-      });
 
       document.querySelectorAll('#dietary_checkboxes input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
