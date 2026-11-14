@@ -21,7 +21,6 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DEFAULT_DINING_COURTS = ['Earhart', 'Ford', 'Hillenbrand', 'Wiley', 'Windsor']
 QUICK_BITES_LOCATIONS = ['1bowl', "Pete's Za", 'Sushi Boss']
 
-# Standard Purdue dining court windows used if API returns null Hours
 DEFAULT_MEAL_WINDOWS = {
     'breakfast': ('07:00:00', '10:00:00'),
     'brunch': ('10:00:00', '14:00:00'),
@@ -62,7 +61,7 @@ FALLBACK_MACROS = {
 }
 
 ORDERED_KEYWORD_MACROS = [
-    # 1. Standalone buns, breads, and bakery items (must come BEFORE hamburger/hot dog/sausage!)
+    # 1. Standalone buns, breads, and bakery items
     ('hamburger bun', (130.0, 4.0, 24.0, 2.0, 3.0)),
     ('hot dog bun', (120.0, 4.0, 22.0, 2.0, 3.0)),
     ('brioche bun', (150.0, 4.5, 26.0, 3.0, 4.0)),
@@ -124,8 +123,9 @@ ORDERED_KEYWORD_MACROS = [
     ('egg salad', (280.0, 14.0, 6.0, 22.0, 3.0)),
     ('potato salad', (220.0, 4.0, 26.0, 11.0, 5.0)),
 
-    # 5. Single proteins
+    # 5. Single proteins & dairy anchors
     ('scrambled egg', (180.0, 12.0, 2.0, 13.5, 1.0)),
+    ('hard boiled egg', (78.0, 6.3, 0.6, 5.3, 0.6)),
     ('egg', (155.0, 12.5, 1.1, 10.6, 1.0)),
     ('grilled chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
     ('chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
@@ -149,14 +149,18 @@ ORDERED_KEYWORD_MACROS = [
     ('shrimp', (140.0, 24.0, 1.0, 3.0, 0.0)),
     ('tofu', (160.0, 16.0, 4.0, 9.0, 1.0)),
     ('paneer', (260.0, 18.0, 4.0, 20.0, 2.0)),
+    ('cottage cheese', (120.0, 14.0, 5.0, 4.5, 4.0)),
+    ('greek yogurt', (130.0, 15.0, 6.0, 4.0, 5.0)),
 
     # 6. Legumes, grains, and complex carbohydrates
     ('garbanzo', (135.0, 7.3, 22.5, 2.1, 4.0)),
     ('chickpea', (135.0, 7.3, 22.5, 2.1, 4.0)),
     ('black bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
     ('kidney bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
+    ('pinto bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
     ('bean', (130.0, 7.5, 22.0, 1.0, 1.5)),
     ('lentil', (130.0, 9.0, 22.0, 0.5, 1.5)),
+    ('edamame', (120.0, 11.0, 9.0, 5.0, 2.0)),
     ('brown rice', (216.0, 5.0, 44.8, 1.8, 0.7)),
     ('white rice', (205.0, 4.3, 44.5, 0.4, 0.1)),
     ('long grain rice', (205.0, 4.3, 44.5, 0.4, 0.1)),
@@ -246,13 +250,25 @@ FILLED_ENTREE_OVERRIDES = [
     'french toast', 'avocado toast'
 ]
 
+# Single-ingredient whole foods whose N/A ingredient strings in Purdue's API are safe
 VERIFIED_NA_WHOLE_FOODS = [
     'plain white rice', 'long grain rice', 'jasmine rice', 'basmati rice',
     'plain brown rice', 'brown rice', 'steamed rice', 'steamed white rice',
     'steamed brown rice', 'baked potato', 'plain potato', 'baked sweet potato',
-    'sweet potato', 'steamed broccoli', 'steamed vegetables',
-    'garbanzo beans', 'chickpeas', 'black beans', 'kidney beans',
-    'plain grilled chicken breast', 'grilled chicken breast'
+    'sweet potato', 'steamed broccoli', 'steamed vegetables', 'steamed asparagus',
+    'steamed green beans', 'steamed cauliflower', 'steamed carrots',
+    'garbanzo beans', 'chickpeas', 'black beans', 'kidney beans', 'pinto beans',
+    'lentils', 'edamame', 'quinoa', 'oatmeal',
+    'plain grilled chicken breast', 'grilled chicken breast',
+    'hard boiled egg', 'hard-boiled egg', 'boiled egg', 'poached egg',
+    'cottage cheese', 'plain greek yogurt', 'greek yogurt'
+]
+
+# Keywords identifying plant/vegetarian whole-food anchors for Option B fallback
+PLANT_VEG_ANCHOR_KEYWORDS = [
+    'egg', 'tofu', 'paneer', 'tempeh', 'seitan', 'cottage cheese', 'greek yogurt',
+    'black bean', 'kidney bean', 'pinto bean', 'garbanzo', 'chickpea', 'lentil',
+    'edamame', 'quinoa', 'bean'
 ]
 
 SPECIAL_ORDER_STATION_MARKERS = [
@@ -347,9 +363,6 @@ def _match_fallback_macro(item_name: str) -> Optional[dict]:
 
 
 def _unpack_composite_items(base_item: dict) -> list[dict]:
-    """
-    Keeps real menu items intact without synthesizing raw DIY salad-bar plates.
-    """
     direct_match = _match_fallback_macro(base_item['name'])
     if direct_match:
         item_copy = dict(base_item)
@@ -969,7 +982,6 @@ def _is_dip_or_condiment(item: dict) -> bool:
     if any(k in station_lower for k in ['condiment', 'topping', 'dressing']):
         return True
 
-    # Allow actual sandwiches like "French Dip Sandwich"
     if any(ent in name_lower for ent in ['sandwich', 'panini', 'wrap', 'burrito']):
         return False
 
@@ -979,9 +991,7 @@ def _is_dip_or_condiment(item: dict) -> bool:
 def _is_standalone_bakery(item: dict) -> bool:
     name_lower = (item.get('name') or '').lower().strip()
 
-    # Do not flag filled entrees as standalone breads
     if any(ov in name_lower for ov in FILLED_ENTREE_OVERRIDES):
-        # Exception: "hamburger bun" or "hot dog bun" is strictly a standalone bun
         if not any(b in name_lower for b in ['bun', 'buns', 'roll', 'rolls', 'bread']):
             return False
 
@@ -998,6 +1008,10 @@ def _is_verified_na_whole_food(item: dict) -> bool:
         'salad', 'bowl', 'stir fry', 'moo shu', 'teriyaki', 'sauce', 'glaze',
         'fried', 'crispy', 'breaded', 'dip', 'queso', 'cheese', 'creamy', 'casserole'
     ]
+    # Allow explicit cottage cheese / paneer whole foods
+    if 'cottage cheese' in name_lower or 'paneer' in name_lower:
+        return True
+
     if any(risk in name_lower for risk in unverified_risk_words):
         return False
 
@@ -1018,7 +1032,6 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
     if _is_dip_or_condiment(item):
         return False, -100.0, 'Excluded: standalone dip, sauce, or condiment'
 
-    # Never serve plain hamburger buns / hot dog buns as standalone items
     if any(b in name_lower for b in ['hamburger bun', 'hot dog bun', 'sesame bun', 'wheat bun', 'white bun']):
         return False, -100.0, 'Excluded: standalone burger bun'
 
@@ -1034,6 +1047,7 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
     whole_fruit = _is_whole_fruit(name_lower)
 
     if tier == 'high':
+        # Strictly seed-oil free, dye free, deep-fry free, and added-sugar free
         if ing_raw.upper() == 'N/A' and not _is_verified_na_whole_food(item):
             return False, -100.0, 'Excluded from Healthiest mode: unverified ingredients'
         if has_seed_oil:
@@ -1077,7 +1091,7 @@ def evaluate_item_health(item: dict, health_intensity: str) -> tuple[bool, float
 
 
 # ==============================================================================
-# MODULE 5: CULINARY COHESION ENGINE & MULTI-COMBO CURATOR
+# MODULE 5: CULINARY COHESION ENGINE & OPTION B WHOLE-FOOD FALLBACK CURATOR
 # ==============================================================================
 
 def _detect_cuisine_profile(item: dict) -> str:
@@ -1143,12 +1157,12 @@ def _is_composed_salad(item: dict) -> bool:
     return True
 
 
+def _is_plant_veg_anchor(item: dict) -> bool:
+    name_lower = item['name'].lower().strip()
+    return any(re.search(rf'\b{re.escape(kw)}(?:s|es)?\b', name_lower) for kw in PLANT_VEG_ANCHOR_KEYWORDS)
+
+
 def _classify_item_role(item: dict) -> str:
-    """
-    Categorizes a menu item into 'protein' (main entree), 'carb' (grain/starch base),
-    or 'side' (vegetable, composed salad, or fruit).
-    Strictly blocks standalone buns, breads, and dips from being primary proteins.
-    """
     name_lower = item['name'].lower().strip()
 
     if (
@@ -1158,7 +1172,6 @@ def _classify_item_role(item: dict) -> str:
     ):
         return 'exclude'
 
-    # Standalone breads/buns/rolls are carbs (or excluded if plain burger buns), NEVER proteins
     if _is_standalone_bakery(item):
         if any(b in name_lower for b in ['bun', 'buns']):
             return 'exclude'
@@ -1167,7 +1180,7 @@ def _classify_item_role(item: dict) -> str:
     if _is_composed_salad(item):
         return 'side'
 
-    if any(k in name_lower for k in ['spinach', 'greens', 'broccoli', 'asparagus', 'brussels', 'vegetable', 'edamame', 'cauliflower', 'zucchini', 'carrots', 'green beans', 'corn']):
+    if any(k in name_lower for k in ['spinach', 'greens', 'broccoli', 'asparagus', 'brussels', 'vegetable', 'cauliflower', 'zucchini', 'carrots', 'green beans', 'corn']):
         return 'side'
 
     if _is_whole_fruit(name_lower):
@@ -1176,14 +1189,14 @@ def _classify_item_role(item: dict) -> str:
     entree_protein_hints = [
         'chicken', 'beef', 'steak', 'pork', 'salmon', 'fish', 'shrimp',
         'turkey', 'tofu', 'tempeh', 'seitan', 'egg', 'gyro', 'burger',
-        'meatball', 'carnitas', 'barbacoa', 'tilapia', 'cod', 'ham', 'tuna'
+        'meatball', 'carnitas', 'barbacoa', 'tilapia', 'cod', 'ham', 'tuna',
+        'paneer', 'cottage cheese', 'greek yogurt'
     ]
     has_protein_word = any(
         re.search(rf'\b{re.escape(h)}(?:s|es)?\b', name_lower)
         for h in entree_protein_hints
     )
 
-    # Require >= 12g protein and non-bakery status so buns/starches never masquerade as proteins
     if item['protein'] >= 12.0 and (
         item['protein'] >= item['carbs'] * 0.65
         or has_protein_word
@@ -1194,6 +1207,74 @@ def _classify_item_role(item: dict) -> str:
         return 'carb'
 
     return 'side'
+
+
+def _build_option_b_anchors(pool: list[dict], existing_proteins: list[dict]) -> list[dict]:
+    """
+    Option B: Builds a prioritized list of strictly seed-oil-free whole-food
+    anchors when a dining court lacks traditional meat entrees:
+      1. Clean meats / eggs / tofu / paneer / Greek yogurt (>= 10g protein)
+      2. Beans / lentils / chickpeas / edamame / quinoa (>= 6g protein)
+      3. Whole-food complex grains & potatoes (rice, sweet potato, oatmeal)
+    """
+    anchors = list(existing_proteins)
+    seen_names = {p['name'] for p in anchors}
+
+    # Tier 1: Eggs, tofu, paneer, cottage cheese, Greek yogurt (even if < 12g, e.g., hard-boiled eggs)
+    tier1 = sorted(
+        [
+            i for i in pool
+            if i['name'] not in seen_names
+            and not _is_standalone_bakery(i)
+            and not _is_composed_salad(i)
+            and (i['protein'] >= 6.0 and any(k in i['name'].lower() for k in ['egg', 'tofu', 'paneer', 'cottage cheese', 'greek yogurt', 'edamame']))
+        ],
+        key=lambda x: (x['_health_bonus'] + x['protein'] * 1.1),
+        reverse=True,
+    )
+    for item in tier1:
+        anchors.append(item)
+        seen_names.add(item['name'])
+
+    if len(anchors) >= 3:
+        return anchors[:8]
+
+    # Tier 2: Beans, lentils, chickpeas, quinoa
+    tier2 = sorted(
+        [
+            i for i in pool
+            if i['name'] not in seen_names
+            and not _is_standalone_bakery(i)
+            and not _is_composed_salad(i)
+            and (_is_plant_veg_anchor(i) or (i['protein'] >= 6.0 and i['calories'] >= 100.0))
+        ],
+        key=lambda x: (x['_health_bonus'] + x['protein'] * 1.1 + x['calories'] * 0.03),
+        reverse=True,
+    )
+    for item in tier2:
+        anchors.append(item)
+        seen_names.add(item['name'])
+
+    if len(anchors) >= 2:
+        return anchors[:8]
+
+    # Tier 3: Plain complex grains & potatoes (brown rice, white rice, baked/sweet potato, oatmeal)
+    tier3 = sorted(
+        [
+            i for i in pool
+            if i['name'] not in seen_names
+            and i['_role'] == 'carb'
+            and not _is_standalone_bakery(i)
+            and i['calories'] >= 110.0
+        ],
+        key=lambda x: (x['_health_bonus'] + x['protein'] * 0.9 + x['calories'] * 0.03),
+        reverse=True,
+    )
+    for item in tier3:
+        anchors.append(item)
+        seen_names.add(item['name'])
+
+    return anchors[:8]
 
 
 def _are_items_culinarily_compatible(p_item: dict, c_item: Optional[dict], s_item: Optional[dict]) -> tuple[bool, float]:
@@ -1211,6 +1292,13 @@ def _are_items_culinarily_compatible(p_item: dict, c_item: Optional[dict], s_ite
     if c_item and _is_standalone_bakery(c_item):
         p_name = p_item['name'].lower()
         if any(g in p_name for g in ['pasta', 'spaghetti', 'penne', 'rice', 'pizza', 'burrito', 'sandwich', 'burger']):
+            return False, -50.0
+
+    # Never pair two identical grain types together (e.g., brown rice anchor + brown rice base)
+    if c_item and p_item['_role'] == 'carb':
+        p_name = p_item['name'].lower()
+        c_name = c_item['name'].lower()
+        if ('rice' in p_name and 'rice' in c_name) or ('potato' in p_name and 'potato' in c_name):
             return False, -50.0
 
     cuisines = [it['_cuisine'] for it in items if it['_cuisine'] != 'neutral']
@@ -1239,8 +1327,8 @@ def _are_items_culinarily_compatible(p_item: dict, c_item: Optional[dict], s_ite
         synergy += 10.0
 
     if c_item and 'rice' in c_item['name'].lower():
-        if p_item['_cuisine'] in ('asian', 'latin', 'mediterranean', 'grill_comfort'):
-            synergy += 5.0
+        if p_item['_cuisine'] in ('asian', 'latin', 'mediterranean', 'grill_comfort') or _is_plant_veg_anchor(p_item):
+            synergy += 6.0
 
     return True, synergy
 
@@ -1256,16 +1344,8 @@ def _generate_combo_title(items: list[dict], cuisine: str) -> str:
         return main_name
 
     second_name = _clean_food_short_name(items[1]['name'])
-    if cuisine == 'asian':
+    if cuisine == 'asian' or any('rice' in it['name'].lower() or 'quinoa' in it['name'].lower() for it in items):
         return f"{main_name} & {second_name} Bowl"
-    if cuisine == 'latin':
-        return f"{main_name} & {second_name}"
-    if cuisine == 'mediterranean':
-        return f"{main_name} & {second_name}"
-    if cuisine == 'italian':
-        return f"{main_name} & {second_name}"
-    if cuisine == 'breakfast':
-        return f"{main_name} & {second_name}"
     return f"{main_name} & {second_name}"
 
 
@@ -1338,6 +1418,14 @@ def build_optimal_plates(
             key=lambda x: (x['_health_bonus'] + x['protein'] * 0.8),
             reverse=True,
         )[:10]
+
+        # Option B: Guarantee strictly seed-oil-free whole-food anchors (eggs, beans, lentils, tofu, paneer, grains)
+        if len(proteins) < 3:
+            proteins = _build_option_b_anchors(pool, proteins)
+
+        if not proteins:
+            continue
+
         carbs = sorted(
             [i for i in pool if i['_role'] == 'carb'],
             key=lambda x: (x['_health_bonus'] + x['carbs'] * 0.35),
@@ -1348,23 +1436,6 @@ def build_optimal_plates(
             key=lambda x: (x['_health_bonus'] + x['protein'] * 0.5 + x['calories'] * 0.04),
             reverse=True,
         )[:8]
-
-        if not proteins:
-            fallback_mains = sorted(
-                [
-                    i for i in pool
-                    if i['protein'] >= 9.0
-                    and i['calories'] >= 120.0
-                    and not _is_composed_salad(i)
-                    and not _is_standalone_bakery(i)
-                    and not _is_dip_or_condiment(i)
-                ],
-                key=lambda x: (x['_health_bonus'] + x['protein']),
-                reverse=True,
-            )[:6]
-            if not fallback_mains:
-                continue
-            proteins = fallback_mains
 
         carb_choices = carbs + [None]
         side_choices = sides + [None]
@@ -1386,7 +1457,8 @@ def build_optimal_plates(
             if not compatible:
                 continue
 
-            slots = [('Main', p_item)]
+            main_label = 'Main' if p_item['_role'] == 'protein' else 'Base'
+            slots = [(main_label, p_item)]
             if c_item:
                 slots.append(('Base', c_item))
             if s_item:
@@ -1420,8 +1492,8 @@ def build_optimal_plates(
 
                 total_score = 100.0 + avg_health + synergy_bonus + completeness_bonus - macro_penalty - pro_shortfall
             else:
-                protein_yield_bonus = min(tot_pro * 0.35, 16.0)
-                satiety_bonus = 6.0 if 380.0 <= tot_cal <= 920.0 else 0.0
+                protein_yield_bonus = min(tot_pro * 0.4, 18.0)
+                satiety_bonus = 6.0 if 320.0 <= tot_cal <= 920.0 else 0.0
                 total_score = 100.0 + avg_health + synergy_bonus + completeness_bonus + protein_yield_bonus + satiety_bonus
 
             candidate_combos.append((total_score, p_item, slots, {
@@ -1439,12 +1511,32 @@ def build_optimal_plates(
 
         selected_combos = []
         used_mains = set()
+        used_signatures = set()
 
+        # Pass 1: Pick top combos with distinct primary anchors
         for score_val, p_item, slots, totals_obj in candidate_combos:
-            if p_item['name'] in used_mains:
+            sig = tuple(it['name'] for _, it in slots)
+            if p_item['name'] in used_mains or sig in used_signatures:
                 continue
             used_mains.add(p_item['name'])
+            used_signatures.add(sig)
+            selected_combos.append((score_val, p_item, slots, totals_obj))
+            if len(selected_combos) >= 3:
+                break
 
+        # Pass 2: If fewer than 3 distinct mains exist, fill remaining cards with distinct side/base combinations
+        if len(selected_combos) < 3:
+            for score_val, p_item, slots, totals_obj in candidate_combos:
+                sig = tuple(it['name'] for _, it in slots)
+                if sig in used_signatures:
+                    continue
+                used_signatures.add(sig)
+                selected_combos.append((score_val, p_item, slots, totals_obj))
+                if len(selected_combos) >= 3:
+                    break
+
+        formatted_combos = []
+        for idx, (score_val, p_item, slots, totals_obj) in enumerate(selected_combos, start=1):
             slot_items = [it for _, it in slots]
             dominant_cuisine = p_item['_cuisine']
             combo_name = _generate_combo_title(slot_items, dominant_cuisine)
@@ -1467,8 +1559,8 @@ def build_optimal_plates(
                     'reason': it['_health_reason'],
                 })
 
-            selected_combos.append({
-                'combo_id': f"{location.lower().replace(' ', '_')}_{len(selected_combos) + 1}",
+            formatted_combos.append({
+                'combo_id': f"{location.lower().replace(' ', '_')}_{idx}",
                 'combo_name': combo_name,
                 'station_tag': p_item['station'],
                 'score': round(score_val, 1),
@@ -1477,16 +1569,13 @@ def build_optimal_plates(
                 'macro_split': macro_split,
             })
 
-            if len(selected_combos) >= 3:
-                break
-
-        top_combo = selected_combos[0]
+        top_combo = formatted_combos[0]
         location_results.append({
             'location': location,
             'hours_status': items[0]['hours_status'],
             'closing_time': items[0]['closing_time'],
             'score': top_combo['score'],
-            'combos': selected_combos,
+            'combos': formatted_combos,
             'items': top_combo['items'],
             'totals': top_combo['totals'],
         })

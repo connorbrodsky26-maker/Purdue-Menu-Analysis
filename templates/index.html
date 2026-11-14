@@ -36,7 +36,6 @@
       width: 100%;
       max-width: 100%;
       overflow-x: hidden;
-      touch-action: pan-y;
       overscroll-behavior-y: none;
     }
 
@@ -234,10 +233,11 @@
       width: 100%;
       max-width: 100%;
       touch-action: pan-y;
+      -webkit-user-select: none;
       user-select: none;
     }
 
-    /* Subtle stacked cards peeking beneath active card */
+    /* Stacked cards peeking beneath active card */
     .deck-underlay-1,
     .deck-underlay-2 {
       position: absolute;
@@ -245,20 +245,21 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      pointer-events: none;
-      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease;
     }
 
     .deck-underlay-1 {
       z-index: 1;
-      transform: translateY(6px) scale(0.975);
+      transform: translate3d(0, 6px, 0) scale(0.975);
       background: #FCFBF8;
+      cursor: pointer;
     }
 
     .deck-underlay-2 {
       z-index: 0;
-      transform: translateY(12px) scale(0.95);
+      transform: translate3d(0, 12px, 0) scale(0.95);
       background: var(--surface-alt);
+      pointer-events: none;
     }
 
     .flashcard {
@@ -271,51 +272,50 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
+      transform: translate3d(0, 0, 0) rotate(0deg);
       will-change: transform, opacity;
-      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.26s ease;
     }
 
     .flashcard.dragging {
-      transition: none;
+      transition: none !important;
       cursor: grabbing;
     }
 
     .flashcard.shuffle-out-left {
-      transform: translateX(-112%) rotate(-7deg) !important;
-      opacity: 0;
+      transform: translate3d(-115%, -8px, 0) rotate(-7deg) !important;
+      opacity: 0 !important;
     }
 
     .flashcard.shuffle-out-right {
-      transform: translateX(112%) rotate(7deg) !important;
-      opacity: 0;
+      transform: translate3d(115%, -8px, 0) rotate(7deg) !important;
+      opacity: 0 !important;
     }
 
-    @keyframes cardDealIn {
-      0% {
-        opacity: 0;
-        transform: translateY(10px) scale(0.97);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    /* Physical card peek animation so mobile users clearly see it's swipeable */
+    @keyframes physicalCardPeek {
+      0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+      28% { transform: translate3d(-34px, 0, 0) rotate(-2.2deg); }
+      55% { transform: translate3d(8px, 0, 0) rotate(0.6deg); }
+      78% { transform: translate3d(-14px, 0, 0) rotate(-0.9deg); }
+      100% { transform: translate3d(0, 0, 0) rotate(0deg); }
     }
 
-    .flashcard.deal-in {
-      animation: cardDealIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    .flashcard.peek-demo {
+      animation: physicalCardPeek 1.5s cubic-bezier(0.25, 0.9, 0.35, 1) forwards;
     }
 
-    /* Delayed Swipe Tutorial Overlay (3s delay, fade in & out) */
+    /* Delayed Swipe Tutorial Pill */
     .swipe-hint-overlay {
       position: absolute;
       inset: 0;
-      z-index: 5;
+      z-index: 6;
       display: flex;
       align-items: center;
       justify-content: center;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.65s ease;
+      transition: opacity 0.4s ease;
     }
 
     .swipe-hint-overlay.visible {
@@ -326,25 +326,19 @@
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      background: rgba(22, 21, 19, 0.86);
+      background: rgba(22, 21, 19, 0.88);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       color: #FFFFFF;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 0.48rem 0.9rem;
+      padding: 0.5rem 0.95rem;
       border-radius: 999px;
-      box-shadow: 0 8px 24px rgba(22, 21, 19, 0.22);
-      animation: nudgeArrow 1.3s ease-in-out infinite;
+      box-shadow: 0 8px 24px rgba(22, 21, 19, 0.25);
     }
 
     .swipe-hint-pill svg {
       color: var(--terracotta);
-    }
-
-    @keyframes nudgeArrow {
-      0%, 100% { transform: translateX(0); }
-      50% { transform: translateX(-7px); }
     }
 
     /* Combo Title Header inside Card */
@@ -366,16 +360,17 @@
       word-break: break-word;
     }
 
-    .card-counter {
+    .card-counter-btn {
       font-size: 0.72rem;
       font-weight: 800;
       color: var(--text-muted);
       background: var(--surface-alt);
       border: 1px solid var(--border);
-      padding: 0.2rem 0.56rem;
+      padding: 0.22rem 0.6rem;
       border-radius: 999px;
       white-space: nowrap;
       flex-shrink: 0;
+      cursor: pointer;
     }
 
     /* Menu Item Rows */
@@ -557,13 +552,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.42rem;
+      gap: 0.45rem;
       margin-top: 0.85rem;
     }
 
     .deck-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 999px;
       border: none;
       background: #D5CEC0;
@@ -573,7 +568,7 @@
     }
 
     .deck-dot.active {
-      width: 22px;
+      width: 24px;
       background: var(--terracotta);
     }
 
@@ -1233,7 +1228,7 @@
   </aside>
 
   <script>
-    const STORAGE_KEY = 'feast_dining_prefs_v5';
+    const STORAGE_KEY = 'feast_dining_prefs_v6';
 
     const state = {
       health_intensity: 'High',
@@ -1394,12 +1389,16 @@
       document.querySelectorAll('.swipe-hint-overlay').forEach(el => {
         el.classList.remove('visible');
       });
+      document.querySelectorAll('.flashcard.peek-demo').forEach(el => {
+        el.classList.remove('peek-demo');
+      });
     }
 
     function scheduleSwipeHint() {
       if (hasShownSwipeHint) return;
       const firstHint = document.querySelector('.swipe-hint-overlay');
       if (!firstHint) return;
+      const firstCard = firstHint.closest('.flashcard');
 
       if (hintShowTimer) clearTimeout(hintShowTimer);
       if (hintHideTimer) clearTimeout(hintHideTimer);
@@ -1408,14 +1407,44 @@
         if (hasShownSwipeHint) return;
         hasShownSwipeHint = true;
         firstHint.classList.add('visible');
+        if (firstCard) {
+          firstCard.classList.remove('peek-demo');
+          void firstCard.offsetWidth;
+          firstCard.classList.add('peek-demo');
+        }
 
         hintHideTimer = setTimeout(() => {
           firstHint.classList.remove('visible');
-        }, 3600);
-      }, 3000);
+          if (firstCard) firstCard.classList.remove('peek-demo');
+        }, 2800);
+      }, 2400);
     }
 
-    function advanceLocationCard(location, direction = 'left', dealIn = true) {
+    function runIncomingCardAnimation(location, direction = 'left') {
+      const deck = document.querySelector(`.flashcard-deck[data-location="${CSS.escape(location)}"]`);
+      if (!deck) return;
+      const card = deck.querySelector('.flashcard');
+      if (!card) return;
+
+      const startX = direction === 'left' ? 38 : -38;
+      const startRot = direction === 'left' ? 2.5 : -2.5;
+
+      if (card.animate) {
+        card.animate(
+          [
+            { opacity: 0.35, transform: `translate3d(${startX}px, 8px, 0) scale(0.96) rotate(${startRot}deg)` },
+            { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1) rotate(0deg)' }
+          ],
+          {
+            duration: 280,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'both'
+          }
+        );
+      }
+    }
+
+    function advanceLocationCard(location, direction = 'left') {
       const rec = currentRecommendations.find(r => r.location === location);
       if (!rec || !rec.combos || rec.combos.length <= 1) return;
 
@@ -1427,13 +1456,30 @@
         : (cur + 1) % total;
 
       selectedComboIndexByLoc[location] = next;
-      renderCardsOnly(dealIn ? location : null);
+      renderCardsOnly();
+      runIncomingCardAnimation(location, direction);
     }
 
     function setLocationComboIndex(location, idx) {
+      const cur = selectedComboIndexByLoc[location] || 0;
+      if (cur === idx) return;
       dismissSwipeHint();
-      selectedComboIndexByLoc[location] = idx;
-      renderCardsOnly(location);
+
+      const deck = document.querySelector(`.flashcard-deck[data-location="${CSS.escape(location)}"]`);
+      const card = deck ? deck.querySelector('.flashcard') : null;
+      const dir = idx > cur ? 'left' : 'right';
+
+      if (card) {
+        card.classList.add(dir === 'left' ? 'shuffle-out-left' : 'shuffle-out-right');
+        setTimeout(() => {
+          selectedComboIndexByLoc[location] = idx;
+          renderCardsOnly();
+          runIncomingCardAnimation(location, dir);
+        }, 190);
+      } else {
+        selectedComboIndexByLoc[location] = idx;
+        renderCardsOnly();
+      }
     }
 
     function attachDeckSwipeListeners() {
@@ -1449,52 +1495,60 @@
         let startY = 0;
         let deltaX = 0;
         let isDragging = false;
-        let isHorizontalSwipe = null;
+        let gestureAxis = null; // 'horizontal' | 'vertical' | null
+        let isAnimatingOut = false;
 
         const onStart = (clientX, clientY) => {
+          if (isAnimatingOut) return;
           startX = clientX;
           startY = clientY;
           deltaX = 0;
           isDragging = true;
-          isHorizontalSwipe = null;
-          card.classList.add('dragging');
+          gestureAxis = null;
+          card.classList.remove('peek-demo');
         };
 
         const onMove = (clientX, clientY, e) => {
-          if (!isDragging) return;
+          if (!isDragging || isAnimatingOut) return;
           const dx = clientX - startX;
           const dy = clientY - startY;
 
-          if (isHorizontalSwipe === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
-            isHorizontalSwipe = Math.abs(dx) > Math.abs(dy);
+          if (gestureAxis === null) {
+            if (Math.hypot(dx, dy) < 8) return;
+            // Generous horizontal detection so slightly diagonal phone swipes always register
+            gestureAxis = Math.abs(dx) >= Math.abs(dy) * 0.75 ? 'horizontal' : 'vertical';
+            if (gestureAxis === 'horizontal') {
+              card.classList.add('dragging');
+              dismissSwipeHint();
+            }
           }
 
-          if (!isHorizontalSwipe) return;
+          if (gestureAxis !== 'horizontal') return;
           if (e && e.cancelable) e.preventDefault();
 
-          dismissSwipeHint();
           deltaX = dx;
-          const rotateDeg = Math.max(-8, Math.min(8, dx * 0.04));
-          card.style.transform = `translateX(${dx}px) rotate(${rotateDeg}deg)`;
+          const rotateDeg = Math.max(-9, Math.min(9, dx * 0.045));
+          card.style.transform = `translate3d(${dx}px, 0, 0) rotate(${rotateDeg}deg)`;
         };
 
         const onEnd = () => {
-          if (!isDragging) return;
+          if (!isDragging || isAnimatingOut) return;
           isDragging = false;
           card.classList.remove('dragging');
 
-          if (isHorizontalSwipe && Math.abs(deltaX) > 52) {
+          if (gestureAxis === 'horizontal' && Math.abs(deltaX) > 42) {
+            isAnimatingOut = true;
             const dir = deltaX < 0 ? 'left' : 'right';
             card.classList.add(dir === 'left' ? 'shuffle-out-left' : 'shuffle-out-right');
             setTimeout(() => {
-              advanceLocationCard(location, dir, true);
+              advanceLocationCard(location, dir);
             }, 210);
           } else {
             card.style.transform = '';
           }
+          gestureAxis = null;
         };
 
-        // Touch events for mobile swipe
         deck.addEventListener('touchstart', (e) => {
           if (e.touches.length === 1) {
             onStart(e.touches[0].clientX, e.touches[0].clientY);
@@ -1507,10 +1561,9 @@
           }
         }, { passive: false });
 
-        deck.addEventListener('touchend', onEnd);
-        deck.addEventListener('touchcancel', onEnd);
+        deck.addEventListener('touchend', onEnd, { passive: true });
+        deck.addEventListener('touchcancel', onEnd, { passive: true });
 
-        // Mouse drag support for desktop/laptop testing
         deck.addEventListener('mousedown', (e) => {
           if (e.button !== 0) return;
           onStart(e.clientX, e.clientY);
@@ -1526,7 +1579,7 @@
       });
     }
 
-    function renderCardsOnly(animateDealLocation = null) {
+    function renderCardsOnly() {
       const resultsEl = document.getElementById('results_container');
       const recs = currentRecommendations || [];
 
@@ -1560,7 +1613,7 @@
         const activeComboIdx = Math.min(selectedComboIndexByLoc[rec.location] || 0, combos.length - 1);
         const combo = combos[activeComboIdx];
         const hasMultiple = combos.length > 1;
-        const shouldDealIn = animateDealLocation === rec.location;
+        const safeLoc = escapeHtml(rec.location);
 
         let hintHtml = '';
         if (hasMultiple && !hasShownSwipeHint && !renderedFirstHint) {
@@ -1572,7 +1625,7 @@
                   <line x1="19" y1="12" x2="5" y2="12"></line>
                   <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-                <span>Swipe for more options</span>
+                <span>Swipe card for more options</span>
               </div>
             </div>
           `;
@@ -1581,7 +1634,7 @@
         const underlaysHtml = hasMultiple
           ? `
             ${combos.length > 2 ? '<div class="deck-underlay-2"></div>' : ''}
-            <div class="deck-underlay-1"></div>
+            <div class="deck-underlay-1" onclick="advanceLocationCard('${safeLoc}', 'left')"></div>
           `
           : '';
 
@@ -1590,7 +1643,7 @@
               ${combos.map((_, cIdx) => `
                 <button type="button"
                   class="deck-dot ${cIdx === activeComboIdx ? 'active' : ''}"
-                  onclick="setLocationComboIndex('${escapeHtml(rec.location)}', ${cIdx})"
+                  onclick="setLocationComboIndex('${safeLoc}', ${cIdx})"
                   aria-label="Meal option ${cIdx + 1} of ${combos.length}"></button>
               `).join('')}
             </div>`
@@ -1631,18 +1684,18 @@
         return `
           <section class="court-section">
             <div class="court-header">
-              <h2 class="court-name">${escapeHtml(rec.location)}</h2>
+              <h2 class="court-name">${safeLoc}</h2>
               <span class="live-hours"><span class="pulse-dot"></span>${escapeHtml(rec.hours_status)}</span>
             </div>
 
             <div class="deck-wrapper">
-              <div class="flashcard-deck" data-location="${escapeHtml(rec.location)}" data-count="${combos.length}">
+              <div class="flashcard-deck" data-location="${safeLoc}" data-count="${combos.length}">
                 ${underlaysHtml}
-                <article class="flashcard ${shouldDealIn ? 'deal-in' : ''}">
+                <article class="flashcard">
                   ${hintHtml}
                   <div class="combo-head">
                     <div class="combo-name">${escapeHtml(combo.combo_name)}</div>
-                    ${hasMultiple ? `<span class="card-counter">${activeComboIdx + 1} / ${combos.length}</span>` : ''}
+                    ${hasMultiple ? `<button type="button" class="card-counter-btn" onclick="advanceLocationCard('${safeLoc}', 'left')" title="Next option">${activeComboIdx + 1} / ${combos.length} &rsaquo;</button>` : ''}
                   </div>
 
                   <div class="plate-board">${itemsHtml}</div>
