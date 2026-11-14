@@ -20,11 +20,14 @@ def index():
 
 @app.route('/api/recommend', methods=['POST'])
 def api_recommend():
-    """Receives mode, allergy/dietary filters, and optional DRI biometrics as JSON."""
+    """Receives mode, allergy/dietary filters, Pure Health toggle, and optional DRI biometrics as JSON."""
     data = request.get_json(silent=True) or {}
 
     try:
-        health_intensity = str(data.get('health_intensity', 'High')).strip() or 'High'
+        pure_health_mode = bool(data.get('pure_health_mode', False))
+        raw_intensity = str(data.get('health_intensity', 'High')).strip() or 'High'
+        health_intensity = 'Extreme' if pure_health_mode else raw_intensity
+
         dri_enabled = bool(data.get('dri_enabled', False))
         meal_goal = str(data.get('meal_goal', 'Balanced Maintenance')).strip() or 'Balanced Maintenance'
 
