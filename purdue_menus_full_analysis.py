@@ -2468,7 +2468,7 @@ def build_optimal_plates(
     health_intensity: str,
     dri_enabled: bool = False,
     dietary_filters: Optional[list[str]] = None,
-    top_n: int = 3,
+    top_n: Optional[int] = None,
     custom_weights: Optional[dict] = None,
 ) -> list[dict]:
     active_filters = dietary_filters or []
@@ -2634,7 +2634,7 @@ def build_optimal_plates(
         })
 
     location_results.sort(key=lambda r: r['score'], reverse=True)
-    return location_results[:top_n]
+    return location_results[:top_n] if top_n is not None else location_results
 
 
 def recommend_meals(
@@ -2688,7 +2688,7 @@ def recommend_meals(
         health_intensity=health_intensity,
         dri_enabled=dri_enabled,
         dietary_filters=dietary_filters or [],
-        top_n=3,
+        top_n=None,
     )
 
     return {
