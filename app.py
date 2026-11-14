@@ -12,17 +12,15 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 FEEDBACK_FILE = os.path.join(BASE_DIR, 'feast_feedback.json')
 PURDUE_TZ = ZoneInfo("America/Indiana/Indianapolis")
 
-FEAST_FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
-  <rect width="128" height="128" rx="28" fill="#F7F3EE"/>
-  <g transform="translate(0, 34)">
-    <path d="M4 13H24.5V19.8H11.8V28.4H22.2V35.2H11.8V49H4V13Z" fill="#C84B31"/>
-    <path d="M39 22.4C46.5 22.4 51.2 27.8 51.2 35.8V38.2H33.4C34.1 42.1 36.8 44.3 40.8 44.3C43.8 44.3 45.8 43 47.2 41.3L51.5 45.4C49 48.5 45.2 50.4 40.1 50.4C31.6 50.4 26 44.7 26 36.4C26 28 31.6 22.4 39 22.4ZM33.5 33.4H43.9C43.4 30 41.5 28.2 38.8 28.2C36 28.2 34.1 30.1 33.5 33.4Z" fill="#C84B31"/>
-    <path d="M65.2 22.4C72.7 22.4 77.2 26.4 77.2 33.4V49H70V45.9C68.3 48.3 65.5 49.7 62.1 49.7C56.9 49.7 53.5 46.4 53.5 41.6C53.5 36.4 57.5 33.6 64.3 33L69.8 32.5V31.6C69.8 28.8 67.9 27.2 64.9 27.2C62.1 27.2 60.3 28.4 59.4 30.3L53.9 27.6C55.8 23.8 59.8 22.4 65.2 22.4ZM69.8 37.3L65.2 37.7C62.1 38 60.6 39.3 60.6 41.3C60.6 43.3 62.2 44.5 64.5 44.5C67.7 44.5 69.8 42.4 69.8 39.3V37.3Z" fill="#C84B31"/>
-    <path d="M90.5 22.4C95.8 22.4 99.6 24.7 101.1 28.4L95.5 30.8C94.6 28.8 92.9 27.8 90.5 27.8C88.3 27.8 86.9 28.7 86.9 30.2C86.9 31.6 88.2 32.4 91.2 33.1L94.4 33.8C99.5 35 102 37.7 102 42.1C102 47.4 97.3 50.4 90.4 50.4C84.4 50.4 80.2 47.8 78.8 43.8L84.6 41.3C85.6 43.7 87.6 45 90.6 45C93.1 45 94.6 44 94.6 42.4C94.6 40.9 93.4 40.1 90.4 39.4L87.1 38.7C82.3 37.6 79.7 34.9 79.7 30.6C79.7 25.5 84.1 22.4 90.5 22.4Z" fill="#C84B31"/>
-    <path d="M107.2 15.8H114.6V23H119.8V28.9H114.6V40.4C114.6 43.1 115.8 44.3 118.4 44.3H120V49.8H117C110.6 49.8 107.2 46.8 107.2 40.6V28.9H103.6V23H107.2V15.8Z" fill="#C84B31"/>
-    <path d="M111.1 14.8C109.9 8.2 115.4 2.7 123.3 1.7C122.9 9.7 117.8 15.1 111.1 14.8Z" fill="#1D8A5A"/>
-    <path d="M111.8 14.1C114.9 10.6 118.3 7.3 122.1 3.1" stroke="#F7F3EE" stroke-width="1.55" stroke-linecap="round"/>
-  </g>
+# Brand logo SVG based on image_2.png
+FEAST_FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 84" fill="none">
+  <path d="M15.4 28H39.4V36.2H23.9V46.6H36.3V54.7H23.9V71.3H15.4V28Z" fill="#C84B31"/>
+  <path d="M54.1 39.4C63.1 39.4 68.7 45.9 68.7 55.4V58.3H47.4C48.2 63.1 51.5 65.7 56.3 65.7C59.9 65.7 62.3 64.2 64.0 62.1L69.1 67C66.1 70.8 61.6 73.1 55.5 73.1C45.3 73.1 38.6 66.2 38.6 56.3C38.6 46.2 45.3 39.4 54.1 39.4ZM47.6 52.6H59.9C59.3 48.6 57.0 46.4 53.8 46.4C50.5 46.4 48.2 48.7 47.6 52.6Z" fill="#C84B31"/>
+  <path d="M85.4 39.4C94.4 39.4 99.8 44.2 99.8 52.6V71.3H91.1V67.6C89.1 70.5 85.8 72.2 81.7 72.2C75.5 72.2 71.4 68.2 71.4 62.5C71.4 56.2 76.2 52.9 84.3 52.2L91.0 51.6V50.5C91.0 47.1 88.7 45.2 85.1 45.2C81.7 45.2 79.5 46.6 78.5 48.9L71.9 45.7C74.1 41.1 79.0 39.4 85.4 39.4ZM91.0 57.3L85.4 57.8C81.7 58.2 79.9 59.7 79.9 62.1C79.9 64.5 81.8 66 84.6 66C88.5 66 91.0 63.4 91.0 59.7V57.3Z" fill="#C84B31"/>
+  <path d="M115.8 39.4C122.1 39.4 126.7 42.1 128.5 46.6L121.8 49.5C120.7 47.1 118.7 45.9 115.8 45.9C113.2 45.9 111.5 47 111.5 48.8C111.5 50.5 113.1 51.4 116.7 52.3L120.5 53.1C126.6 54.6 129.6 57.8 129.6 63.1C129.6 69.5 124.0 73.1 115.7 73.1C108.5 73.1 103.5 69.9 101.8 65.1L108.8 62.1C110.0 65 112.4 66.6 115.9 66.6C118.9 66.6 120.7 65.4 120.7 63.5C120.7 61.7 119.3 60.7 115.7 59.9L111.7 59.1C106.0 57.8 102.9 54.5 102.9 49.3C102.9 43.1 108.2 39.4 115.8 39.4Z" fill="#C84B31"/>
+  <path d="M135.8 31.4H144.7V40.1H150.9V47.2H144.7V61.0C144.7 64.2 146.1 65.7 149.2 65.7H151.2V72.3H147.6C140.0 72.3 135.8 68.7 135.8 61.3V47.2H131.5V40.1H135.8V31.4Z" fill="#C84B31"/>
+  <path d="M133.5 31.5C132.5 19.3 140.6 8.5 151.1 5.3C152.0 17.5 144.5 28.5 133.5 31.5Z" fill="#1D8A5A"/>
+  <path d="M134.3 30.6C141.0 23.3 145.4 15.6 148.9 7.3" stroke="#F7F3EE" stroke-width="1.6" stroke-linecap="round"/>
 </svg>
 """
 
@@ -35,7 +33,7 @@ def index():
 
 @app.route('/favicon.svg')
 def favicon_svg():
-    """Serves the updated geometric Feast SVG favicon directly so sanitizers never strip it."""
+    """Serves the brand Feast SVG favicon directly to prevent caching and parsing issues."""
     resp = Response(FEAST_FAVICON_SVG, mimetype='image/svg+xml')
     resp.headers['Cache-Control'] = 'public, max-age=3600'
     return resp
@@ -43,7 +41,7 @@ def favicon_svg():
 
 @app.route('/manifest.webmanifest')
 def manifest_webmanifest():
-    """Serves the web app manifest pointing to the geometric Feast SVG icon."""
+    """Serves the web app manifest pointing to the brand Feast SVG icon."""
     manifest = {
         'name': 'Feast — Purdue Campus Dining',
         'short_name': 'Feast',
@@ -54,7 +52,7 @@ def manifest_webmanifest():
         'theme_color': '#F7F3EE',
         'icons': [
             {
-                'src': '/favicon.svg?v=2',
+                'src': '/favicon.svg?v=3',
                 'sizes': 'any',
                 'type': 'image/svg+xml',
                 'purpose': 'any maskable',
