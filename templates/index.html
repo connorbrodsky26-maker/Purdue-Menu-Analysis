@@ -2,62 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feast — Purdue Dining Companion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#F6F3EE" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Feast" />
+  <meta name="application-name" content="Feast" />
+  <title>Feast — Campus Dining</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%23F6F3EE'/%3E%3Ctext x='56' y='73' text-anchor='middle' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif' font-weight='900' font-size='34' letter-spacing='-1.5' fill='%23C84B31'%3EFeast%3C/text%3E%3Cpath d='M105 33C95 33 88 39 88 49C98 49 105 42 105 33Z' fill='%231D8A5A'/%3E%3C/svg%3E" />
   <style>
     :root {
       --bg: #F6F3EE;
       --surface: #FFFFFF;
       --surface-alt: #EFECE6;
-      --surface-hover: #E7E2D9;
+      --surface-press: #E6E0D6;
       --border: #E2DDD4;
       --text: #1E1B18;
-      --text-muted: #70685F;
+      --text-muted: #6E665D;
       --terracotta: #C84B31;
       --terracotta-dark: #A63A23;
       --terracotta-soft: #FBECE8;
       --leaf: #1D8A5A;
       --leaf-soft: #E6F4ED;
       --amber: #D98A3C;
-      --shadow-sm: 0 4px 14px rgba(30, 27, 24, 0.05);
-      --shadow-lg: 0 14px 36px rgba(30, 27, 24, 0.10);
-      --radius-card: 22px;
+      --shadow-sm: 0 3px 12px rgba(30, 27, 24, 0.045);
+      --shadow-lg: 0 14px 34px rgba(30, 27, 24, 0.11);
+      --radius-card: 24px;
       --radius-pill: 999px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-top: env(safe-area-inset-top, 0px);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.48;
+      line-height: 1.45;
       -webkit-font-smoothing: antialiased;
-      padding-bottom: 6.5rem;
+      padding-bottom: calc(6.5rem + var(--safe-bottom));
     }
 
-    /* Top Header */
+    /* Sticky Top Header + Dining Hall Switcher */
     header {
       position: sticky;
       top: 0;
-      z-index: 30;
-      background: rgba(246, 243, 238, 0.9);
-      backdrop-filter: blur(12px);
+      z-index: 35;
+      background: rgba(246, 243, 238, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
+      padding-top: var(--safe-top);
     }
 
     .header-inner {
-      max-width: 1120px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 0.9rem 1.25rem;
+      padding: 0.78rem 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
     .brand {
@@ -65,10 +81,11 @@
       align-items: center;
       text-decoration: none;
       user-select: none;
+      cursor: pointer;
     }
 
     .wordmark {
-      font-size: 2rem;
+      font-size: 1.92rem;
       font-weight: 900;
       letter-spacing: -0.045em;
       color: var(--terracotta);
@@ -98,94 +115,169 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
-      padding: 0.36rem 0.82rem;
-      font-size: 0.77rem;
+      padding: 0.42rem 0.85rem;
+      font-size: 0.78rem;
       font-weight: 800;
-      color: var(--terracotta);
+      color: var(--text);
       box-shadow: var(--shadow-sm);
     }
 
     .live-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--leaf);
       display: inline-block;
+      flex-shrink: 0;
+    }
+
+    /* Sticky Horizontal Dining Hall Switcher */
+    .hall-switcher-wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0.1rem 1.1rem 0.75rem;
+      display: none;
+    }
+
+    .hall-switcher-wrap.visible {
+      display: block;
+    }
+
+    .hall-scroller {
+      display: flex;
+      align-items: center;
+      gap: 0.48rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .hall-scroller::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hall-pill {
+      min-height: 44px;
+      padding: 0 1rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.84rem;
+      font-weight: 800;
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+    }
+
+    .hall-pill:active {
+      transform: scale(0.97);
+    }
+
+    .hall-pill.active {
+      background: var(--text);
+      border-color: var(--text);
+      color: #FFFFFF;
+    }
+
+    .hall-pill-count {
+      font-size: 0.72rem;
+      font-weight: 800;
+      opacity: 0.72;
     }
 
     /* Main Content Container */
     .main-wrap {
-      max-width: 1120px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 1.45rem 1.25rem 2rem;
+      padding: 1.15rem 1.1rem 2rem;
     }
 
     .hero-section {
-      margin-bottom: 1.4rem;
+      margin-bottom: 1.1rem;
     }
 
     .hero-section h1 {
-      font-size: 1.72rem;
+      font-size: 1.58rem;
       font-weight: 900;
       letter-spacing: -0.03em;
+      line-height: 1.18;
       margin-bottom: 0.25rem;
       color: var(--text);
     }
 
     .hero-section p {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       color: var(--text-muted);
       font-weight: 500;
     }
 
-    /* Active Filters & DRI Summary Strip */
+    /* Active Filters & Target Summary Strip */
     .active-strip {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1.25rem;
+      gap: 0.45rem;
+      margin-bottom: 1.1rem;
     }
 
     .active-chip {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
-      padding: 0.28rem 0.72rem;
+      padding: 0.3rem 0.75rem;
       font-size: 0.76rem;
       font-weight: 700;
       color: var(--text);
+      text-transform: capitalize;
     }
 
     .active-chip.accent {
       background: var(--terracotta-soft);
       border-color: rgba(200, 75, 49, 0.25);
       color: var(--terracotta-dark);
+      text-transform: none;
     }
 
     .error-banner {
       background: var(--terracotta-soft);
       border: 1px solid rgba(200, 75, 49, 0.3);
       color: var(--terracotta-dark);
-      border-radius: 14px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 1.2rem;
+      border-radius: 16px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.1rem;
       font-size: 0.86rem;
       font-weight: 700;
       display: none;
     }
 
-    /* Dining Court Cards Grid */
+    /* Dining Hall Cards Grid */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.35rem;
+      grid-template-columns: 1fr;
+      gap: 1.4rem;
+    }
+
+    @media (min-width: 720px) {
+      .cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      }
+      .cards-grid.single-focus {
+        grid-template-columns: minmax(340px, 560px);
+        justify-content: center;
+      }
     }
 
     .court-card-wrap {
       display: flex;
       flex-direction: column;
-      gap: 0.55rem;
+      gap: 0.5rem;
       overflow-x: clip;
     }
 
@@ -193,18 +285,18 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 0.3rem;
+      padding: 0 0.25rem;
     }
 
     .court-name {
-      font-size: 1.12rem;
+      font-size: 1.14rem;
       font-weight: 900;
       letter-spacing: -0.02em;
     }
 
     .court-hours {
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.77rem;
+      font-weight: 800;
       color: var(--leaf);
       display: inline-flex;
       align-items: center;
@@ -218,27 +310,29 @@
       flex: 1;
     }
 
-    /* Delayed Swipe Hint Arrow Badge */
+    /* Delayed Swipe Hint Arrow Pill (44px+ tap target) */
     .swipe-hint-pill {
       position: absolute;
       bottom: 14px;
       left: 50%;
-      transform: translate(-50%, 10px);
+      transform: translate(-50%, 12px);
       z-index: 15;
+      min-height: 44px;
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      background: rgba(30, 27, 24, 0.92);
+      gap: 0.5rem;
+      background: rgba(30, 27, 24, 0.94);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       color: #FFFFFF;
       border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: var(--radius-pill);
-      padding: 0.44rem 0.92rem;
-      font-size: 0.76rem;
+      padding: 0 1.05rem;
+      font-size: 0.8rem;
       font-weight: 800;
       letter-spacing: 0.01em;
       white-space: nowrap;
-      box-shadow: 0 10px 24px rgba(30, 27, 24, 0.28);
+      box-shadow: 0 10px 26px rgba(30, 27, 24, 0.28);
       opacity: 0;
       pointer-events: none;
       cursor: pointer;
@@ -287,12 +381,8 @@
       box-shadow: var(--shadow-lg);
     }
 
-    .meal-card:hover {
-      box-shadow: var(--shadow-lg);
-    }
-
     .card-header {
-      padding: 1.15rem 1.2rem 0.45rem;
+      padding: 1.2rem 1.2rem 0.55rem;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -300,48 +390,55 @@
     }
 
     .combo-title {
-      font-size: 1.12rem;
-      font-weight: 800;
-      line-height: 1.26;
-      letter-spacing: -0.015em;
+      font-size: 1.18rem;
+      font-weight: 900;
+      line-height: 1.24;
+      letter-spacing: -0.02em;
+      color: var(--text);
     }
 
+    /* Pager Controls (44px+ touch targets) */
     .pager-wrap {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 0.28rem;
+      gap: 0.3rem;
       flex-shrink: 0;
     }
 
     .pager-controls {
       display: inline-flex;
       align-items: center;
-      gap: 0.2rem;
       background: var(--surface-alt);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
-      padding: 0.18rem 0.45rem;
+      height: 44px;
+      padding: 0 0.2rem;
     }
 
     .pager-btn {
       background: none;
       border: none;
       color: var(--text);
-      font-size: 0.92rem;
+      font-size: 1.15rem;
       font-weight: 800;
       cursor: pointer;
-      padding: 0.08rem 0.34rem;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       line-height: 1;
     }
 
-    .pager-btn:hover {
+    .pager-btn:active {
+      background: var(--surface-press);
       color: var(--terracotta);
     }
 
     .pager-label {
-      font-size: 0.73rem;
+      font-size: 0.76rem;
       font-weight: 800;
       color: var(--text-muted);
       min-width: 2.1rem;
@@ -351,13 +448,13 @@
     .pager-dots {
       display: inline-flex;
       align-items: center;
-      gap: 0.28rem;
-      padding-right: 0.25rem;
+      gap: 0.32rem;
+      padding-right: 0.35rem;
     }
 
     .pager-dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 999px;
       background: var(--border);
       border: none;
@@ -367,31 +464,34 @@
     }
 
     .pager-dot.active {
-      width: 15px;
+      width: 18px;
       background: var(--terracotta);
     }
 
-    /* Match Rationale & Pillar Chips */
+    /* Single Concise Clean-Food / Match Badge */
     .rationale-box {
-      padding: 0.15rem 1.2rem 0.6rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.42rem;
+      padding: 0.1rem 1.2rem 0.7rem;
     }
 
     .rationale-pill {
       display: inline-flex;
       align-items: center;
-      gap: 0.36rem;
-      align-self: flex-start;
+      gap: 0.38rem;
       background: var(--leaf-soft);
       color: var(--leaf);
       border: 1px solid rgba(29, 138, 90, 0.2);
-      border-radius: 10px;
-      padding: 0.26rem 0.64rem;
-      font-size: 0.74rem;
-      font-weight: 700;
-      line-height: 1.3;
+      border-radius: var(--radius-pill);
+      padding: 0.3rem 0.72rem;
+      font-size: 0.76rem;
+      font-weight: 800;
+      line-height: 1.25;
+      max-width: 100%;
+    }
+
+    .rationale-pill span:last-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .rationale-pill.neutral {
@@ -400,48 +500,36 @@
       border-color: var(--border);
     }
 
-    .pillar-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.34rem;
-    }
-
-    .pillar-tag {
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-pill);
-      padding: 0.14rem 0.5rem;
-    }
-
-    /* Expandable Plate Items */
+    /* Clean Scannable Dish Rows (44px+ tap targets, Protein + Calories only by default) */
     .items-list {
-      padding: 0.25rem 1.2rem 0.9rem;
+      padding: 0.15rem 1.2rem 1.05rem;
       display: flex;
       flex-direction: column;
-      gap: 0.55rem;
+      gap: 0.6rem;
     }
 
     .dish-row {
+      min-height: 56px;
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 0.68rem 0.85rem;
+      border-radius: 16px;
+      padding: 0.78rem 0.95rem;
       cursor: pointer;
-      transition: background 0.14s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: background 0.14s ease, border-color 0.14s ease;
     }
 
-    .dish-row:hover {
-      background: var(--surface-alt);
+    .dish-row:active {
+      background: var(--surface-press);
     }
 
     .dish-main-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
     .dish-info {
@@ -449,12 +537,12 @@
     }
 
     .dish-meta-top {
-      font-size: 0.68rem;
+      font-size: 0.69rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--terracotta);
-      margin-bottom: 0.14rem;
+      margin-bottom: 0.16rem;
     }
 
     .dish-meta-top span {
@@ -465,9 +553,10 @@
     }
 
     .dish-name {
-      font-size: 0.93rem;
-      font-weight: 700;
+      font-size: 0.97rem;
+      font-weight: 800;
       color: var(--text);
+      line-height: 1.28;
     }
 
     .dish-right {
@@ -476,24 +565,24 @@
     }
 
     .dish-pro {
-      font-size: 0.84rem;
-      font-weight: 800;
+      font-size: 0.9rem;
+      font-weight: 900;
       color: var(--text);
       display: inline-flex;
       align-items: center;
-      gap: 0.28rem;
+      gap: 0.3rem;
     }
 
     .dish-cal {
-      font-size: 0.72rem;
-      font-weight: 600;
+      font-size: 0.76rem;
+      font-weight: 700;
       color: var(--text-muted);
     }
 
     .dish-chevron {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
-      transition: transform 0.16s ease;
+      transition: transform 0.18s ease;
       display: inline-block;
     }
 
@@ -503,48 +592,112 @@
 
     .dish-details {
       display: none;
-      margin-top: 0.52rem;
-      padding-top: 0.48rem;
+      margin-top: 0.58rem;
+      padding-top: 0.54rem;
       border-top: 1px dashed var(--border);
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       font-weight: 600;
+      line-height: 1.4;
     }
 
     .dish-row.expanded .dish-details {
       display: block;
     }
 
-    /* Card Bottom Macro Breakdown */
+    /* Card Bottom: Clean Protein + Calories Summary + Tap-to-Expand Macro/Score Drawer */
     .card-bottom {
       background: var(--surface-alt);
       border-top: 1px solid var(--border);
-      padding: 0.85rem 1.2rem 0.95rem;
+      padding: 0.45rem 0.75rem 0.45rem 1.2rem;
     }
 
-    .macro-pills-row {
+    .card-summary-bar {
       display: flex;
-      gap: 0.45rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      min-height: 44px;
+    }
+
+    .headline-macros {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .headline-sep {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .details-toggle-btn {
+      min-height: 44px;
+      padding: 0 0.85rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.32rem;
+      flex-shrink: 0;
+    }
+
+    .details-toggle-btn:active {
+      background: var(--surface-press);
+    }
+
+    .details-toggle-btn .chev {
+      transition: transform 0.18s ease;
+      display: inline-block;
+    }
+
+    .card-bottom.expanded .details-toggle-btn .chev {
+      transform: rotate(180deg);
+    }
+
+    .card-extra-panel {
+      display: none;
+      padding: 0.55rem 0.45rem 0.65rem 0;
+      border-top: 1px dashed var(--border);
+      margin-top: 0.25rem;
+    }
+
+    .card-bottom.expanded .card-extra-panel {
+      display: block;
+    }
+
+    .extra-macros-row {
+      display: flex;
       flex-wrap: wrap;
-      margin-bottom: 0.48rem;
+      gap: 0.45rem;
+      margin-bottom: 0.55rem;
     }
 
     .m-pill {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.22rem 0.54rem;
-      font-size: 0.75rem;
+      border-radius: 10px;
+      padding: 0.26rem 0.6rem;
+      font-size: 0.76rem;
       font-weight: 800;
+      color: var(--text);
     }
 
     .macro-bar-track {
-      height: 6px;
+      height: 7px;
       border-radius: var(--radius-pill);
       overflow: hidden;
       display: flex;
       background: var(--border);
-      margin-bottom: 0.42rem;
+      margin-bottom: 0.45rem;
     }
 
     .seg-p { background: var(--terracotta); }
@@ -554,43 +707,62 @@
     .macro-pct-line {
       display: flex;
       justify-content: space-between;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       font-weight: 700;
       color: var(--text-muted);
     }
 
-    /* Floating Bottom Dock */
+    .pillar-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.38rem;
+      margin-top: 0.6rem;
+    }
+
+    .pillar-tag {
+      font-size: 0.71rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 0.18rem 0.58rem;
+    }
+
+    /* Floating Bottom Mode & Preferences Dock (Thumb-Zone Safe) */
     .bottom-dock {
       position: fixed;
-      bottom: 1.15rem;
+      bottom: calc(1rem + var(--safe-bottom));
       left: 50%;
       transform: translateX(-50%);
       z-index: 40;
       display: flex;
       align-items: center;
       gap: 0.55rem;
-      max-width: calc(100vw - 1.5rem);
+      max-width: calc(100vw - 1.25rem);
     }
 
     .mode-dock {
       display: inline-flex;
       align-items: center;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
-      padding: 0.3rem;
+      padding: 0.28rem;
       box-shadow: var(--shadow-lg);
-      gap: 0.2rem;
+      gap: 0.18rem;
     }
 
     .dock-mode-btn {
       border: none;
       background: transparent;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       font-weight: 800;
-      padding: 0.54rem 1.05rem;
+      min-height: 44px;
+      padding: 0 1.05rem;
       border-radius: var(--radius-pill);
       cursor: pointer;
       transition: all 0.16s ease;
@@ -605,8 +777,8 @@
 
     .dock-filter-btn {
       position: relative;
-      width: 46px;
-      height: 46px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       background: var(--surface);
       border: 1px solid var(--border);
@@ -617,36 +789,36 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: all 0.15s ease;
+      transition: border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
     }
 
-    .dock-filter-btn:hover {
-      border-color: var(--terracotta);
-      color: var(--terracotta);
+    .dock-filter-btn:active {
+      transform: scale(0.95);
     }
 
     .dock-badge {
       position: absolute;
-      top: -3px;
-      right: -3px;
+      top: -2px;
+      right: -2px;
       background: var(--terracotta);
       color: #fff;
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       font-weight: 800;
-      min-width: 18px;
-      height: 18px;
+      min-width: 20px;
+      height: 20px;
       border-radius: 50%;
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 0 4px;
+      padding: 0 5px;
+      border: 2px solid var(--bg);
     }
 
-    /* Slide-Over Preferences Drawer */
+    /* Preferences Sheet (Bottom Sheet on Mobile, Right Drawer on Desktop) */
     .drawer-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(25, 22, 19, 0.42);
+      background: rgba(25, 22, 19, 0.44);
       z-index: 60;
       display: none;
     }
@@ -657,27 +829,68 @@
 
     .prefs-drawer {
       position: fixed;
-      top: 0;
+      top: auto;
+      left: 0;
       right: 0;
       bottom: 0;
       width: 100%;
-      max-width: 420px;
+      max-height: 88dvh;
       background: var(--bg);
-      border-left: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      border-radius: 28px 28px 0 0;
       z-index: 70;
       display: flex;
       flex-direction: column;
-      transform: translateX(100%);
-      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
-      box-shadow: -12px 0 36px rgba(0, 0, 0, 0.14);
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 -14px 40px rgba(0, 0, 0, 0.16);
     }
 
     .prefs-drawer.open {
-      transform: translateX(0);
+      transform: translateY(0);
+    }
+
+    .sheet-handle-wrap {
+      padding-top: 0.6rem;
+      display: flex;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: 28px 28px 0 0;
+    }
+
+    .sheet-handle {
+      width: 38px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--border);
+    }
+
+    @media (min-width: 681px) {
+      .prefs-drawer {
+        top: 0;
+        left: auto;
+        right: 0;
+        bottom: 0;
+        max-width: 430px;
+        max-height: 100dvh;
+        border-top: none;
+        border-left: 1px solid var(--border);
+        border-radius: 0;
+        transform: translateX(100%);
+        box-shadow: -12px 0 36px rgba(0, 0, 0, 0.14);
+      }
+
+      .prefs-drawer.open {
+        transform: translateX(0);
+      }
+
+      .sheet-handle-wrap {
+        display: none;
+      }
     }
 
     .drawer-header {
-      padding: 1.15rem 1.25rem;
+      padding: 0.85rem 1.25rem 1rem;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       display: flex;
@@ -686,7 +899,7 @@
     }
 
     .drawer-header h2 {
-      font-size: 1.2rem;
+      font-size: 1.24rem;
       font-weight: 900;
       letter-spacing: -0.02em;
     }
@@ -696,29 +909,31 @@
       color: #fff;
       border: none;
       border-radius: var(--radius-pill);
-      padding: 0.44rem 1.05rem;
-      font-size: 0.84rem;
+      min-height: 44px;
+      padding: 0 1.25rem;
+      font-size: 0.88rem;
       font-weight: 800;
       cursor: pointer;
     }
 
     .drawer-body {
-      padding: 1.15rem 1.25rem 2.5rem;
+      padding: 1.15rem 1.25rem calc(2.25rem + var(--safe-bottom));
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       display: flex;
       flex-direction: column;
-      gap: 1.35rem;
+      gap: 1.4rem;
     }
 
     .drawer-sec-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.55rem;
     }
 
     .drawer-sec-title {
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.06em;
@@ -729,48 +944,81 @@
       background: none;
       border: none;
       color: var(--terracotta);
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       font-weight: 800;
       text-decoration: underline;
+      min-height: 44px;
+      padding: 0 0.4rem;
       cursor: pointer;
     }
 
+    /* Large Pill Toggles for Dietary & Allergies */
     .diet-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 0.48rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.52rem;
     }
 
     .diet-row-check {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 0.68rem;
+      justify-content: space-between;
+      gap: 0.5rem;
+      min-height: 48px;
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      padding: 0.65rem 0.85rem;
-      font-size: 0.88rem;
-      font-weight: 700;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 0.6rem 0.82rem;
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: var(--text);
       cursor: pointer;
-      transition: border-color 0.14s ease;
+      user-select: none;
+      transition: border-color 0.14s ease, background 0.14s ease;
     }
 
-    .diet-row-check:hover {
+    .diet-row-check:has(input:checked) {
       border-color: var(--terracotta);
+      background: var(--terracotta-soft);
+      color: var(--terracotta-dark);
     }
 
     .diet-row-check input[type="checkbox"] {
-      width: 17px;
-      height: 17px;
-      accent-color: var(--terracotta);
-      cursor: pointer;
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      pointer-events: none;
+    }
+
+    .pill-check-indicator {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: transparent;
+      flex-shrink: 0;
+      transition: all 0.14s ease;
+    }
+
+    .diet-row-check:has(input:checked) .pill-check-indicator {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: #FFFFFF;
     }
 
     .toggle-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 0.8rem 0.9rem;
+      border-radius: 18px;
+      padding: 0.85rem 1rem;
     }
 
     .toggle-row {
@@ -778,24 +1026,63 @@
       justify-content: space-between;
       align-items: center;
       gap: 0.75rem;
-      font-size: 0.88rem;
+      min-height: 44px;
+      font-size: 0.92rem;
       font-weight: 800;
       cursor: pointer;
     }
 
-    .toggle-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--terracotta);
+    .switch-control {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .switch-control input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+    }
+
+    .switch-track {
+      width: 48px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      padding: 2px;
+      transition: background 0.18s ease, border-color 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .switch-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+      transition: transform 0.18s ease;
+    }
+
+    .switch-control input:checked + .switch-track {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+    }
+
+    .switch-control input:checked + .switch-track .switch-thumb {
+      transform: translateX(20px);
     }
 
     .dri-panel {
       margin-top: 0.85rem;
-      padding-top: 0.85rem;
+      padding-top: 0.9rem;
       border-top: 1px solid var(--border);
       display: none;
       flex-direction: column;
-      gap: 0.68rem;
+      gap: 0.72rem;
     }
 
     .dri-panel.open {
@@ -804,21 +1091,22 @@
 
     .field-group label {
       display: block;
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       font-weight: 800;
       color: var(--text-muted);
-      margin-bottom: 0.24rem;
+      margin-bottom: 0.26rem;
     }
 
     .field-group input,
     .field-group select,
     .field-group textarea {
       width: 100%;
-      padding: 0.56rem 0.72rem;
-      border-radius: 11px;
+      min-height: 44px;
+      padding: 0.58rem 0.78rem;
+      border-radius: 12px;
       border: 1px solid var(--border);
       background: var(--bg);
-      font-size: 0.86rem;
+      font-size: 0.9rem;
       font-family: inherit;
       color: var(--text);
       font-weight: 600;
@@ -827,21 +1115,22 @@
     .two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.58rem;
+      gap: 0.6rem;
     }
 
     .time-row {
       display: flex;
-      gap: 0.48rem;
+      gap: 0.5rem;
     }
 
     .time-row input {
       flex: 1;
-      padding: 0.56rem 0.75rem;
-      border-radius: 12px;
+      min-height: 46px;
+      padding: 0.58rem 0.82rem;
+      border-radius: 14px;
       border: 1px solid var(--border);
       background: var(--surface);
-      font-size: 0.86rem;
+      font-size: 0.9rem;
       font-weight: 600;
     }
 
@@ -849,9 +1138,11 @@
       background: var(--text);
       color: #fff;
       border: none;
-      border-radius: 12px;
-      padding: 0.56rem 0.95rem;
-      font-size: 0.84rem;
+      border-radius: 14px;
+      min-height: 46px;
+      min-width: 64px;
+      padding: 0 1.05rem;
+      font-size: 0.86rem;
       font-weight: 800;
       cursor: pointer;
     }
@@ -860,15 +1151,16 @@
       background: var(--terracotta);
       color: #fff;
       border: none;
-      border-radius: 12px;
-      padding: 0.65rem 1rem;
-      font-size: 0.86rem;
+      border-radius: 14px;
+      min-height: 46px;
+      padding: 0.68rem 1rem;
+      font-size: 0.88rem;
       font-weight: 800;
       cursor: pointer;
       width: 100%;
     }
 
-    .btn-terracotta:hover {
+    .btn-terracotta:active {
       background: var(--terracotta-dark);
     }
 
@@ -889,7 +1181,7 @@
     }
 
     .skeleton-card {
-      height: 310px;
+      height: 300px;
       border-radius: var(--radius-card);
       background: linear-gradient(90deg, var(--surface) 25%, var(--surface-alt) 50%, var(--surface) 75%);
       background-size: 200% 100%;
@@ -907,7 +1199,7 @@
 
   <header>
     <div class="header-inner">
-      <div class="brand" aria-label="Feast">
+      <div class="brand" aria-label="Feast" onclick="selectHall('ALL')">
         <span class="wordmark">
           Feas<span class="t-leaf-wrap">t
             <svg class="leaf-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -923,12 +1215,17 @@
         <span id="liveStatusText">Loading menus...</span>
       </div>
     </div>
+
+    <!-- Sticky One-Thumb Dining Hall Switcher -->
+    <nav class="hall-switcher-wrap" id="hallSwitcherWrap" aria-label="Dining Hall Switcher">
+      <div class="hall-scroller" id="hallScroller"></div>
+    </nav>
   </header>
 
   <main class="main-wrap">
     <section class="hero-section">
-      <h1 id="greetingTitle">Finding what’s open on campus...</h1>
-      <p id="greetingSub">Balanced meal options from live dining court menus.</p>
+      <h1 id="greetingTitle">Finding what’s open...</h1>
+      <p id="greetingSub">Balanced meal options from live dining menus.</p>
     </section>
 
     <div class="active-strip" id="activeStrip" style="display:none;"></div>
@@ -952,7 +1249,7 @@
     </div>
 
     <button type="button" class="dock-filter-btn" onclick="openDrawer()" aria-label="Open Preferences">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="4" y1="21" x2="4" y2="14"></line>
         <line x1="4" y1="10" x2="4" y2="3"></line>
         <line x1="12" y1="21" x2="12" y2="12"></line>
@@ -967,9 +1264,13 @@
     </button>
   </nav>
 
-  <!-- Slide-Over Preferences Drawer -->
+  <!-- Preferences Sheet / Drawer -->
   <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawerAndApply()"></div>
   <aside class="prefs-drawer" id="prefsDrawer" aria-label="Filters and Settings" role="dialog">
+    <div class="sheet-handle-wrap" aria-hidden="true">
+      <div class="sheet-handle"></div>
+    </div>
+
     <div class="drawer-header">
       <h2>Preferences</h2>
       <button type="button" class="done-btn" onclick="closeDrawerAndApply()">Done</button>
@@ -983,17 +1284,61 @@
           <button type="button" class="text-link-btn" onclick="clearAllDietary()">Clear all</button>
         </div>
         <div class="diet-stack" id="dietary_checkboxes">
-          <label class="diet-row-check"><input type="checkbox" value="vegetarian" /> Vegetarian</label>
-          <label class="diet-row-check"><input type="checkbox" value="vegan" /> Vegan</label>
-          <label class="diet-row-check"><input type="checkbox" value="gluten-free" /> Gluten-Free</label>
-          <label class="diet-row-check"><input type="checkbox" value="dairy-free" /> Dairy-Free</label>
-          <label class="diet-row-check"><input type="checkbox" value="egg-free" /> Egg-Free</label>
-          <label class="diet-row-check"><input type="checkbox" value="soy-free" /> Soy-Free</label>
-          <label class="diet-row-check"><input type="checkbox" value="peanut-free" /> Peanut-Free</label>
-          <label class="diet-row-check"><input type="checkbox" value="tree-nut-free" /> Tree-Nut-Free</label>
-          <label class="diet-row-check"><input type="checkbox" value="shellfish-free" /> Shellfish-Free</label>
-          <label class="diet-row-check"><input type="checkbox" value="fish-free" /> Fish-Free</label>
-          <label class="diet-row-check"><input type="checkbox" value="sesame-free" /> Sesame-Free</label>
+          <label class="diet-row-check">
+            <span>Vegetarian</span>
+            <input type="checkbox" value="vegetarian" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Vegan</span>
+            <input type="checkbox" value="vegan" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Gluten-Free</span>
+            <input type="checkbox" value="gluten-free" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Dairy-Free</span>
+            <input type="checkbox" value="dairy-free" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Egg-Free</span>
+            <input type="checkbox" value="egg-free" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Soy-Free</span>
+            <input type="checkbox" value="soy-free" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Peanut-Free</span>
+            <input type="checkbox" value="peanut-free" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Tree-Nut-Free</span>
+            <input type="checkbox" value="tree-nut-free" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Shellfish-Free</span>
+            <input type="checkbox" value="shellfish-free" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Fish-Free</span>
+            <input type="checkbox" value="fish-free" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
+          <label class="diet-row-check">
+            <span>Sesame-Free</span>
+            <input type="checkbox" value="sesame-free" />
+            <span class="pill-check-indicator">&#10003;</span>
+          </label>
         </div>
       </div>
 
@@ -1001,7 +1346,10 @@
       <div class="toggle-card">
         <label class="toggle-row">
           <span>Tailor Plates to My Goals</span>
-          <input type="checkbox" id="dri_enabled" onchange="toggleDriPanel()" />
+          <span class="switch-control">
+            <input type="checkbox" id="dri_enabled" onchange="toggleDriPanel()" />
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+          </span>
         </label>
 
         <div class="dri-panel" id="driPanel">
@@ -1124,7 +1472,7 @@
           <div class="field-group">
             <input type="text" id="fb_contact" placeholder="Email or name (optional)" />
           </div>
-          <div id="fbStatus" style="font-size:0.78rem; font-weight:700;"></div>
+          <div id="fbStatus" style="font-size:0.8rem; font-weight:700;"></div>
           <button type="button" class="btn-terracotta" onclick="submitFeedback()">Send Feedback</button>
         </div>
       </div>
@@ -1132,6 +1480,118 @@
   </aside>
 
   <script>
+    /* Self-Contained Full "Feast" Home Screen Icon & Web App Manifest Generator */
+    (function setupFeastHomeScreenIcons() {
+      function renderFeastWordmarkPng(size) {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return '';
+
+        // Warm oat background matching app theme
+        ctx.fillStyle = '#F6F3EE';
+        ctx.fillRect(0, 0, size, size);
+
+        // Size the full "Feast" wordmark so it fits comfortably inside safe icon margins
+        let fontSize = Math.round(size * 0.28);
+        const fontStack = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+        ctx.font = `900 ${fontSize}px ${fontStack}`;
+
+        const maxTextWidth = size * 0.72;
+        let metrics = ctx.measureText('Feast');
+        if (metrics.width > maxTextWidth) {
+          fontSize = Math.floor(fontSize * (maxTextWidth / metrics.width));
+          ctx.font = `900 ${fontSize}px ${fontStack}`;
+          metrics = ctx.measureText('Feast');
+        }
+
+        const textWidth = metrics.width;
+        const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.72;
+        const descent = metrics.actualBoundingBoxDescent || fontSize * 0.16;
+
+        // Slightly shift left so the leaf on the right of "t" balances visually
+        const leafAllowance = fontSize * 0.14;
+        const textX = (size - textWidth - leafAllowance) / 2;
+        const textY = (size + ascent - descent) / 2 + fontSize * 0.04;
+
+        ctx.fillStyle = '#C84B31';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('Feast', textX, textY);
+
+        // Draw the green leaf perched on the top-right of the "t"
+        const leafOriginX = textX + textWidth - fontSize * 0.03;
+        const leafOriginY = textY - ascent + fontSize * 0.06;
+        const leafScale = (fontSize * 0.62) / 24;
+
+        ctx.save();
+        ctx.translate(leafOriginX, leafOriginY - 24 * leafScale * 0.55);
+        ctx.scale(leafScale, leafScale);
+
+        ctx.beginPath();
+        ctx.moveTo(20, 4);
+        ctx.bezierCurveTo(12, 4, 6, 9, 6, 17);
+        ctx.bezierCurveTo(14, 17, 20, 11, 20, 4);
+        ctx.closePath();
+        ctx.fillStyle = '#1D8A5A';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(6, 17);
+        ctx.quadraticCurveTo(11, 12, 19, 5);
+        ctx.strokeStyle = '#E6F4ED';
+        ctx.lineWidth = 1.7;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        ctx.restore();
+
+        return canvas.toDataURL('image/png');
+      }
+
+      try {
+        const icon180 = renderFeastWordmarkPng(180);
+        const icon192 = renderFeastWordmarkPng(192);
+        const icon512 = renderFeastWordmarkPng(512);
+
+        if (icon180) {
+          const appleTouch = document.createElement('link');
+          appleTouch.rel = 'apple-touch-icon';
+          appleTouch.sizes = '180x180';
+          appleTouch.href = icon180;
+          document.head.appendChild(appleTouch);
+        }
+
+        if (icon192 && icon512) {
+          const pngFavicon = document.createElement('link');
+          pngFavicon.rel = 'icon';
+          pngFavicon.type = 'image/png';
+          pngFavicon.sizes = '192x192';
+          pngFavicon.href = icon192;
+          document.head.appendChild(pngFavicon);
+
+          const manifest = {
+            name: 'Feast',
+            short_name: 'Feast',
+            description: 'Fast, clean campus dining recommendations.',
+            start_url: '/',
+            display: 'standalone',
+            background_color: '#F6F3EE',
+            theme_color: '#F6F3EE',
+            icons: [
+              { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+              { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+            ]
+          };
+
+          const manifestLink = document.createElement('link');
+          manifestLink.rel = 'manifest';
+          manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
+          document.head.appendChild(manifestLink);
+        }
+      } catch (e) {}
+    })();
+
     const STORAGE_KEY = 'feast_purdue_prefs_v12';
     const SWIPE_HINT_KEY = 'feast_swipe_hint_dismissed';
 
@@ -1151,6 +1611,7 @@
     };
 
     let lastRecommendations = [];
+    let selectedHall = 'ALL';
     const comboIndexByLoc = {};
     const animatingLoc = {};
     let dragState = null;
@@ -1308,13 +1769,55 @@
       fetchRecommendations();
     }
 
+    /* Sticky Dining Hall Switcher */
+    function renderHallSwitcher() {
+      const wrap = document.getElementById('hallSwitcherWrap');
+      const scroller = document.getElementById('hallScroller');
+
+      if (!lastRecommendations || lastRecommendations.length <= 1) {
+        selectedHall = 'ALL';
+        wrap.classList.remove('visible');
+        scroller.innerHTML = '';
+        return;
+      }
+
+      const validLocations = new Set(lastRecommendations.map(r => r.location));
+      if (selectedHall !== 'ALL' && !validLocations.has(selectedHall)) {
+        selectedHall = 'ALL';
+      }
+
+      const pillsHtml = [
+        `<button type="button" class="hall-pill ${selectedHall === 'ALL' ? 'active' : ''}" onclick="selectHall('ALL')">
+          All <span class="hall-pill-count">${lastRecommendations.length}</span>
+        </button>`,
+        ...lastRecommendations.map(rec => {
+          const safeLoc = rec.location.replace(/'/g, "\\'");
+          const isActive = selectedHall === rec.location;
+          return `<button type="button" class="hall-pill ${isActive ? 'active' : ''}" onclick="selectHall('${safeLoc}')">
+            ${escapeHtml(rec.location)}
+          </button>`;
+        })
+      ].join('');
+
+      scroller.innerHTML = pillsHtml;
+      wrap.classList.add('visible');
+    }
+
+    function selectHall(loc) {
+      if (selectedHall === loc) return;
+      selectedHall = loc;
+      renderHallSwitcher();
+      renderCards();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function buildRationaleHtml(combo) {
       const bd = combo.score_breakdown || {};
       const notes = Array.isArray(bd.compatibility_notes) ? bd.compatibility_notes : [];
       let summary = bd.match_summary || '';
 
       if (!summary) {
-        const pairing = notes.find(n => !n.startsWith('Cohesive ')) || notes[0] || 'Balanced campus plate';
+        const pairing = notes.find(n => !n.startsWith('Cohesive ')) || notes[0] || 'Balanced plate';
         const firstReason = (combo.items && combo.items[0] && combo.items[0].reason) || '';
         const quality = firstReason.toLowerCase().includes('seed-oil-free')
           ? 'Verified seed-oil-free'
@@ -1323,19 +1826,6 @@
       }
 
       const isClean = summary.toLowerCase().includes('seed-oil-free');
-      const hasPillars = (
-        typeof bd.culinary_compatibility === 'number' &&
-        typeof bd.food_quality === 'number' &&
-        typeof bd.nutrition_balance === 'number'
-      );
-
-      const pillarsHtml = hasPillars
-        ? `<div class="pillar-row">
-            <span class="pillar-tag">Pairing ${Math.round(bd.culinary_compatibility)}</span>
-            <span class="pillar-tag">Quality ${Math.round(bd.food_quality)}</span>
-            <span class="pillar-tag">Balance ${Math.round(bd.nutrition_balance)}</span>
-          </div>`
-        : '';
 
       return `
         <div class="rationale-box">
@@ -1343,7 +1833,6 @@
             <span>${isClean ? '&#10003;' : '&#9679;'}</span>
             <span>${escapeHtml(summary)}</span>
           </div>
-          ${pillarsHtml}
         </div>
       `;
     }
@@ -1404,6 +1893,20 @@
 
       const tot = combo.totals || { calories: 0, protein: 0, carbs: 0, fat: 0 };
       const split = combo.macro_split || { protein_pct: 33, carbs_pct: 34, fat_pct: 33 };
+      const bd = combo.score_breakdown || {};
+      const hasPillars = (
+        typeof bd.culinary_compatibility === 'number' &&
+        typeof bd.food_quality === 'number' &&
+        typeof bd.nutrition_balance === 'number'
+      );
+
+      const pillarsHtml = hasPillars
+        ? `<div class="pillar-row">
+            <span class="pillar-tag">Pairing ${Math.round(bd.culinary_compatibility)}</span>
+            <span class="pillar-tag">Quality ${Math.round(bd.food_quality)}</span>
+            <span class="pillar-tag">Balance ${Math.round(bd.nutrition_balance)}</span>
+          </div>`
+        : '';
 
       return `
         <div>
@@ -1418,21 +1921,34 @@
         </div>
 
         <div class="card-bottom">
-          <div class="macro-pills-row">
-            <span class="m-pill">${Math.round(tot.protein)}g Protein</span>
-            <span class="m-pill">${Math.round(tot.carbs)}g Carbs</span>
-            <span class="m-pill">${Math.round(tot.fat)}g Fat</span>
-            <span class="m-pill">${Math.round(tot.calories)} kcal</span>
+          <div class="card-summary-bar">
+            <div class="headline-macros">
+              <span>${Math.round(tot.protein)}g Protein</span>
+              <span class="headline-sep">&middot;</span>
+              <span>${Math.round(tot.calories)} kcal</span>
+            </div>
+            <button type="button" class="details-toggle-btn" onclick="toggleCardMacros(this)">
+              <span>Details</span>
+              <span class="chev">&#9662;</span>
+            </button>
           </div>
-          <div class="macro-bar-track">
-            <div class="seg-p" style="width:${split.protein_pct}%"></div>
-            <div class="seg-c" style="width:${split.carbs_pct}%"></div>
-            <div class="seg-f" style="width:${split.fat_pct}%"></div>
-          </div>
-          <div class="macro-pct-line">
-            <span>&bull; Protein ${split.protein_pct}%</span>
-            <span>&bull; Carbs ${split.carbs_pct}%</span>
-            <span>&bull; Fat ${split.fat_pct}%</span>
+
+          <div class="card-extra-panel">
+            <div class="extra-macros-row">
+              <span class="m-pill">${Math.round(tot.carbs)}g Carbs</span>
+              <span class="m-pill">${Math.round(tot.fat)}g Fat</span>
+            </div>
+            <div class="macro-bar-track">
+              <div class="seg-p" style="width:${split.protein_pct}%"></div>
+              <div class="seg-c" style="width:${split.carbs_pct}%"></div>
+              <div class="seg-f" style="width:${split.fat_pct}%"></div>
+            </div>
+            <div class="macro-pct-line">
+              <span>&bull; Protein ${split.protein_pct}%</span>
+              <span>&bull; Carbs ${split.carbs_pct}%</span>
+              <span>&bull; Fat ${split.fat_pct}%</span>
+            </div>
+            ${pillarsHtml}
           </div>
         </div>
       `;
@@ -1441,6 +1957,14 @@
     function toggleDishRow(rowEl) {
       if (dragState && dragState.moved) return;
       rowEl.classList.toggle('expanded');
+    }
+
+    function toggleCardMacros(btnEl) {
+      if (dragState && dragState.moved) return;
+      const footer = btnEl.closest('.card-bottom');
+      if (footer) {
+        footer.classList.toggle('expanded');
+      }
     }
 
     function animateCardSwap(loc, targetIdx, direction) {
@@ -1596,13 +2120,17 @@
     function renderCards() {
       const container = document.getElementById('cardsContainer');
       if (!lastRecommendations.length) {
-        container.innerHTML = `<div class="empty-state">No matching plates found for your active filters and mode. Try switching to <strong>Balanced</strong> or relaxing a filter in Preferences.</div>`;
+        container.innerHTML = `<div class="empty-state">No matching plates found for your active filters. Try switching to <strong>Balanced</strong> or relaxing a filter in Preferences.</div>`;
         return;
       }
 
+      const visibleRecs = selectedHall === 'ALL'
+        ? lastRecommendations
+        : lastRecommendations.filter(r => r.location === selectedHall);
+
       let attachedHint = false;
 
-      const html = lastRecommendations.map(rec => {
+      const html = visibleRecs.map(rec => {
         const slug = locSlug(rec.location);
         const safeLoc = rec.location.replace(/'/g, "\\'");
         const hasMultiple = Array.isArray(rec.combos) && rec.combos.length > 1;
@@ -1644,7 +2172,8 @@
         `;
       }).join('');
 
-      container.innerHTML = `<div class="cards-grid">${html}</div>`;
+      const focusClass = visibleRecs.length === 1 ? 'single-focus' : '';
+      container.innerHTML = `<div class="cards-grid ${focusClass}">${html}</div>`;
       attachCardGestures();
       scheduleSwipeHint();
     }
@@ -1720,6 +2249,7 @@
 
         lastRecommendations = data.recommendations || [];
         lastRecommendations.forEach(r => { comboIndexByLoc[r.location] = 0; });
+        renderHallSwitcher();
         renderCards();
       } catch (err) {
         errEl.textContent = 'Network error connecting to Feast server.';
