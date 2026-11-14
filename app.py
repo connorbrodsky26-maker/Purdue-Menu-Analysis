@@ -26,7 +26,6 @@ def api_recommend():
     try:
         health_intensity = str(data.get('health_intensity', 'High')).strip() or 'High'
         dri_enabled = bool(data.get('dri_enabled', False))
-        include_quick_bites = bool(data.get('include_quick_bites', False))
         meal_goal = str(data.get('meal_goal', 'Balanced Maintenance')).strip() or 'Balanced Maintenance'
 
         raw_filters = data.get('dietary_filters') or []
@@ -81,7 +80,6 @@ def api_recommend():
             health_intensity=health_intensity,
             dri_enabled=dri_enabled,
             dietary_filters=dietary_filters,
-            include_quick_bites=include_quick_bites,
             current_time=sim_time,
         )
         return jsonify(result)

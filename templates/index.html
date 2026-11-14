@@ -48,7 +48,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Sticky Cream Header */
     .topbar {
       position: sticky;
       top: 0;
@@ -116,7 +115,6 @@
       padding: 0 1rem;
     }
 
-    /* Clean Greeting */
     .greeting-banner {
       margin-bottom: 1rem;
       padding: 0 0.15rem;
@@ -137,7 +135,6 @@
       font-weight: 500;
     }
 
-    /* Active Filter Strip */
     .active-pills-row {
       display: none;
       flex-wrap: wrap;
@@ -175,7 +172,6 @@
       margin-bottom: 0.9rem;
     }
 
-    /* Minimalist Dining Court Wrapper */
     .court-section {
       width: 100%;
       max-width: 100%;
@@ -220,7 +216,6 @@
       flex-shrink: 0;
     }
 
-    /* Flashcard Stack Deck */
     .deck-wrapper {
       position: relative;
       width: 100%;
@@ -237,7 +232,6 @@
       user-select: none;
     }
 
-    /* Stacked cards peeking beneath active card */
     .deck-underlay-1,
     .deck-underlay-2 {
       position: absolute;
@@ -865,10 +859,17 @@
       gap: 0.38rem;
     }
 
+    .safety-note {
+      margin-top: 0.65rem;
+      font-size: 0.73rem;
+      line-height: 1.38;
+      color: var(--text-muted);
+    }
+
     .apply-btn {
       width: 100%;
       min-height: 46px;
-      margin-top: 0.85rem;
+      margin-top: 0.75rem;
       background: var(--obsidian);
       color: #FFFFFF;
       border: none;
@@ -983,7 +984,6 @@
   </style>
 </head>
 <body>
-  <!-- Sticky Cream Header -->
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand-logo" aria-label="Feast">
@@ -1002,19 +1002,14 @@
   </header>
 
   <main>
-    <!-- Clean Time-Aware Greeting -->
     <section class="greeting-banner">
       <h1 class="greeting-title" id="greeting_title">Finding what’s open on campus...</h1>
       <p class="greeting-sub" id="greeting_sub">Balanced meal options from live dining court menus.</p>
     </section>
 
-    <!-- Active Filters Indicator Strip -->
     <div class="active-pills-row" id="active_pills_row"></div>
-
-    <!-- Validation / Friendly Notice Banner -->
     <div id="validation_banner" class="alert-box" style="display:none;"></div>
 
-    <!-- Main Recommendation Feed -->
     <div id="results_container">
       <div class="skeleton-card">
         <div class="skel-line" style="width:35%;"></div>
@@ -1025,7 +1020,6 @@
     </div>
   </main>
 
-  <!-- Floating Frosted Bottom Pill + Side Filter Button -->
   <nav class="floating-dock" aria-label="Meal Mode and Filters">
     <div class="dock-inner">
       <div class="floating-pill" role="radiogroup" aria-label="Meal Style Mode">
@@ -1051,7 +1045,6 @@
     </div>
   </nav>
 
-  <!-- Slide-In Side Drawer -->
   <div class="sheet-backdrop" id="sheet_backdrop"></div>
   <aside class="side-drawer" id="control_sheet" aria-modal="true" role="dialog" aria-label="Filters and Settings">
     <div class="sheet-header">
@@ -1080,15 +1073,7 @@
       </div>
     </div>
 
-    <!-- 2. Quick Bites Locations -->
-    <div class="sheet-section">
-      <label class="switch-card">
-        <span>Include Quick Bites (1bowl, Pete’s Za)</span>
-        <input type="checkbox" id="include_quick_bites" />
-      </label>
-    </div>
-
-    <!-- 3. Personalize Meal Goals -->
+    <!-- 2. Personalize Meal Goals -->
     <div class="sheet-section">
       <label class="switch-card">
         <span>Tailor Plates to My Goals</span>
@@ -1183,11 +1168,15 @@
           </div>
         </div>
 
+        <p class="safety-note" id="dri_safety_note">
+          General dining portion estimates only—not medical advice. Calorie deficits are automatically disabled for users under 18.
+        </p>
+
         <button type="button" class="apply-btn" id="calculate_dri_btn">Apply Goal</button>
       </div>
     </div>
 
-    <!-- 4. Check Another Time -->
+    <!-- 3. Check Another Time -->
     <div class="sheet-section">
       <div class="sec-head">
         <span class="sec-title">Check Another Time</span>
@@ -1199,7 +1188,7 @@
       </div>
     </div>
 
-    <!-- 5. Send Feedback -->
+    <!-- 4. Send Feedback -->
     <div class="sheet-section" style="margin-bottom:0;">
       <div class="sec-head">
         <span class="sec-title">Send Feedback</span>
@@ -1220,13 +1209,12 @@
   </aside>
 
   <script>
-    const STORAGE_KEY = 'feast_dining_prefs_v7';
+    const STORAGE_KEY = 'feast_dining_prefs_v8';
 
     const state = {
       health_intensity: 'High',
       dietary_filters: [],
       dri_enabled: false,
-      include_quick_bites: false,
       meal_goal: 'Balanced Maintenance',
       sex: '',
       age: '',
@@ -1249,7 +1237,9 @@
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
-          Object.assign(state, JSON.parse(raw));
+          const parsed = JSON.parse(raw);
+          delete parsed.include_quick_bites;
+          Object.assign(state, parsed);
           state.sim_time = '';
         }
       } catch (e) {}
@@ -1281,14 +1271,10 @@
         cb.checked = state.dietary_filters.includes(cb.value);
       });
 
-      document.getElementById('include_quick_bites').checked = !!state.include_quick_bites;
       document.getElementById('dri_toggle').checked = !!state.dri_enabled;
       document.getElementById('dri_drawer').classList.toggle('open', !!state.dri_enabled);
 
-      const extraCount =
-        state.dietary_filters.length +
-        (state.dri_enabled ? 1 : 0) +
-        (state.include_quick_bites ? 1 : 0);
+      const extraCount = state.dietary_filters.length + (state.dri_enabled ? 1 : 0);
 
       const badge = document.getElementById('filter_badge');
       const trigger = document.getElementById('open_sheet_btn');
@@ -1305,9 +1291,6 @@
       const pills = [];
       if (state.dri_enabled) {
         pills.push(`<span class="mini-badge">Goal: ${escapeHtml(state.meal_goal)}</span>`);
-      }
-      if (state.include_quick_bites) {
-        pills.push(`<span class="mini-badge light">+ Quick Bites</span>`);
       }
       state.dietary_filters.forEach(f => {
         const label = f.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -1474,7 +1457,6 @@
       }
     }
 
-    // Global event delegation for touch/drag swipe so listeners never break after re-renders
     function initGlobalDeckDelegation() {
       const feed = document.getElementById('results_container');
       if (!feed || feed.dataset.delegated) return;
@@ -1552,7 +1534,6 @@
       feed.addEventListener('touchend', handleEnd, { passive: true });
       feed.addEventListener('touchcancel', handleEnd, { passive: true });
 
-      // Mouse support for desktop testing
       feed.addEventListener('mousedown', (e) => {
         if (e.button !== 0) return;
         const deck = e.target.closest('.flashcard-deck');
@@ -1669,7 +1650,9 @@
         const itemsHtml = combo.items.map(it => {
           const allergenStr = (it.allergens && it.allergens.length > 0)
             ? `Contains: ${it.allergens.join(', ')}`
-            : 'No major allergens flagged';
+            : (it.ingredient_certainty === 'unknown'
+                ? 'Allergen/ingredient metadata unverified'
+                : 'No major allergens flagged');
 
           return `
             <div class="menu-row" onclick="this.classList.toggle('expanded')" role="button" tabindex="0">
@@ -1691,6 +1674,7 @@
               <div class="item-details">
                 <div><strong>${Math.round(it.protein)}g Protein</strong> &bull; ${Math.round(it.carbs)}g Carbs &bull; ${Math.round(it.fat)}g Fat</div>
                 <div style="margin-top:0.2rem;">${escapeHtml(allergenStr)}</div>
+                ${it.reason ? `<div style="margin-top:0.18rem; color:var(--text-main); font-weight:600;">${escapeHtml(it.reason)}</div>` : ''}
               </div>
             </div>
           `;
@@ -1761,6 +1745,9 @@
       if (data.greeting_sub) {
         document.getElementById('greeting_sub').textContent = data.greeting_sub;
       }
+      if (data.targets && data.targets.disclaimer) {
+        document.getElementById('dri_safety_note').textContent = data.targets.disclaimer;
+      }
 
       currentRecommendations = data.recommendations || [];
       selectedComboIndexByLoc = {};
@@ -1776,7 +1763,6 @@
         health_intensity: state.health_intensity,
         dietary_filters: state.dietary_filters,
         dri_enabled: state.dri_enabled,
-        include_quick_bites: state.include_quick_bites,
         sim_time: state.sim_time
       };
 
@@ -1895,12 +1881,6 @@
 
       document.getElementById('clear_filters_btn').addEventListener('click', () => {
         state.dietary_filters = [];
-        syncUIToState();
-        fetchRecommendations();
-      });
-
-      document.getElementById('include_quick_bites').addEventListener('change', (e) => {
-        state.include_quick_bites = e.target.checked;
         syncUIToState();
         fetchRecommendations();
       });
