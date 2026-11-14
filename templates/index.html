@@ -218,6 +218,51 @@
       flex: 1;
     }
 
+    /* Delayed Swipe Hint Arrow Badge */
+    .swipe-hint-pill {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translate(-50%, 10px);
+      z-index: 15;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(30, 27, 24, 0.92);
+      backdrop-filter: blur(8px);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-pill);
+      padding: 0.44rem 0.92rem;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      box-shadow: 0 10px 24px rgba(30, 27, 24, 0.28);
+      opacity: 0;
+      pointer-events: none;
+      cursor: pointer;
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .swipe-hint-pill.visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      pointer-events: auto;
+    }
+
+    .swipe-hint-arrow {
+      display: inline-flex;
+      align-items: center;
+      color: #FF8E72;
+      animation: swipeArrowNudge 1.25s ease-in-out infinite;
+    }
+
+    @keyframes swipeArrowNudge {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(5px); }
+    }
+
     .meal-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -1087,7 +1132,8 @@
   </aside>
 
   <script>
-    const STORAGE_KEY = 'feast_purdue_prefs_v11';
+    const STORAGE_KEY = 'feast_purdue_prefs_v12';
+    const SWIPE_HINT_KEY = 'feast_swipe_hint_dismissed';
 
     const state = {
       health_intensity: 'High',
@@ -1108,6 +1154,7 @@
     const comboIndexByLoc = {};
     const animatingLoc = {};
     let dragState = null;
+    let swipeHintTimer = null;
 
     function escapeHtml(str) {
       return String(str ?? '')
@@ -1120,6 +1167,43 @@
 
     function locSlug(loc) {
       return String(loc || '').toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    }
+
+    function isSwipeHintDismissed() {
+      try {
+        return sessionStorage.getItem(SWIPE_HINT_KEY) === '1';
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function dismissSwipeHint(markSeen = true) {
+      if (swipeHintTimer) {
+        clearTimeout(swipeHintTimer);
+        swipeHintTimer = null;
+      }
+      if (markSeen) {
+        try { sessionStorage.setItem(SWIPE_HINT_KEY, '1'); } catch (e) {}
+      }
+      const pill = document.getElementById('swipeHintPill');
+      if (pill) {
+        pill.classList.remove('visible');
+      }
+    }
+
+    function scheduleSwipeHint() {
+      if (swipeHintTimer) {
+        clearTimeout(swipeHintTimer);
+        swipeHintTimer = null;
+      }
+      if (isSwipeHintDismissed()) return;
+
+      swipeHintTimer = setTimeout(() => {
+        const pill = document.getElementById('swipeHintPill');
+        if (pill && !isSwipeHintDismissed()) {
+          pill.classList.add('visible');
+        }
+      }, 2200);
     }
 
     function loadPrefs() {
@@ -1364,6 +1448,8 @@
       if (!rec || !rec.combos || rec.combos.length <= 1) return;
       if (animatingLoc[loc]) return;
 
+      dismissSwipeHint(true);
+
       const cardEl = document.getElementById(`card-${locSlug(loc)}`);
       if (!cardEl) {
         comboIndexByLoc[loc] = targetIdx;
@@ -1514,8 +1600,33 @@
         return;
       }
 
+      let attachedHint = false;
+
       const html = lastRecommendations.map(rec => {
         const slug = locSlug(rec.location);
+        const safeLoc = rec.location.replace(/'/g, "\\'");
+        const hasMultiple = Array.isArray(rec.combos) && rec.combos.length > 1;
+
+        let hintHtml = '';
+        if (hasMultiple && !attachedHint && !isSwipeHintDismissed()) {
+          attachedHint = true;
+          hintHtml = `
+            <button type="button"
+              class="swipe-hint-pill"
+              id="swipeHintPill"
+              onclick="stepCard('${safeLoc}', 1)"
+              aria-label="Swipe card for more meal options">
+              <span>Swipe for more options</span>
+              <span class="swipe-hint-arrow" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="m13 6 6 6-6 6"></path>
+                </svg>
+              </span>
+            </button>
+          `;
+        }
+
         return `
           <section class="court-card-wrap">
             <div class="court-top-row">
@@ -1527,6 +1638,7 @@
               <article class="meal-card" id="card-${slug}" data-loc="${escapeHtml(rec.location)}">
                 ${buildCardInnerHtml(rec)}
               </article>
+              ${hintHtml}
             </div>
           </section>
         `;
@@ -1534,11 +1646,13 @@
 
       container.innerHTML = `<div class="cards-grid">${html}</div>`;
       attachCardGestures();
+      scheduleSwipeHint();
     }
 
     async function fetchRecommendations() {
       const errEl = document.getElementById('errorBanner');
       errEl.style.display = 'none';
+      dismissSwipeHint(false);
       document.getElementById('cardsContainer').innerHTML = `
         <div class="skeleton-grid">
           <div class="skeleton-card"></div>
