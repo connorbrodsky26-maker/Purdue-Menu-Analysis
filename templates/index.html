@@ -25,8 +25,8 @@
       --leaf: #1D8A5A;
       --leaf-soft: #E6F4ED;
       --amber: #D98A3C;
-      --shadow-sm: 0 3px 12px rgba(30, 27, 24, 0.045);
-      --shadow-lg: 0 14px 34px rgba(30, 27, 24, 0.11);
+      --shadow-sm: 0 3px 12px rgba(30, 27, 24, 0.05);
+      --shadow-lg: 0 14px 34px rgba(30, 27, 24, 0.12);
       --radius-card: 24px;
       --radius-pill: 999px;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -195,7 +195,7 @@
     .hall-pill-count {
       font-size: 0.72rem;
       font-weight: 800;
-      opacity: 0.72;
+      opacity: 0.75;
     }
 
     /* Main Content Container */
@@ -203,16 +203,16 @@
       width: 100%;
       max-width: 1080px;
       margin: 0 auto;
-      padding: 1.15rem 1rem 2rem;
+      padding: 1.1rem 1rem 2rem;
     }
 
     .hero-section {
-      margin-bottom: 1.05rem;
+      margin-bottom: 1rem;
       padding: 0 0.15rem;
     }
 
     .hero-section h1 {
-      font-size: 1.38rem;
+      font-size: 1.32rem;
       font-weight: 800;
       letter-spacing: -0.025em;
       line-height: 1.25;
@@ -225,7 +225,7 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 0.45rem;
-      margin-bottom: 1.1rem;
+      margin-bottom: 1.05rem;
     }
 
     .active-chip {
@@ -258,11 +258,11 @@
       display: none;
     }
 
-    /* Dining Hall Cards Grid (minmax(0, 1fr) prevents mobile horizontal blowout) */
+    /* Dining Hall Cards Grid */
     .cards-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      gap: 1.5rem;
+      gap: 1.45rem;
       width: 100%;
     }
 
@@ -281,37 +281,7 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 0.55rem;
       overflow-x: clip;
-    }
-
-    .court-top-row {
-      width: 100%;
-      min-width: 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 0.75rem;
-      padding: 0 0.2rem;
-    }
-
-    .court-name {
-      font-size: 1.5rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      color: var(--text);
-    }
-
-    .court-hours {
-      font-size: 0.78rem;
-      font-weight: 800;
-      color: var(--leaf);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.32rem;
-      white-space: nowrap;
-      flex-shrink: 0;
     }
 
     .card-stage {
@@ -323,7 +293,35 @@
       flex: 1;
     }
 
-    /* Delayed Swipe Hint Arrow Pill (44px+ tap target) */
+    /* Subtle Next-Card Edge Peek Cue (signals card is swipeable) */
+    .card-peek-edge {
+      position: absolute;
+      top: 66px;
+      bottom: 16px;
+      right: -6px;
+      width: 14px;
+      border-radius: 0 18px 18px 0;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-left: none;
+      box-shadow: 3px 4px 12px rgba(30, 27, 24, 0.06);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Gentle First-Card Swipe Nudge Animation */
+    @keyframes gentleCardPeekNudge {
+      0% { transform: translateX(0); }
+      35% { transform: translateX(-16px); }
+      70% { transform: translateX(4px); }
+      100% { transform: translateX(0); }
+    }
+
+    .meal-card.nudge-once {
+      animation: gentleCardPeekNudge 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.45s 1;
+    }
+
+    /* Delayed Swipe Hint Arrow Pill */
     .swipe-hint-pill {
       position: absolute;
       bottom: 14px;
@@ -371,6 +369,8 @@
     }
 
     .meal-card {
+      position: relative;
+      z-index: 2;
       width: 100%;
       min-width: 0;
       background: var(--surface);
@@ -396,8 +396,51 @@
       box-shadow: var(--shadow-lg);
     }
 
+    /* Bold Colored Dining Hall Banner Integrated on Top of Each Card */
+    .card-hall-banner {
+      background: var(--terracotta);
+      color: #FFFFFF;
+      padding: 0.85rem 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .banner-hall-name {
+      font-size: 1.38rem;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      line-height: 1.12;
+      color: #FFFFFF;
+      min-width: 0;
+    }
+
+    .banner-open-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.36rem;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: var(--radius-pill);
+      padding: 0.26rem 0.68rem;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .banner-open-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #6EE7B7;
+      display: inline-block;
+    }
+
     .card-header {
-      padding: 1.2rem 1.15rem 0.5rem;
+      padding: 1.05rem 1.15rem 0.48rem;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -405,7 +448,7 @@
     }
 
     .combo-title {
-      font-size: 1.14rem;
+      font-size: 1.12rem;
       font-weight: 800;
       line-height: 1.26;
       letter-spacing: -0.018em;
@@ -413,12 +456,12 @@
       min-width: 0;
     }
 
-    /* Clean Pagination Dots Only (No < 1/3 > Clutter) */
+    /* Clean Pagination Dots Only */
     .pager-dots {
       display: inline-flex;
       align-items: center;
       gap: 0.36rem;
-      padding-top: 0.32rem;
+      padding-top: 0.34rem;
       flex-shrink: 0;
     }
 
@@ -471,7 +514,7 @@
       border-color: var(--border);
     }
 
-    /* Clean Scannable Dish Rows (44px+ tap targets, Protein + Calories only by default) */
+    /* Clean Scannable Dish Rows */
     .items-list {
       padding: 0.15rem 1.15rem 1.05rem;
       display: flex;
@@ -707,7 +750,7 @@
       padding: 0.18rem 0.58rem;
     }
 
-    /* Floating Bottom Mode & Preferences Dock (Dead-Center on All Phones) */
+    /* Floating Bottom Mode & Preferences Dock */
     .bottom-dock {
       position: fixed;
       left: 0;
@@ -1079,7 +1122,6 @@
       margin-bottom: 0.26rem;
     }
 
-    /* 16px font-size prevents iOS Safari automatic zoom when tapping inputs */
     .field-group input,
     .field-group select,
     .field-group textarea {
@@ -1147,6 +1189,27 @@
       background: var(--terracotta-dark);
     }
 
+    .btn-outline {
+      background: var(--surface);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      min-height: 46px;
+      padding: 0.65rem 1rem;
+      font-size: 0.86rem;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+    }
+
+    .btn-outline:active {
+      background: var(--surface-press);
+    }
+
     .empty-state {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -1183,6 +1246,199 @@
     @keyframes shimmer {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
+    }
+
+    /* First-Visit Welcome Modal */
+    .welcome-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      background: rgba(25, 22, 19, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .welcome-overlay.open {
+      display: flex;
+    }
+
+    .welcome-modal {
+      width: 100%;
+      max-width: 370px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 1.65rem 1.45rem 1.45rem;
+      box-shadow: 0 24px 54px rgba(0, 0, 0, 0.24);
+      text-align: center;
+      animation: popIn 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.94) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--terracotta-soft);
+      color: var(--terracotta);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      padding: 0.32rem 0.78rem;
+      border-radius: var(--radius-pill);
+      margin-bottom: 0.85rem;
+    }
+
+    .welcome-modal h2 {
+      font-size: 1.38rem;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 0.45rem;
+    }
+
+    .welcome-modal p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      line-height: 1.45;
+      margin-bottom: 1.35rem;
+    }
+
+    .welcome-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .welcome-primary-btn {
+      width: 100%;
+      min-height: 48px;
+      border: none;
+      border-radius: 15px;
+      background: var(--terracotta);
+      color: #FFFFFF;
+      font-size: 0.94rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(200, 75, 49, 0.28);
+    }
+
+    .welcome-secondary-btn {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Interactive Video-Game-Style Spotlight Tutorial */
+    .tour-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 95;
+      display: none;
+      pointer-events: auto;
+    }
+
+    .tour-layer.open {
+      display: block;
+    }
+
+    .tour-spotlight {
+      position: fixed;
+      border-radius: 20px;
+      box-shadow: 0 0 0 9999px rgba(20, 18, 16, 0.72), 0 0 0 3px #FFFFFF;
+      pointer-events: none;
+      transition: top 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  left 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-radius 0.28s ease;
+    }
+
+    .tour-tooltip {
+      position: fixed;
+      left: 1rem;
+      right: 1rem;
+      max-width: 360px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 1.15rem 1.2rem;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.32);
+      z-index: 96;
+      transition: top 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  bottom 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tour-step-tag {
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--terracotta);
+      margin-bottom: 0.25rem;
+    }
+
+    .tour-title {
+      font-size: 1.08rem;
+      font-weight: 900;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+
+    .tour-desc {
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.42;
+      margin-bottom: 1rem;
+    }
+
+    .tour-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .tour-skip-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+      min-height: 44px;
+      padding: 0 0.5rem;
+      cursor: pointer;
+    }
+
+    .tour-next-btn {
+      background: var(--terracotta);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-pill);
+      min-height: 44px;
+      padding: 0 1.35rem;
+      font-size: 0.86rem;
+      font-weight: 800;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -1225,14 +1481,12 @@
     <div id="cardsContainer">
       <div class="skeleton-grid">
         <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
       </div>
     </div>
   </main>
 
   <!-- Floating Bottom Mode & Preferences Dock -->
-  <nav class="bottom-dock" aria-label="Meal Mode and Filters">
+  <nav class="bottom-dock" id="bottomDock" aria-label="Meal Mode and Filters">
     <div class="mode-dock" role="radiogroup" aria-label="Meal Style Mode">
       <button type="button" class="dock-mode-btn active" data-mode="High" onclick="selectMode('High')">Healthiest</button>
       <button type="button" class="dock-mode-btn" data-mode="Mid" onclick="selectMode('Mid')">Balanced</button>
@@ -1254,6 +1508,33 @@
       <span class="dock-badge" id="dockBadge">0</span>
     </button>
   </nav>
+
+  <!-- First-Time Welcome Modal -->
+  <div class="welcome-overlay" id="welcomeOverlay" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <div class="welcome-modal">
+      <div class="welcome-badge">Welcome to Feast</div>
+      <h2 id="welcomeTitle">Need a quick tour?</h2>
+      <p>Learn how to pick a dining hall, swipe meal combos, and filter allergies in 10 seconds.</p>
+      <div class="welcome-actions">
+        <button type="button" class="welcome-primary-btn" onclick="startSpotlightTour()">Quick Tour (10 sec)</button>
+        <button type="button" class="welcome-secondary-btn" onclick="dismissWelcomeModal()">I can navigate by myself</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Video-Game-Style Spotlight Tutorial -->
+  <div class="tour-layer" id="tourLayer" role="dialog" aria-modal="true">
+    <div class="tour-spotlight" id="tourSpotlight"></div>
+    <div class="tour-tooltip" id="tourTooltip">
+      <div class="tour-step-tag" id="tourStepTag">Step 1 of 3</div>
+      <div class="tour-title" id="tourTitle">Switch Dining Halls</div>
+      <div class="tour-desc" id="tourDesc">Tap any pill at the top to jump between open dining halls or view All at once.</div>
+      <div class="tour-footer">
+        <button type="button" class="tour-skip-btn" onclick="endSpotlightTour()">Skip</button>
+        <button type="button" class="tour-next-btn" id="tourNextBtn" onclick="nextTourStep()">Next</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Preferences Sheet / Drawer -->
   <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawerAndApply()"></div>
@@ -1467,6 +1748,14 @@
           <button type="button" class="btn-terracotta" onclick="submitFeedback()">Send Feedback</button>
         </div>
       </div>
+
+      <!-- Replay Tutorial Button -->
+      <div>
+        <button type="button" class="btn-outline" onclick="replayTutorialFromPrefs()">
+          <span>&#9654;</span>
+          <span>Replay Tutorial</span>
+        </button>
+      </div>
     </div>
   </aside>
 
@@ -1599,6 +1888,7 @@
 
     const STORAGE_KEY = 'feast_purdue_prefs_v12';
     const SWIPE_HINT_KEY = 'feast_swipe_hint_dismissed';
+    const ONBOARDING_KEY = 'feast_onboarding_seen_v1';
 
     const state = {
       health_intensity: 'High',
@@ -1616,11 +1906,166 @@
     };
 
     let lastRecommendations = [];
-    let selectedHall = 'ALL';
+    let selectedHall = null; // Starts focused on one dining hall so fresh eyes aren't overwhelmed
+    let hasPlayedInitialNudge = false;
     const comboIndexByLoc = {};
     const animatingLoc = {};
     let dragState = null;
     let swipeHintTimer = null;
+
+    /* Onboarding & Video-Game-Style Spotlight Tour */
+    let tourStepIndex = 0;
+
+    function hasSeenOnboarding() {
+      try {
+        return localStorage.getItem(ONBOARDING_KEY) === '1';
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function markOnboardingSeen() {
+      try {
+        localStorage.setItem(ONBOARDING_KEY, '1');
+      } catch (e) {}
+    }
+
+    function maybeShowWelcomeModal() {
+      if (!lastRecommendations.length) return;
+      if (hasSeenOnboarding()) {
+        triggerFirstCardSwipeCue();
+        return;
+      }
+      document.getElementById('welcomeOverlay').classList.add('open');
+    }
+
+    function dismissWelcomeModal() {
+      markOnboardingSeen();
+      document.getElementById('welcomeOverlay').classList.remove('open');
+      triggerFirstCardSwipeCue();
+    }
+
+    function triggerFirstCardSwipeCue() {
+      if (hasPlayedInitialNudge) return;
+      const firstCard = document.querySelector('.meal-card');
+      if (firstCard) {
+        hasPlayedInitialNudge = true;
+        firstCard.classList.remove('nudge-once');
+        void firstCard.offsetWidth;
+        firstCard.classList.add('nudge-once');
+      }
+      scheduleSwipeHint();
+    }
+
+    function getTourSteps() {
+      const steps = [];
+      const hallWrap = document.getElementById('hallSwitcherWrap');
+      if (hallWrap && hallWrap.classList.contains('visible')) {
+        steps.push({
+          target: '#hallSwitcherWrap',
+          title: 'Pick a Dining Hall',
+          desc: 'We start you on one open dining hall so it’s easy to scan. Tap any pill here to switch halls or see All.',
+          placement: 'below'
+        });
+      }
+      steps.push({
+        target: '.card-stage',
+        title: 'Swipe for More Plates',
+        desc: 'Swipe left or right on any meal card to flip through backup combos. Tap any dish for extra macro details.',
+        placement: 'auto'
+      });
+      steps.push({
+        target: '#bottomDock',
+        title: 'Set Vibe & Allergies',
+        desc: 'Switch between Healthiest, Balanced, or Yummiest, or tap the sliders icon for dietary filters and meal goals.',
+        placement: 'above'
+      });
+      return steps;
+    }
+
+    function startSpotlightTour() {
+      markOnboardingSeen();
+      document.getElementById('welcomeOverlay').classList.remove('open');
+      dismissSwipeHint(false);
+      tourStepIndex = 0;
+      document.getElementById('tourLayer').classList.add('open');
+      renderTourStep();
+    }
+
+    function replayTutorialFromPrefs() {
+      document.getElementById('drawerBackdrop').classList.remove('open');
+      document.getElementById('prefsDrawer').classList.remove('open');
+      setTimeout(() => {
+        tourStepIndex = 0;
+        document.getElementById('tourLayer').classList.add('open');
+        renderTourStep();
+      }, 220);
+    }
+
+    function nextTourStep() {
+      const steps = getTourSteps();
+      if (tourStepIndex + 1 >= steps.length) {
+        endSpotlightTour();
+        return;
+      }
+      tourStepIndex += 1;
+      renderTourStep();
+    }
+
+    function endSpotlightTour() {
+      document.getElementById('tourLayer').classList.remove('open');
+      triggerFirstCardSwipeCue();
+    }
+
+    function renderTourStep() {
+      const steps = getTourSteps();
+      const step = steps[tourStepIndex];
+      if (!step) {
+        endSpotlightTour();
+        return;
+      }
+
+      const el = document.querySelector(step.target);
+      if (!el) {
+        endSpotlightTour();
+        return;
+      }
+
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        const pad = 8;
+        const spotlight = document.getElementById('tourSpotlight');
+        const tooltip = document.getElementById('tourTooltip');
+
+        spotlight.style.top = `${Math.max(4, rect.top - pad)}px`;
+        spotlight.style.left = `${Math.max(4, rect.left - pad)}px`;
+        spotlight.style.width = `${Math.min(window.innerWidth - 8, rect.width + pad * 2)}px`;
+        spotlight.style.height = `${rect.height + pad * 2}px`;
+        spotlight.style.borderRadius = step.target === '#bottomDock' ? '999px' : '22px';
+
+        document.getElementById('tourStepTag').textContent = `Step ${tourStepIndex + 1} of ${steps.length}`;
+        document.getElementById('tourTitle').textContent = step.title;
+        document.getElementById('tourDesc').textContent = step.desc;
+        document.getElementById('tourNextBtn').textContent = tourStepIndex === steps.length - 1 ? 'Got it' : 'Next';
+
+        const viewportH = window.innerHeight;
+        if (step.placement === 'above' || (step.placement === 'auto' && rect.top > viewportH * 0.42)) {
+          tooltip.style.top = 'auto';
+          tooltip.style.bottom = `${Math.max(20, viewportH - rect.top + 18)}px`;
+        } else {
+          tooltip.style.bottom = 'auto';
+          tooltip.style.top = `${Math.min(viewportH - 210, rect.bottom + 18)}px`;
+        }
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      if (document.getElementById('tourLayer').classList.contains('open')) {
+        renderTourStep();
+      }
+    });
 
     function escapeHtml(str) {
       return String(str ?? '')
@@ -1663,13 +2108,15 @@
         swipeHintTimer = null;
       }
       if (isSwipeHintDismissed()) return;
+      if (document.getElementById('welcomeOverlay').classList.contains('open')) return;
+      if (document.getElementById('tourLayer').classList.contains('open')) return;
 
       swipeHintTimer = setTimeout(() => {
         const pill = document.getElementById('swipeHintPill');
         if (pill && !isSwipeHintDismissed()) {
           pill.classList.add('visible');
         }
-      }, 2200);
+      }, 1800);
     }
 
     function loadPrefs() {
@@ -1774,34 +2221,40 @@
       fetchRecommendations();
     }
 
-    /* Sticky Dining Hall Switcher */
+    /* Sticky Dining Hall Switcher (Defaults to 1st Open Hall so fresh eyes aren't overwhelmed) */
     function renderHallSwitcher() {
       const wrap = document.getElementById('hallSwitcherWrap');
       const scroller = document.getElementById('hallScroller');
 
-      if (!lastRecommendations || lastRecommendations.length <= 1) {
-        selectedHall = 'ALL';
+      if (!lastRecommendations || !lastRecommendations.length) {
+        selectedHall = null;
         wrap.classList.remove('visible');
         scroller.innerHTML = '';
         return;
       }
 
       const validLocations = new Set(lastRecommendations.map(r => r.location));
-      if (selectedHall !== 'ALL' && !validLocations.has(selectedHall)) {
-        selectedHall = 'ALL';
+      if (!selectedHall || (selectedHall !== 'ALL' && !validLocations.has(selectedHall))) {
+        selectedHall = lastRecommendations[0].location;
+      }
+
+      if (lastRecommendations.length === 1) {
+        wrap.classList.remove('visible');
+        scroller.innerHTML = '';
+        return;
       }
 
       const pillsHtml = [
-        `<button type="button" class="hall-pill ${selectedHall === 'ALL' ? 'active' : ''}" onclick="selectHall('ALL')">
-          All <span class="hall-pill-count">${lastRecommendations.length}</span>
-        </button>`,
         ...lastRecommendations.map(rec => {
           const safeLoc = rec.location.replace(/'/g, "\\'");
           const isActive = selectedHall === rec.location;
           return `<button type="button" class="hall-pill ${isActive ? 'active' : ''}" onclick="selectHall('${safeLoc}')">
             ${escapeHtml(rec.location)}
           </button>`;
-        })
+        }),
+        `<button type="button" class="hall-pill ${selectedHall === 'ALL' ? 'active' : ''}" onclick="selectHall('ALL')">
+          All <span class="hall-pill-count">${lastRecommendations.length}</span>
+        </button>`
       ].join('');
 
       scroller.innerHTML = pillsHtml;
@@ -1809,8 +2262,12 @@
     }
 
     function selectHall(loc) {
-      if (selectedHall === loc) return;
-      selectedHall = loc;
+      if (!lastRecommendations.length) return;
+      const target = (loc === 'ALL' && lastRecommendations.length === 1)
+        ? lastRecommendations[0].location
+        : loc;
+      if (selectedHall === target) return;
+      selectedHall = target;
       renderHallSwitcher();
       renderCards();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1904,6 +2361,14 @@
 
       return `
         <div>
+          <div class="card-hall-banner">
+            <h2 class="banner-hall-name">${escapeHtml(rec.location)}</h2>
+            <span class="banner-open-pill">
+              <span class="banner-open-dot"></span>
+              <span>${escapeHtml(rec.hours_status || 'Open')}</span>
+            </span>
+          </div>
+
           <div class="card-header">
             <div class="combo-title">${escapeHtml(combo.combo_name)}</div>
             ${dotsHtml}
@@ -1979,7 +2444,7 @@
       const exitRot = direction > 0 ? '-2.5deg' : '2.5deg';
       const enterX = direction > 0 ? '60%' : '-60%';
 
-      cardEl.classList.remove('dragging');
+      cardEl.classList.remove('dragging', 'nudge-once');
       cardEl.style.transition = 'transform 0.19s cubic-bezier(0.4, 0, 1, 1), opacity 0.16s ease';
       cardEl.style.transform = `translateX(${exitX}) rotate(${exitRot})`;
       cardEl.style.opacity = '0';
@@ -2062,6 +2527,7 @@
             if (Math.abs(dx) > 10) {
               dragState.lockedHorizontal = true;
               dragState.moved = true;
+              cardEl.classList.remove('nudge-once');
               cardEl.classList.add('dragging');
               try { cardEl.setPointerCapture(e.pointerId); } catch (_) {}
             } else {
@@ -2118,7 +2584,7 @@
         return;
       }
 
-      const visibleRecs = selectedHall === 'ALL'
+      const visibleRecs = (!selectedHall || selectedHall === 'ALL')
         ? lastRecommendations
         : lastRecommendations.filter(r => r.location === selectedHall);
 
@@ -2149,17 +2615,15 @@
           `;
         }
 
+        const peekEdgeHtml = hasMultiple ? `<div class="card-peek-edge" aria-hidden="true"></div>` : '';
+
         return `
           <section class="court-card-wrap">
-            <div class="court-top-row">
-              <h2 class="court-name">${escapeHtml(rec.location)}</h2>
-              <span class="court-hours">&bull; ${escapeHtml(rec.hours_status || 'Open')}</span>
-            </div>
-
             <div class="card-stage">
               <article class="meal-card" id="card-${slug}" data-loc="${escapeHtml(rec.location)}">
                 ${buildCardInnerHtml(rec)}
               </article>
+              ${peekEdgeHtml}
               ${hintHtml}
             </div>
           </section>
@@ -2169,7 +2633,6 @@
       const focusClass = visibleRecs.length === 1 ? 'single-focus' : '';
       container.innerHTML = `<div class="cards-grid ${focusClass}">${html}</div>`;
       attachCardGestures();
-      scheduleSwipeHint();
     }
 
     async function fetchRecommendations() {
@@ -2178,8 +2641,6 @@
       dismissSwipeHint(false);
       document.getElementById('cardsContainer').innerHTML = `
         <div class="skeleton-grid">
-          <div class="skeleton-card"></div>
-          <div class="skeleton-card"></div>
           <div class="skeleton-card"></div>
         </div>
       `;
@@ -2244,6 +2705,7 @@
         lastRecommendations.forEach(r => { comboIndexByLoc[r.location] = 0; });
         renderHallSwitcher();
         renderCards();
+        maybeShowWelcomeModal();
       } catch (err) {
         errEl.textContent = 'Network error connecting to Feast server.';
         errEl.style.display = 'block';
