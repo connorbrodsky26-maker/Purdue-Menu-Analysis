@@ -827,11 +827,33 @@ HILLENBRAND_SAFEBYTES_STAPLES = [
 
 
 def _unpack_composite_items(base_item: dict) -> list[dict]:
-    name_lower = (base_item.get('name') or '').lower().strip()
+    # Guard: If already a recognized staple or individual component, never re-unpack
+    if base_item.get('is_staple'):
+        return [base_item]
+
+    name_raw = (base_item.get('name') or '').strip()
+    name_lower = name_raw.lower()
     station_lower = (base_item.get('station') or '').lower().strip()
 
+    # Guard: If item contains parentheses (e.g. 'Fresh Baby Spinach (Salad Bar)'), it is an individual food, not the composite bar line item!
+    if '(' in name_raw and ')' in name_raw:
+        direct_match = _match_fallback_macro(base_item['name'])
+        if direct_match and base_item.get('calories', 0.0) == 0.0 and base_item.get('protein', 0.0) == 0.0:
+            item_copy = dict(base_item)
+            item_copy.update({
+                'calories': direct_match['calories'],
+                'protein': direct_match['protein'],
+                'carbs': direct_match['carbs'],
+                'fat': direct_match['fat'],
+                'sugar': direct_match['sugar'],
+                'used_fallback': True,
+            })
+            return [item_copy]
+        return [base_item]
+
     # Deconstruct composite 'Salad Bar' line items from Purdue API into individual whole food staples
-    if name_lower in ('salad bar', 'daily salad bar selection') or ('salad' in name_lower and 'bar' in name_lower):
+    # Only match exact composite station or menu headers like "Salad Bar" or "Daily Salad Bar Selection"
+    if name_lower in ('salad bar', 'daily salad bar selection', 'salad bar selection', 'daily salad bar'):
         unpacked = []
         for staple in CAMPUS_PERMANENT_SALAD_STAPLES:
             item_copy = dict(staple)
@@ -844,6 +866,7 @@ def _unpack_composite_items(base_item: dict) -> list[dict]:
                 'end_time': base_item.get('end_time', ''),
                 'station': base_item.get('station', 'Salad Stop'),
                 'used_fallback': True,
+                'is_staple': True,
             })
             unpacked.append(item_copy)
         return unpacked
@@ -894,7 +917,7 @@ def ensure_campus_permanent_staples(items: list[dict]) -> list[dict]:
         # 1. Lunch / Dinner / Late Lunch / Brunch -> Salad Bar Staples
         if any(period in mp_lower for period in ('lunch', 'dinner', 'brunch')):
             has_salad_staples = any(
-                'spinach' in n or 'garbanzo' in n or 'hard boiled egg' in n
+                'spinach' in n or 'garbanzo' in n or 'hard boiled egg' in n or '(salad bar)' in n
                 for n in item_names_lower
             )
             if not has_salad_staples:
@@ -908,6 +931,7 @@ def ensure_campus_permanent_staples(items: list[dict]) -> list[dict]:
                         'start_time': start_time,
                         'end_time': end_time,
                         'used_fallback': True,
+                        'is_staple': True,
                     })
                     result.append(staple_record)
 
@@ -926,12 +950,13 @@ def ensure_campus_permanent_staples(items: list[dict]) -> list[dict]:
                             'start_time': start_time,
                             'end_time': end_time,
                             'used_fallback': True,
+                            'is_staple': True,
                         })
                         result.append(staple_record)
 
         # 3. Hillenbrand -> SafeBytes staples
         if loc.strip().lower() == 'hillenbrand' and any(period in mp_lower for period in ('lunch', 'dinner')):
-            has_safebytes = any('safebytes' in (it.get('station') or '').lower() for it in session_items)
+            has_safebytes = any('safebytes' in (it.get('station') or '').lower() or 'safebytes' in (it.get('name') or '').lower() for it in session_items)
             if not has_safebytes:
                 for staple in HILLENBRAND_SAFEBYTES_STAPLES:
                     staple_record = dict(staple)
@@ -943,6 +968,8 @@ def ensure_campus_permanent_staples(items: list[dict]) -> list[dict]:
                         'start_time': start_time,
                         'end_time': end_time,
                         'used_fallback': True,
+                        'is_staple': True,
+                        'is_safebytes': True,
                     })
                     result.append(staple_record)
 
@@ -977,7 +1004,21 @@ def hydrate_missing_macros(items: list[dict], inject_permanent_staples: bool = F
                         copy_item['used_fallback'] = True
                         break
         hydrated.append(copy_item)
-    return hydrated
+
+    # 3. Deduplicate by (location, meal_period, name, station) to prevent explosive memory bloat
+    seen = set()
+    deduped = []
+    for item in hydrated:
+        key = (
+            item.get('location', ''),
+            item.get('meal_period', ''),
+            item.get('name', ''),
+            item.get('station', ''),
+        )
+        if key not in seen:
+            seen.add(key)
+            deduped.append(item)
+    return deduped
 
 
 _thread_local = threading.local()
@@ -1116,9 +1157,12 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                     'used_fallback': used_fallback,
                 }
 
-                normalized_items.extend(_unpack_composite_items(base_record))
+                normalized_items.append(base_record)
 
     return hydrate_missing_macros(normalized_items)
+
+
+_IN_MEMORY_DAILY_MENU_CACHE: dict[tuple[str, tuple[str, ...]], list[dict]] = {}
 
 
 def get_daily_menus(
@@ -1130,7 +1174,13 @@ def get_daily_menus(
     cache_path = os.path.join(BASE_DIR, f'purdue_menu_cache_{date_str}.json')
     target_locations = list(locations or DEFAULT_DINING_COURTS)
     allowed_set = set(target_locations)
+    mem_key = (date_str, tuple(sorted(target_locations)))
 
+    # 1. Fast in-memory RAM lookup (instant sub-millisecond response)
+    if not force_refresh and mem_key in _IN_MEMORY_DAILY_MENU_CACHE:
+        return list(_IN_MEMORY_DAILY_MENU_CACHE[mem_key]), True
+
+    # 2. Secondary local disk cache lookup
     if not force_refresh and os.path.exists(cache_path):
         try:
             with open(cache_path, 'r', encoding='utf-8') as f:
@@ -1142,14 +1192,19 @@ def get_daily_menus(
                 cached_items = raw_cache.get('items') or []
                 if cached_date == date_str and allowed_set.issubset(cached_locs) and cached_items:
                     filtered = [it for it in cached_items if it.get('location') in allowed_set]
-                    return hydrate_missing_macros(filtered, inject_permanent_staples=True), True
+                    hydrated = hydrate_missing_macros(filtered, inject_permanent_staples=True)
+                    _IN_MEMORY_DAILY_MENU_CACHE[mem_key] = hydrated
+                    return list(hydrated), True
             elif isinstance(raw_cache, list) and raw_cache:
                 filtered = [it for it in raw_cache if it.get('location') in allowed_set]
                 if filtered:
-                    return hydrate_missing_macros(filtered, inject_permanent_staples=True), True
+                    hydrated = hydrate_missing_macros(filtered, inject_permanent_staples=True)
+                    _IN_MEMORY_DAILY_MENU_CACHE[mem_key] = hydrated
+                    return list(hydrated), True
         except (OSError, ValueError):
             pass
 
+    # 3. Live fetch from Purdue HFS v2 API
     all_items = []
     with ThreadPoolExecutor(max_workers=len(target_locations) or 1) as executor:
         location_futures = [
@@ -1159,19 +1214,22 @@ def get_daily_menus(
         for future in as_completed(location_futures):
             all_items.extend(future.result())
 
-    if all_items:
+    hydrated_items = hydrate_missing_macros(all_items, inject_permanent_staples=True)
+
+    if hydrated_items:
         try:
             envelope = {
                 'date': date_str,
                 'locations': target_locations,
-                'items': all_items,
+                'items': hydrated_items,
             }
             with open(cache_path, 'w', encoding='utf-8') as f:
                 json.dump(envelope, f, indent=2)
         except OSError:
             pass
+        _IN_MEMORY_DAILY_MENU_CACHE[mem_key] = hydrated_items
 
-    return hydrate_missing_macros(all_items, inject_permanent_staples=True), False
+    return list(hydrated_items), False
 
 
 # ==============================================================================
