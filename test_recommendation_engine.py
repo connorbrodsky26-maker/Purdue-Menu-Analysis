@@ -479,6 +479,36 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertIn('Cheeseburger', combo_item_names)
         self.assertIn('Chocolate Chip Cookie', combo_item_names)
 
+    def test_yummy_crowd_pleaser_tiers_and_modifiers(self):
+        from purdue_menus_full_analysis import compute_combo_yummy_score, compute_item_yummy_score
+
+        # Tier 1 base score check
+        cookie_item = _make_item('Chocolate Chip Cookie')
+        self.assertEqual(compute_item_yummy_score(cookie_item), 100.0)  # 98 base + 5 chocolate modifier = 100 capped
+
+        pizza_item = _make_item('Pepperoni Pizza')
+        self.assertEqual(compute_item_yummy_score(pizza_item), 94.0)  # 94 base
+
+        # Modifiers bonus (+5 pts)
+        bbq_drumstick = _make_item('BBQ Chicken Drumstick')
+        # 88 base (bbq chicken / drumstick) + 5 (bbq modifier) = 93.0
+        self.assertEqual(compute_item_yummy_score(bbq_drumstick), 93.0)
+
+        # Penalties (-15 pts)
+        steamed_item = _make_item('Steamed Plain Rice')
+        # 60 base (plain rice) - 15 (steamed) - 15 (plain) = 30.0 (floor)
+        self.assertEqual(compute_item_yummy_score(steamed_item), 30.0)
+
+        # Combo scoring takes highest base tier + modifiers
+        slots = [
+            ('Main', _make_item('Pepperoni Pizza')),
+            ('Side', _make_item('Loaded French Fries')),
+            ('Dessert', _make_item('Warm Chocolate Chip Cookie')),
+        ]
+        # Highest base = 98 (cookie). Modifiers: 'loaded' (+5), 'chocolate' (+5), 'fried' (+5) -> 98 + 15 = 113 -> capped at 100
+        combo_score = compute_combo_yummy_score(slots)
+        self.assertEqual(combo_score, 100.0)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1847,6 +1847,142 @@ def _compute_nutrient_density_score(item: dict) -> float:
     return round(max(10.0, min(score, 100.0)), 1)
 
 
+# ==============================================================================
+# YUMMY MODE CROWD-PLEASER SCORING TIERS & MULTIPLIERS
+# ==============================================================================
+
+YUMMY_BASE_TIERS = [
+    # Tier 1 — Elite Crowd-Pleasers (Base Score: 92–98)
+    (98, [
+        'chocolate chip cookie', 'warm cookie', 'brownie', 'lava cake',
+        'cookie', 'cookies', 'fudge', 'cheesecake', 'cupcake'
+    ]),
+    (95, [
+        'crispy bacon', 'bacon', 'scrambled eggs', 'scrambled egg', 'omelet',
+        'omelette', 'breakfast sandwich', 'eggless scrambled'
+    ]),
+    (94, [
+        'lasagna', 'baked ziti', 'meatball sub', 'pepperoni pizza', 'cheese pizza',
+        'pizza'
+    ]),
+    (93, [
+        'loaded fries', 'nachos', 'nacho', 'tater tots', 'tots', 'mozzarella sticks',
+        'mozzarella stick', 'cheese stick', 'cheese curd'
+    ]),
+    (92, [
+        'spaghetti & meatballs', 'chicken alfredo', 'fettuccine alfredo',
+        'mac & cheese', 'macaroni and cheese', 'mac and cheese', 'alfredo'
+    ]),
+
+    # Tier 2 — Top Savory Favorites (Base Score: 85–91)
+    (90, [
+        'burrito bowl', 'burrito', 'quesadilla', 'fajitas', 'fajita',
+        'birria', 'carnitas', 'carne asada'
+    ]),
+    (89, [
+        'crispy chicken', 'fried chicken', 'chicken tenders', 'chicken tender',
+        'tenders', 'chicken wings', 'chicken wing', 'wings', 'popcorn chicken',
+        'orange chicken', 'general tso'
+    ]),
+    (88, [
+        'bbq brisket', 'pulled pork', 'baby back ribs', 'smoked sausage',
+        'bbq chicken', 'drumstick', 'chicken drumstick', 'ribs', 'pork potstickers',
+        'potstickers', 'potsticker'
+    ]),
+    (87, [
+        'smashburger', 'bacon burger', 'patty melt', 'philly cheesesteak',
+        'cheeseburger', 'burger', 'burgers'
+    ]),
+    (85, [
+        'garlic bread', 'breadsticks', 'breadstick', 'biscuits & gravy',
+        'waffle', 'waffles', 'french toast', 'pancakes', 'pancake'
+    ]),
+
+    # Tier 3 — Solid Classics (Base Score: 75–84)
+    (83, [
+        'penne rosa', 'pesto pasta', 'ravioli', 'tortellini', 'pasta'
+    ]),
+    (81, [
+        'grilled cheese', 'tomato soup'
+    ]),
+    (79, [
+        'teriyaki chicken', 'beef & broccoli', 'sirloin', 'ribeye', 'steak',
+        'myo stir fry', 'stir fry'
+    ]),
+    (77, [
+        'soft serve', 'cinnamon roll', 'ice cream', 'gelato', 'churros', 'churro',
+        'pie', 'cherry pie', 'cake', 'carrot cake', 'donut', 'donuts', 'donut holes'
+    ]),
+    (75, [
+        'curly fries', 'mashed potatoes', 'roasted potatoes', 'french fries',
+        'fries', 'sidewinder', 'sidewinders', 'tater'
+    ]),
+
+    # Tier 4 — Everyday Mains & Sides (Base Score: 60–74)
+    (72, [
+        'rice bowl', 'fried rice', 'lo mein', 'ramen', 'tacos', 'taco',
+        'enchiladas', 'enchilada'
+    ]),
+    (68, [
+        'roast turkey', 'honey glazed ham', 'grilled chicken', 'meatloaf',
+        'mango chicken'
+    ]),
+    (64, [
+        'chicken noodle soup', 'chili', 'baked potato'
+    ]),
+    (60, [
+        'dinner roll', 'roll', 'plain rice', 'rice', 'basmati rice', 'jasmine rice'
+    ]),
+]
+
+HIGH_APPEAL_MODIFIERS = [
+    'crispy', 'loaded', 'melted', 'cheesy', 'glazed', 'smoked',
+    'garlic', 'butter', 'caramelized', 'fried', 'bacon', 'alfredo',
+    'bbq', 'buffalo', 'chocolate'
+]
+
+YUMMY_PENALTIES = [
+    'steamed', 'plain', 'unseasoned', 'boiled', 'low-fat', 'sugar-free'
+]
+
+
+def compute_item_yummy_score(item: dict) -> float:
+    name_lower = (item.get('name') or '').lower().strip()
+    base_score = 55.0
+    for tier_score, kws in YUMMY_BASE_TIERS:
+        if any(kw in name_lower for kw in kws):
+            base_score = float(tier_score)
+            break
+
+    bonus = sum(5.0 for mod in HIGH_APPEAL_MODIFIERS if mod in name_lower)
+    penalty = sum(15.0 for pen in YUMMY_PENALTIES if pen in name_lower)
+
+    if 'tofu' in name_lower and not ('crispy' in name_lower or 'general tso' in name_lower):
+        penalty += 15.0
+
+    return round(max(30.0, min(base_score + bonus - penalty, 100.0)), 1)
+
+
+def compute_combo_yummy_score(slots: list[tuple[str, dict]]) -> float:
+    items = [it for _, it in slots]
+    names_lower = [(it.get('name') or '').lower().strip() for it in items]
+    combined_text = ' '.join(names_lower)
+
+    base_score = 55.0
+    for tier_score, kws in YUMMY_BASE_TIERS:
+        if any(kw in combined_text for kw in kws):
+            base_score = float(tier_score)
+            break
+
+    bonus = sum(5.0 for mod in HIGH_APPEAL_MODIFIERS if mod in combined_text)
+    penalty = sum(15.0 for pen in YUMMY_PENALTIES if pen in combined_text)
+
+    if 'tofu' in combined_text and not ('crispy' in combined_text or 'general tso' in combined_text):
+        penalty += 15.0
+
+    return round(max(30.0, min(base_score + bonus - penalty, 100.0)), 1)
+
+
 def evaluate_item_health(
     item: dict,
     health_intensity: str,
@@ -2041,58 +2177,21 @@ def evaluate_item_health(
         if is_salad_or_greens:
             return False, 0.0, 'Excluded from Yummy: salads and greens (comfort foods & cravings prioritized)'
 
-        if is_dessert:
-            dessert_appeal = 86.0
-            if any(k in name_lower for k in ['cookie', 'brownie', 'pie', 'cake', 'ice cream', 'donut', 'sundae', 'fudge', 'cheesecake']):
-                dessert_appeal += 8.0
-            return True, min(dessert_appeal, 98.0), 'Campus dessert treat'
-
-        appeal = 68.0
-
-        comfort_craving_markers = [
-            'pizza', 'burger', 'cheeseburger', 'bacon', 'wings', 'wing', 'tender',
-            'tenders', 'nugget', 'nuggets', 'bbq', 'barbecue', 'drumstick', 'ribs',
-            'pulled pork', 'fried chicken', 'mac and cheese', 'mac & cheese', 'macaroni and cheese',
-            'quesadilla', 'taco', 'tacos', 'nacho', 'nachos', 'burrito', 'grilled cheese',
-            'hot dog', 'corn dog', 'french fries', 'fries', 'sidewinder', 'curly fries',
-            'waffle fries', 'tater tots', 'tots', 'onion rings', 'mozzarella sticks',
-            'garlic bread', 'breadstick', 'breadsticks', 'biscuit', 'biscuits', 'cheese sauce',
-            'queso', 'mashed potatoes', 'gravy', 'fried rice', 'pork potstickers', 'potsticker',
-            'stir fry', 'alfredo', 'lasagna', 'meatball', 'parmesan', 'steak', 'sausage',
-            'pancake', 'pancakes', 'waffle', 'waffles', 'donut', 'donuts'
-        ]
-        matched_cravings = sum(1 for cm in comfort_craving_markers if cm in name_lower)
-        appeal += min(matched_cravings * 10.0, 26.0)
-
-        flavor_markers = [
-            'grilled', 'roasted', 'seared', 'braised', 'smoked', 'marinated',
-            'teriyaki', 'parmesan', 'pesto', 'marinara', 'alfredo', 'garlic',
-            'herb', 'honey', 'chipotle', 'carnitas', 'barbacoa', 'carne asada',
-            'tikka', 'masala', 'curry', 'sesame', 'ginger', 'bourbon', 'bbq',
-            'barbecue', 'buffalo', 'lemon', 'balsamic', 'glazed', 'crispy',
-            'baked', 'cheddar', 'mozzarella', 'feta', 'bacon', 'avocado'
-        ]
-        matched_flavors = sum(1 for fm in flavor_markers if fm in name_lower)
-        appeal += min(matched_flavors * 5.0, 15.0)
-
-        if is_deep_fried:
-            appeal += 6.0  # crispy deep-fried favorites are prized in Yummy mode
-
-        if any(m in name_lower for m in SANDWICH_ENTREE_MARKERS + COMPLETE_ENTREE_MARKERS + PASTA_ENTREE_MARKERS + BOWL_ENTREE_MARKERS):
-            appeal += 6.0
-        if certainty == 'verified':
-            appeal += 2.0
-
+        appeal = compute_item_yummy_score(item)
         reason = (
-            'Campus comfort food craving'
-            if matched_cravings > 0
+            'Elite crowd-pleaser craving'
+            if appeal >= 92.0
             else (
-                'Estimated culinary appeal: rich flavor profile & preparation'
-                if matched_flavors > 0
-                else 'Estimated culinary appeal: classic campus favorite'
+                'Top savory comfort favorite'
+                if appeal >= 85.0
+                else (
+                    'Solid campus classic'
+                    if appeal >= 75.0
+                    else 'Campus comfort plate'
+                )
             )
         )
-        return True, round(min(appeal, 100.0), 1), reason
+        return True, round(appeal, 1), reason
 
 
 # ==============================================================================
@@ -3589,6 +3688,8 @@ def build_optimal_plates(
 
             if tier_key == 'extreme':
                 weighted_total = (food_quality_score * 0.55) + (norm_nut * 0.45)
+            elif tier_key == 'low':
+                weighted_total = compute_combo_yummy_score(slots)
             else:
                 weighted_total = (
                     (compat_score * weights['culinary_compatibility']) +
@@ -3604,7 +3705,7 @@ def build_optimal_plates(
             is_featured = _is_hot_court_entree(anchor_item, slot_item_objs)
 
             # Prioritize dining-hall-unique hot entrees over generic salad bar staple bowls
-            if tier_key != 'extreme' and has_featured_hot_entree:
+            if tier_key not in ('extreme', 'low') and has_featured_hot_entree:
                 if is_featured:
                     weighted_total += 7.0
                 elif is_generic_salad:

@@ -1116,10 +1116,6 @@
       background: rgba(220, 38, 38, 0.22);
     }
 
-    .dock-mode-btn[data-mode="Extreme"]:hover {
-      color: #FFFFFF;
-      background: rgba(37, 99, 235, 0.22);
-    }
 
     .dock-mode-btn.active {
       color: #FFFFFF;
@@ -1140,10 +1136,6 @@
       box-shadow: 0 3px 14px rgba(220, 38, 38, 0.52);
     }
 
-    .dock-mode-btn[data-mode="Extreme"].active {
-      background: #2563EB;
-      box-shadow: 0 3px 14px rgba(37, 99, 235, 0.52);
-    }
 
     @media (max-width: 420px) {
       .bottom-dock {
@@ -2397,7 +2389,6 @@
       <button type="button" class="dock-mode-btn active" data-mode="High" onclick="selectMode('High')">Healthy</button>
       <button type="button" class="dock-mode-btn" data-mode="Mid" onclick="selectMode('Mid')">Balanced</button>
       <button type="button" class="dock-mode-btn" data-mode="Low" onclick="selectMode('Low')">Yummy</button>
-      <button type="button" class="dock-mode-btn" data-mode="Extreme" onclick="selectMode('Extreme')">Extreme</button>
     </div>
 
     <button type="button" class="dock-filter-btn" onclick="openDrawer()" aria-label="Open Preferences">
@@ -2738,7 +2729,7 @@
       }
 
       document.querySelectorAll('.dock-mode-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.mode === effectiveMode);
+        btn.classList.toggle('active', !pureOn && btn.dataset.mode === activeMode);
       });
     }
 
@@ -2838,10 +2829,9 @@
 
     function selectMode(mode) {
       const pureCheckbox = document.getElementById('pure_health_mode');
-      const isExtreme = mode === 'Extreme';
-      const effectiveMode = isExtreme ? 'Extreme' : mode;
+      const pureWasOn = pureCheckbox && pureCheckbox.checked;
 
-      if (activeMode === effectiveMode && pureCheckbox && pureCheckbox.checked === isExtreme) {
+      if (activeMode === mode && !pureWasOn) {
         // Quick visual pulse to confirm selection
         const container = document.getElementById('cardsContainer');
         if (container) {
@@ -2850,9 +2840,9 @@
         }
         return;
       }
-      activeMode = effectiveMode;
+      activeMode = mode;
       if (pureCheckbox) {
-        pureCheckbox.checked = isExtreme;
+        pureCheckbox.checked = false;
       }
       updateDockUI();
       savePreferences();
@@ -2878,12 +2868,6 @@
     function closeDrawerAndApply() {
       document.getElementById('drawerBackdrop').classList.remove('open');
       document.getElementById('prefsDrawer').classList.remove('open');
-      const pureOn = document.getElementById('pure_health_mode').checked;
-      if (pureOn) {
-        activeMode = 'Extreme';
-      } else if (activeMode === 'Extreme') {
-        activeMode = 'High';
-      }
       updateDockUI();
       updateBadgeCount();
       savePreferences();
@@ -2948,7 +2932,7 @@
       const p = Object.assign({}, DEFAULT_PREFS, parsed);
       const pureChecked = Boolean(p.pure_health_mode);
       document.getElementById('pure_health_mode').checked = pureChecked;
-      activeMode = pureChecked ? 'Extreme' : (p.mode || 'High');
+      activeMode = (p.mode === 'Extreme' ? 'High' : (p.mode || 'High'));
       updateDockUI();
 
       const dietSet = new Set(p.dietary || []);
@@ -3375,24 +3359,9 @@
               </div>
 
               <div class="card-header">
-                <div>
-                  <h2 class="combo-title">${escapeHtml(combo.combo_name)}</h2>
-                  <div class="plate-visual-tag">
-                    <div class="plate-composition-chips">${plateBadgesHtml}</div>
-                    <span>${combo.items.length}-Item ${plateTypeLabel}</span>
-                  </div>
-                </div>
+                <h2 class="combo-title">${escapeHtml(combo.combo_name)}</h2>
                 ${dotsHtml}
               </div>
-
-              ${rationaleText ? `
-                <div class="rationale-box">
-                  <span class="rationale-pill ${isRelaxedNotice ? 'neutral' : ''}">
-                    <span>${isRelaxedNotice ? '&#8226;' : '&#10003;'}</span>
-                    <span>${escapeHtml(rationaleText)}</span>
-                  </span>
-                </div>
-              ` : ''}
 
               <div class="items-list">${dishesHtml}</div>
               ${saladBuilderHtml}
@@ -3696,11 +3665,10 @@
       }
 
       const driEnabled = document.getElementById('dri_enabled').checked;
-      const pureHealthMode = activeMode === 'Extreme' || document.getElementById('pure_health_mode').checked;
-      const effectiveMode = pureHealthMode ? 'Extreme' : activeMode;
+      const pureHealthMode = document.getElementById('pure_health_mode').checked;
 
       const payload = {
-        health_intensity: effectiveMode,
+        health_intensity: pureHealthMode ? 'Extreme' : activeMode,
         pure_health_mode: pureHealthMode,
         dietary_filters: getDietaryFilters(),
         dri_enabled: driEnabled,
@@ -3906,11 +3874,6 @@
       const pureToggle = document.getElementById('pure_health_mode');
       if (pureToggle) {
         pureToggle.addEventListener('change', (e) => {
-          if (e.target.checked) {
-            activeMode = 'Extreme';
-          } else if (activeMode === 'Extreme') {
-            activeMode = 'High';
-          }
           updateDockUI();
           updateBadgeCount();
         });
