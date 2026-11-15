@@ -242,10 +242,32 @@
       text-transform: none;
     }
 
-    .active-chip.pure {
-      background: var(--leaf-soft);
+    .active-chip.pure,
+    .active-chip.mode-extreme {
+      background: rgba(37, 99, 235, 0.12);
+      border-color: rgba(37, 99, 235, 0.3);
+      color: #2563EB;
+      text-transform: none;
+    }
+
+    .active-chip.mode-high {
+      background: rgba(29, 138, 90, 0.12);
       border-color: rgba(29, 138, 90, 0.3);
-      color: var(--leaf);
+      color: #1D8A5A;
+      text-transform: none;
+    }
+
+    .active-chip.mode-mid {
+      background: rgba(217, 119, 6, 0.14);
+      border-color: rgba(217, 119, 6, 0.32);
+      color: #B45309;
+      text-transform: none;
+    }
+
+    .active-chip.mode-low {
+      background: rgba(220, 38, 38, 0.12);
+      border-color: rgba(220, 38, 38, 0.3);
+      color: #DC2626;
       text-transform: none;
     }
 
@@ -404,10 +426,28 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
+      transition: background 0.24s ease;
     }
 
-    .card-hall-banner.pure-mode {
-      background: var(--leaf);
+    .card-hall-banner.mode-high,
+    [data-active-mode="High"] .card-hall-banner {
+      background: #1D8A5A;
+    }
+
+    .card-hall-banner.mode-mid,
+    [data-active-mode="Mid"] .card-hall-banner {
+      background: #D97706;
+    }
+
+    .card-hall-banner.mode-low,
+    [data-active-mode="Low"] .card-hall-banner {
+      background: #DC2626;
+    }
+
+    .card-hall-banner.pure-mode,
+    .card-hall-banner.mode-extreme,
+    [data-active-mode="Extreme"] .card-hall-banner {
+      background: #2563EB;
     }
 
     .banner-hall-name {
@@ -481,6 +521,23 @@
     .pager-dot.active {
       width: 20px;
       background: var(--terracotta);
+      transition: background 0.24s ease, width 0.2s ease;
+    }
+
+    [data-active-mode="High"] .pager-dot.active {
+      background: #1D8A5A;
+    }
+
+    [data-active-mode="Mid"] .pager-dot.active {
+      background: #D97706;
+    }
+
+    [data-active-mode="Low"] .pager-dot.active {
+      background: #DC2626;
+    }
+
+    [data-active-mode="Extreme"] .pager-dot.active {
+      background: #2563EB;
     }
 
     .rationale-box {
@@ -501,6 +558,31 @@
       font-weight: 800;
       line-height: 1.25;
       max-width: 100%;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    [data-active-mode="High"] .rationale-pill:not(.neutral) {
+      background: rgba(29, 138, 90, 0.12);
+      color: #1D8A5A;
+      border-color: rgba(29, 138, 90, 0.25);
+    }
+
+    [data-active-mode="Mid"] .rationale-pill:not(.neutral) {
+      background: rgba(217, 119, 6, 0.12);
+      color: #B45309;
+      border-color: rgba(217, 119, 6, 0.25);
+    }
+
+    [data-active-mode="Low"] .rationale-pill:not(.neutral) {
+      background: rgba(220, 38, 38, 0.12);
+      color: #DC2626;
+      border-color: rgba(220, 38, 38, 0.25);
+    }
+
+    [data-active-mode="Extreme"] .rationale-pill:not(.neutral) {
+      background: rgba(37, 99, 235, 0.12);
+      color: #2563EB;
+      border-color: rgba(37, 99, 235, 0.25);
     }
 
     .rationale-pill span:last-child {
@@ -998,36 +1080,85 @@
     }
 
     .mode-dock.pure-overridden {
-      opacity: 0.65;
+      opacity: 1;
     }
 
     .dock-mode-btn {
       border: none;
       background: transparent;
       color: rgba(247, 243, 238, 0.74);
-      font-size: 0.88rem;
+      font-size: 0.84rem;
       font-weight: 750;
-      min-height: 44px;
-      padding: 0 1.15rem;
+      min-height: 42px;
+      padding: 0 0.95rem;
       border-radius: var(--radius-pill);
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.2, 0.8, 0.3, 1);
       white-space: nowrap;
     }
 
-    .dock-mode-btn:hover {
-      color: #FFFFFF;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
     .dock-mode-btn:active {
       transform: scale(0.95);
     }
 
-    .dock-mode-btn.active {
-      background: var(--terracotta);
+    .dock-mode-btn[data-mode="High"]:hover {
       color: #FFFFFF;
-      box-shadow: 0 3px 12px rgba(200, 75, 49, 0.45);
+      background: rgba(29, 138, 90, 0.22);
+    }
+
+    .dock-mode-btn[data-mode="Mid"]:hover {
+      color: #FFFFFF;
+      background: rgba(217, 119, 6, 0.22);
+    }
+
+    .dock-mode-btn[data-mode="Low"]:hover {
+      color: #FFFFFF;
+      background: rgba(220, 38, 38, 0.22);
+    }
+
+    .dock-mode-btn[data-mode="Extreme"]:hover {
+      color: #FFFFFF;
+      background: rgba(37, 99, 235, 0.22);
+    }
+
+    .dock-mode-btn.active {
+      color: #FFFFFF;
+    }
+
+    .dock-mode-btn[data-mode="High"].active {
+      background: #1D8A5A;
+      box-shadow: 0 3px 14px rgba(29, 138, 90, 0.52);
+    }
+
+    .dock-mode-btn[data-mode="Mid"].active {
+      background: #D97706;
+      box-shadow: 0 3px 14px rgba(217, 119, 6, 0.52);
+    }
+
+    .dock-mode-btn[data-mode="Low"].active {
+      background: #DC2626;
+      box-shadow: 0 3px 14px rgba(220, 38, 38, 0.52);
+    }
+
+    .dock-mode-btn[data-mode="Extreme"].active {
+      background: #2563EB;
+      box-shadow: 0 3px 14px rgba(37, 99, 235, 0.52);
+    }
+
+    @media (max-width: 420px) {
+      .bottom-dock {
+        gap: 0.3rem;
+        padding: 0 0.35rem;
+      }
+      .dock-mode-btn {
+        padding: 0 0.65rem;
+        font-size: 0.78rem;
+        min-height: 38px;
+      }
+      .dock-filter-btn {
+        width: 44px;
+        height: 44px;
+      }
     }
 
     .dock-filter-btn {
@@ -1284,8 +1415,8 @@
     }
 
     .toggle-card.pure-card {
-      border-color: rgba(29, 138, 90, 0.35);
-      background: linear-gradient(180deg, #FFFFFF 0%, #F3FAF6 100%);
+      border-color: rgba(37, 99, 235, 0.35);
+      background: linear-gradient(180deg, #FFFFFF 0%, #EFF6FF 100%);
     }
 
     .toggle-row {
@@ -1347,9 +1478,10 @@
       border-color: var(--terracotta);
     }
 
+    .switch-control.pure-switch input:checked + .switch-track,
     .switch-control.leaf-switch input:checked + .switch-track {
-      background: var(--leaf);
-      border-color: var(--leaf);
+      background: #2563EB;
+      border-color: #2563EB;
     }
 
     .switch-control input:checked + .switch-track .switch-thumb {
@@ -2265,6 +2397,7 @@
       <button type="button" class="dock-mode-btn active" data-mode="High" onclick="selectMode('High')">Healthy</button>
       <button type="button" class="dock-mode-btn" data-mode="Mid" onclick="selectMode('Mid')">Balanced</button>
       <button type="button" class="dock-mode-btn" data-mode="Low" onclick="selectMode('Low')">Yummy</button>
+      <button type="button" class="dock-mode-btn" data-mode="Extreme" onclick="selectMode('Extreme')">Extreme</button>
     </div>
 
     <button type="button" class="dock-filter-btn" onclick="openDrawer()" aria-label="Open Preferences">
@@ -2594,12 +2727,18 @@
     }
 
     function updateDockUI() {
-      const pureOn = document.getElementById('pure_health_mode').checked;
-      const modeDock = document.getElementById('modeDock');
-      modeDock.classList.toggle('pure-overridden', pureOn);
+      const pureCheckbox = document.getElementById('pure_health_mode');
+      const pureOn = pureCheckbox ? pureCheckbox.checked : false;
+      const effectiveMode = pureOn ? 'Extreme' : activeMode;
+
+      document.body.setAttribute('data-active-mode', effectiveMode);
+      const container = document.getElementById('cardsContainer');
+      if (container) {
+        container.setAttribute('data-active-mode', effectiveMode);
+      }
 
       document.querySelectorAll('.dock-mode-btn').forEach(btn => {
-        btn.classList.toggle('active', !pureOn && btn.dataset.mode === activeMode);
+        btn.classList.toggle('active', btn.dataset.mode === effectiveMode);
       });
     }
 
@@ -2698,7 +2837,11 @@
     }, { passive: false });
 
     function selectMode(mode) {
-      if (activeMode === mode && !document.getElementById('pure_health_mode').checked) {
+      const pureCheckbox = document.getElementById('pure_health_mode');
+      const isExtreme = mode === 'Extreme';
+      const effectiveMode = isExtreme ? 'Extreme' : mode;
+
+      if (activeMode === effectiveMode && pureCheckbox && pureCheckbox.checked === isExtreme) {
         // Quick visual pulse to confirm selection
         const container = document.getElementById('cardsContainer');
         if (container) {
@@ -2707,8 +2850,10 @@
         }
         return;
       }
-      activeMode = mode;
-      document.getElementById('pure_health_mode').checked = false;
+      activeMode = effectiveMode;
+      if (pureCheckbox) {
+        pureCheckbox.checked = isExtreme;
+      }
       updateDockUI();
       savePreferences();
 
@@ -2733,6 +2878,12 @@
     function closeDrawerAndApply() {
       document.getElementById('drawerBackdrop').classList.remove('open');
       document.getElementById('prefsDrawer').classList.remove('open');
+      const pureOn = document.getElementById('pure_health_mode').checked;
+      if (pureOn) {
+        activeMode = 'Extreme';
+      } else if (activeMode === 'Extreme') {
+        activeMode = 'High';
+      }
       updateDockUI();
       updateBadgeCount();
       savePreferences();
@@ -2795,8 +2946,9 @@
       } catch (e) {}
 
       const p = Object.assign({}, DEFAULT_PREFS, parsed);
-      activeMode = p.mode || 'High';
-      document.getElementById('pure_health_mode').checked = Boolean(p.pure_health_mode);
+      const pureChecked = Boolean(p.pure_health_mode);
+      document.getElementById('pure_health_mode').checked = pureChecked;
+      activeMode = pureChecked ? 'Extreme' : (p.mode || 'High');
       updateDockUI();
 
       const dietSet = new Set(p.dietary || []);
@@ -2820,10 +2972,16 @@
     function renderActiveStrip(data) {
       const strip = document.getElementById('activeStrip');
       const chips = [];
-      const pureOn = data.health_intensity === 'Extreme';
+      const pureOn = data.health_intensity === 'Extreme' || activeMode === 'Extreme';
 
       if (pureOn) {
-        chips.push(`<span class="active-chip pure">Pure Health Mode</span>`);
+        chips.push(`<span class="active-chip pure mode-extreme">Extreme Mode (Pure Health)</span>`);
+      } else if (activeMode === 'High') {
+        chips.push(`<span class="active-chip mode-high">Healthy Mode</span>`);
+      } else if (activeMode === 'Mid') {
+        chips.push(`<span class="active-chip mode-mid">Balanced Mode</span>`);
+      } else if (activeMode === 'Low') {
+        chips.push(`<span class="active-chip mode-low">Yummy Mode</span>`);
       }
 
       if (data.dri_enabled && data.targets && data.targets.per_meal) {
@@ -3030,8 +3188,12 @@
     }
 
     function buildSingleCardHtml(rec, comboIdx, isPure, showSwipeAffordance) {
+      const effectivePure = isPure || activeMode === 'Extreme';
+      const bannerClass = effectivePure ? 'pure-mode mode-extreme' : (activeMode === 'High' ? 'mode-high' : (activeMode === 'Low' ? 'mode-low' : 'mode-mid'));
+      const plateTypeLabel = effectivePure ? 'Pure Health Stack' : (activeMode === 'High' ? 'Healthy Plate' : (activeMode === 'Low' ? 'Yummy Plate' : 'Balanced Plate'));
+
       if (!rec.combos || rec.combos.length === 0) {
-        const emptyReason = rec.no_qualifying_reason || (isPure
+        const emptyReason = rec.no_qualifying_reason || (effectivePure
           ? 'No verified whole foods meeting Pure Health density available right now.'
           : (activeMode === 'High'
             ? 'No verified seed-oil-free meals available right now at this dining hall.'
@@ -3039,7 +3201,7 @@
         return `
           <div class="card-stage">
             <article class="meal-card empty-hall-card" data-location="${escapeHtml(rec.location)}">
-              <div class="card-hall-banner ${isPure ? 'pure-mode' : ''}">
+              <div class="card-hall-banner ${bannerClass}">
                 <div class="banner-hall-name">${escapeHtml(rec.location)}</div>
                 <span class="banner-open-pill"><span class="banner-open-dot"></span>${escapeHtml(rec.hours_status || 'Open now')}</span>
               </div>
@@ -3052,11 +3214,11 @@
                   </svg>
                 </div>
                 <div class="empty-hall-badge">Strict Standards Enforced</div>
-                <h3 class="empty-hall-title">No Qualifying ${isPure ? 'Pure Health' : (activeMode === 'High' ? 'Healthy' : 'Balanced')} Meals</h3>
+                <h3 class="empty-hall-title">No Qualifying ${effectivePure ? 'Pure Health' : (activeMode === 'High' ? 'Healthy' : (activeMode === 'Low' ? 'Yummy' : 'Balanced'))} Meals</h3>
                 <p class="empty-hall-desc">${escapeHtml(emptyReason)}</p>
                 <p class="empty-hall-sub">Feast never lowers verification standards or invents fake combinations to fill cards.</p>
                 <div class="empty-hall-actions">
-                  ${(activeMode === 'High' || isPure) ? `<button type="button" class="empty-recovery-btn" onclick="selectMode('Mid')">View Balanced Meals</button>` : ''}
+                  ${(activeMode === 'High' || effectivePure) ? `<button type="button" class="empty-recovery-btn" onclick="selectMode('Mid')">View Balanced Meals</button>` : ''}
                   ${selectedHall !== 'ALL' ? `<button type="button" class="btn-outline empty-court-alt-btn" onclick="selectHall('ALL')">View All Dining Halls</button>` : ''}
                 </div>
               </div>
@@ -3207,7 +3369,7 @@
           ${peekEdgeHtml}
           <article class="meal-card ${showSwipeAffordance && combos.length > 1 ? 'nudge-once' : ''}" data-location="${escapeHtml(rec.location)}" data-total="${combos.length}">
             <div>
-              <div class="card-hall-banner ${isPure ? 'pure-mode' : ''}">
+              <div class="card-hall-banner ${bannerClass}">
                 <div class="banner-hall-name">${escapeHtml(rec.location)}</div>
                 <span class="banner-open-pill"><span class="banner-open-dot"></span>${escapeHtml(rec.hours_status || 'Open now')}</span>
               </div>
@@ -3217,7 +3379,7 @@
                   <h2 class="combo-title">${escapeHtml(combo.combo_name)}</h2>
                   <div class="plate-visual-tag">
                     <div class="plate-composition-chips">${plateBadgesHtml}</div>
-                    <span>${combo.items.length}-Item Balanced Plate</span>
+                    <span>${combo.items.length}-Item ${plateTypeLabel}</span>
                   </div>
                 </div>
                 ${dotsHtml}
@@ -3534,10 +3696,11 @@
       }
 
       const driEnabled = document.getElementById('dri_enabled').checked;
-      const pureHealthMode = document.getElementById('pure_health_mode').checked;
+      const pureHealthMode = activeMode === 'Extreme' || document.getElementById('pure_health_mode').checked;
+      const effectiveMode = pureHealthMode ? 'Extreme' : activeMode;
 
       const payload = {
-        health_intensity: activeMode,
+        health_intensity: effectiveMode,
         pure_health_mode: pureHealthMode,
         dietary_filters: getDietaryFilters(),
         dri_enabled: driEnabled,
@@ -3570,6 +3733,14 @@
         document.getElementById('greetingTitle').textContent = pickMotivation(data.timestamp);
         const count = data.open_locations_count || 0;
         statusTextEl.textContent = count > 0 ? `${count} open now` : 'Courts closed';
+
+        const isPure = data.health_intensity === 'Extreme' || pureHealthMode;
+        const currentMode = isPure ? 'Extreme' : activeMode;
+        document.body.setAttribute('data-active-mode', currentMode);
+        const container = document.getElementById('cardsContainer');
+        if (container) {
+          container.setAttribute('data-active-mode', currentMode);
+        }
 
         renderActiveStrip(data);
         lastRecommendations = data.recommendations || [];
@@ -3732,6 +3903,18 @@
     window.addEventListener('DOMContentLoaded', () => {
       installDynamicAppleTouchIcon();
       loadPreferences();
+      const pureToggle = document.getElementById('pure_health_mode');
+      if (pureToggle) {
+        pureToggle.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            activeMode = 'Extreme';
+          } else if (activeMode === 'Extreme') {
+            activeMode = 'High';
+          }
+          updateDockUI();
+          updateBadgeCount();
+        });
+      }
       fetchRecommendations();
     });
   </script>

@@ -70,13 +70,13 @@ MODE_SCORING_PROFILES = {
         'label': 'Yummy',
         'weights': {
             'culinary_compatibility': 0.38,
-            'meal_completeness': 0.20,
-            'food_quality': 0.22,
-            'nutrition_balance': 0.08,
-            'variety_presentation': 0.12,
+            'meal_completeness': 0.22,
+            'food_quality': 0.26,
+            'nutrition_balance': 0.04,
+            'variety_presentation': 0.10,
         },
         'strict_clean_ingredients': False,
-        'target_cal_range': (400.0, 1050.0),
+        'target_cal_range': (450.0, 1350.0),
         'min_protein_ideal': 15.0,
     },
     'extreme': {  # Pure Health Mode (Unconstrained Macro Assembler & Whole-Food Stacking)
@@ -2020,11 +2020,50 @@ def evaluate_item_health(
         return True, round(max(20.0, min(score, 100.0)), 1), reason
 
     else:
-        # 'low' -> Yummy Mode
-        if is_dessert:
-            return False, 0.0, 'Excluded: standalone dessert'
+        # 'low' -> Yummy Mode (comfort food, cravings, and desserts; NO salads or greens)
+        is_salad_or_greens = (
+            _is_composed_salad(item)
+            or any(g in name_lower for g in [
+                'salad', 'spinach', 'kale', 'lettuce', 'spring mix', 'romaine',
+                'mixed greens', 'arugula', 'chard', 'collard', 'cabbage slaw', 'coleslaw',
+                'green beans', 'steamed broccoli', 'broccoli florets', 'raw broccoli',
+                'steamed cauliflower', 'cauliflower florets', 'raw cauliflower',
+                'baby carrots', 'steamed carrots', 'celery sticks', 'cucumber slices',
+                'sliced cucumbers', 'steamed squash', 'steamed zucchini', 'steamed peas',
+                'snap peas', 'garbanzo bean', 'chickpea salad', 'kidney bean salad'
+            ])
+            or (
+                any(s in station_lower for s in ['salad bar', 'salad stop', 'data crunch', 'rabbit food', 'greens & grains'])
+                and not is_dessert
+                and not any(c in name_lower for c in ['chicken', 'beef', 'bacon', 'ham', 'cheese', 'pasta', 'potato'])
+            )
+        )
+        if is_salad_or_greens:
+            return False, 0.0, 'Excluded from Yummy: salads and greens (comfort foods & cravings prioritized)'
 
-        appeal = 52.0
+        if is_dessert:
+            dessert_appeal = 86.0
+            if any(k in name_lower for k in ['cookie', 'brownie', 'pie', 'cake', 'ice cream', 'donut', 'sundae', 'fudge', 'cheesecake']):
+                dessert_appeal += 8.0
+            return True, min(dessert_appeal, 98.0), 'Campus dessert treat'
+
+        appeal = 68.0
+
+        comfort_craving_markers = [
+            'pizza', 'burger', 'cheeseburger', 'bacon', 'wings', 'wing', 'tender',
+            'tenders', 'nugget', 'nuggets', 'bbq', 'barbecue', 'drumstick', 'ribs',
+            'pulled pork', 'fried chicken', 'mac and cheese', 'mac & cheese', 'macaroni and cheese',
+            'quesadilla', 'taco', 'tacos', 'nacho', 'nachos', 'burrito', 'grilled cheese',
+            'hot dog', 'corn dog', 'french fries', 'fries', 'sidewinder', 'curly fries',
+            'waffle fries', 'tater tots', 'tots', 'onion rings', 'mozzarella sticks',
+            'garlic bread', 'breadstick', 'breadsticks', 'biscuit', 'biscuits', 'cheese sauce',
+            'queso', 'mashed potatoes', 'gravy', 'fried rice', 'pork potstickers', 'potsticker',
+            'stir fry', 'alfredo', 'lasagna', 'meatball', 'parmesan', 'steak', 'sausage',
+            'pancake', 'pancakes', 'waffle', 'waffles', 'donut', 'donuts'
+        ]
+        matched_cravings = sum(1 for cm in comfort_craving_markers if cm in name_lower)
+        appeal += min(matched_cravings * 10.0, 26.0)
+
         flavor_markers = [
             'grilled', 'roasted', 'seared', 'braised', 'smoked', 'marinated',
             'teriyaki', 'parmesan', 'pesto', 'marinara', 'alfredo', 'garlic',
@@ -2034,16 +2073,19 @@ def evaluate_item_health(
             'baked', 'cheddar', 'mozzarella', 'feta', 'bacon', 'avocado'
         ]
         matched_flavors = sum(1 for fm in flavor_markers if fm in name_lower)
-        appeal += min(matched_flavors * 9.0, 32.0)
+        appeal += min(matched_flavors * 5.0, 15.0)
+
+        if is_deep_fried:
+            appeal += 6.0  # crispy deep-fried favorites are prized in Yummy mode
 
         if any(m in name_lower for m in SANDWICH_ENTREE_MARKERS + COMPLETE_ENTREE_MARKERS + PASTA_ENTREE_MARKERS + BOWL_ENTREE_MARKERS):
-            appeal += 10.0
+            appeal += 6.0
         if certainty == 'verified':
-            appeal += 4.0
+            appeal += 2.0
 
         reason = (
-            'Best clean option open now'
-            if narrow_breadth
+            'Campus comfort food craving'
+            if matched_cravings > 0
             else (
                 'Estimated culinary appeal: rich flavor profile & preparation'
                 if matched_flavors > 0
@@ -2193,12 +2235,11 @@ def classify_food_item(item: dict) -> str:
     name_lower = raw_name.lower()
     ing_lower = (item.get('ingredients') or '').lower()
 
-    if (
-        name_lower in STATION_HEADER_NAMES
-        or any(d in name_lower for d in DESSERT_KEYWORDS)
-        or any(ds in name_lower for ds in DESSERT_SALAD_KEYWORDS)
-    ):
+    if name_lower in STATION_HEADER_NAMES:
         return 'exclude'
+
+    if _is_dessert_item(name_lower):
+        return 'dessert'
 
     # Clean name by stripping station or parenthetical markers like '(salad bar)'
     clean_name = re.sub(r'\s*\([^)]*salad\s+bar[^)]*\)', '', name_lower).strip()
@@ -2410,14 +2451,21 @@ def evaluate_culinary_compatibility(
 
     starch_count = 0
     for it in items:
-        n = it['name'].lower()
         r = it['_role']
+        if r == 'dessert':
+            continue
+        n = it['name'].lower()
         if r in ('pasta_entree', 'sandwich', 'complete_entree', 'bowl') or any(
-            g in n for g in ['rice', 'pasta', 'noodle', 'spaghetti', 'penne', 'potato', 'bread', 'roll', 'tortilla', 'naan', 'pita', 'couscous', 'quinoa', 'macaroni']
+            g in n for g in ['rice', 'pasta', 'noodle', 'spaghetti', 'penne', 'potato', 'bread', 'roll', 'tortilla', 'naan', 'pita', 'couscous', 'quinoa', 'macaroni', 'fry', 'fries', 'sidewinder', 'tots', 'rings']
         ):
             starch_count += 1
-    if starch_count > 1:
-        return False, 0.0, ['Rejected: redundant carbohydrate/starch components']
+
+    if tier == 'low':
+        if starch_count > 2:
+            return False, 0.0, ['Rejected: excessive starch combinations']
+    else:
+        if starch_count > 1:
+            return False, 0.0, ['Rejected: redundant carbohydrate/starch components']
 
     has_any_salad = 'composed_salad' in roles or any('salad' in n for n in names_lower)
     if has_any_salad and any(
@@ -2468,6 +2516,9 @@ def evaluate_culinary_compatibility(
         (['chicken parmesan', 'meatball', 'italian chicken', 'bolognese', 'marinara'], ['pasta', 'spaghetti', 'penne', 'fettuccine', 'broccoli', 'green beans'], 15.0, 'Classic Italian entree pairing'),
         (['taco', 'carnitas', 'barbacoa', 'carne asada', 'fajita', 'chorizo'], ['spanish rice', 'mexican rice', 'cilantro lime', 'black bean', 'pinto bean'], 16.0, 'Traditional Latin plate pairing'),
         (['chicken drumstick', 'drumstick', 'bbq chicken', 'grilled chicken', 'chicken breast', 'chicken', 'steak', 'salmon', 'pork loin', 'turkey'], ['rice', 'long grain rice', 'brown rice', 'white rice', 'roasted potato', 'sweet potato', 'mashed potato', 'quinoa', 'asparagus', 'broccoli', 'green beans', 'pasta salad', 'potato salad'], 16.0, 'Classic roasted protein & starch/vegetable plate'),
+        (['burger', 'cheeseburger', 'sandwich', 'hot dog', 'corn dog', 'patty'], ['fry', 'fries', 'sidewinder', 'curly', 'waffle fries', 'tots', 'rings', 'onion rings', 'chips', 'mac'], 18.0, 'Classic burger & crispy craving side'),
+        (['wings', 'wing', 'tender', 'tenders', 'drumstick', 'fried chicken', 'bbq chicken', 'bbq', 'ribs', 'pulled pork'], ['fry', 'fries', 'sidewinder', 'tots', 'mac', 'biscuit', 'waffle', 'cornbread'], 18.0, 'Classic fried/BBQ comfort craving pairing'),
+        (['pizza'], ['breadstick', 'garlic bread', 'mozzarella', 'wings', 'cookie', 'brownie'], 18.0, 'Classic pizza craving plate'),
         (['gyro', 'shawarma', 'lemon herb', 'mediterranean', 'greek'], ['couscous', 'quinoa', 'chickpea', 'garbanzo', 'greek salad'], 15.0, 'Mediterranean flavor pairing'),
         (['burger', 'cheeseburger', 'sandwich', 'panini', 'wrap'], ['fruit', 'apple', 'berries', 'watermelon', 'broccoli', 'salad', 'sweet potato'], 12.0, 'Balanced sandwich/burger & crisp side'),
         (['scrambled', 'omelet', 'frittata', 'pancake', 'waffle', 'egg', 'eggs', 'hard cooked', 'hard boiled'], ['bacon', 'sausage', 'fruit', 'berries', 'banana', 'oatmeal', 'kiwi', 'blueberry', 'blueberries'], 14.0, 'Classic breakfast pairing'),
@@ -2478,6 +2529,10 @@ def evaluate_culinary_compatibility(
             score += bonus_pts
             reasons.append(label)
             break
+
+    if any(it['_role'] == 'dessert' for it in items):
+        score += 14.0
+        reasons.append('Satisfying meal & sweet dessert craving')
 
     flavor_sets = [it['_flavors'] for it in items if it['_flavors']]
     if len(flavor_sets) >= 2:
@@ -2737,9 +2792,137 @@ def _generate_pure_health_templates(pool: list[dict]) -> list[tuple[str, list[tu
     return _generate_pure_health_stacking_combos(pool)
 
 
+def _generate_yummy_templates(pool: list[dict]) -> list[tuple[str, list[tuple[str, dict]]]]:
+    by_role: dict[str, list[dict]] = {}
+    for it in pool:
+        if it['_role'] == 'condiment':
+            continue
+        by_role.setdefault(it['_role'], []).append(it)
+
+    def _diverse_top(items_list: list[dict], limit: int) -> list[dict]:
+        if len(items_list) <= limit:
+            return items_list
+        sorted_items = sorted(items_list, key=lambda x: x['_quality_score'], reverse=True)
+        picked = []
+        for it in sorted_items:
+            picked.append(it)
+            if len(picked) >= limit:
+                break
+        return picked
+
+    complete_entrees = _diverse_top(by_role.get('complete_entree', []), 10)
+    sandwiches = _diverse_top(by_role.get('sandwich', []), 10)
+    proteins = _diverse_top(by_role.get('protein_entree', []), 12)
+    carbs = _diverse_top(by_role.get('carb_base', []), 10)
+    sides = _diverse_top(by_role.get('side', []), 10)
+    pastas = _diverse_top(by_role.get('pasta_entree', []), 8)
+    bowls = _diverse_top(by_role.get('bowl', []), 6)
+    breakfasts = _diverse_top(by_role.get('breakfast_entree', []), 8)
+    desserts = _diverse_top(by_role.get('dessert', []), 12)
+
+    comfort_sides = [
+        s for s in (sides + carbs)
+        if any(k in s['name'].lower() for k in [
+            'fry', 'fries', 'sidewinder', 'tot', 'ring', 'mac', 'biscuit',
+            'bread', 'chips', 'potato', 'rice', 'queso', 'cheese', 'taco', 'nacho', 'waffle'
+        ])
+    ]
+    if not comfort_sides:
+        comfort_sides = (sides + carbs)[:8]
+
+    candidates: list[tuple[str, list[tuple[str, dict]]]] = []
+
+    # 1. Complete Entrees (Pizza, etc.)
+    for ce in complete_entrees:
+        candidates.append(('complete_entree', [('Main', ce)]))
+        for d in desserts[:5]:
+            if d['name'] != ce['name']:
+                candidates.append(('complete_entree_dessert', [('Main', ce), ('Dessert', d)]))
+        for cs in comfort_sides[:5]:
+            if cs['name'] != ce['name']:
+                candidates.append(('complete_entree_side', [('Main', ce), ('Side', cs)]))
+                for d in desserts[:3]:
+                    if d['name'] not in (ce['name'], cs['name']):
+                        candidates.append(('complete_entree_side_dessert', [('Main', ce), ('Side', cs), ('Dessert', d)]))
+
+    # 2. Sandwiches / Burgers
+    for sw in sandwiches:
+        candidates.append(('sandwich_meal', [('Main', sw)]))
+        for cs in comfort_sides[:6]:
+            if cs['name'] != sw['name']:
+                candidates.append(('sandwich_side', [('Main', sw), ('Side', cs)]))
+                for d in desserts[:3]:
+                    if d['name'] not in (sw['name'], cs['name']):
+                        candidates.append(('sandwich_side_dessert', [('Main', sw), ('Side', cs), ('Dessert', d)]))
+        for d in desserts[:5]:
+            if d['name'] != sw['name']:
+                candidates.append(('sandwich_dessert', [('Main', sw), ('Dessert', d)]))
+
+    # 3. Protein Entrees (BBQ Drumstick, Wings, Tenders, Pork, etc.)
+    for p in proteins:
+        for c in carbs[:6]:
+            if c['name'] == p['name']:
+                continue
+            slots = [('Main', p), ('Base', c)]
+            candidates.append(('protein_carb', slots))
+            for d in desserts[:4]:
+                if d['name'] not in (p['name'], c['name']):
+                    candidates.append(('protein_carb_dessert', [('Main', p), ('Base', c), ('Dessert', d)]))
+            for cs in comfort_sides[:4]:
+                if cs['name'] not in (p['name'], c['name']):
+                    candidates.append(('protein_carb_side', [('Main', p), ('Base', c), ('Side', cs)]))
+        for cs in comfort_sides[:6]:
+            if cs['name'] != p['name']:
+                candidates.append(('protein_side', [('Main', p), ('Side', cs)]))
+                for d in desserts[:4]:
+                    if d['name'] not in (p['name'], cs['name']):
+                        candidates.append(('protein_side_dessert', [('Main', p), ('Side', cs), ('Dessert', d)]))
+        for d in desserts[:5]:
+            if d['name'] != p['name']:
+                candidates.append(('protein_dessert', [('Main', p), ('Dessert', d)]))
+
+    # 4. Pastas
+    for pa in pastas:
+        candidates.append(('pasta_meal', [('Main', pa)]))
+        for d in desserts[:4]:
+            if d['name'] != pa['name']:
+                candidates.append(('pasta_dessert', [('Main', pa), ('Dessert', d)]))
+        for cs in comfort_sides[:4]:
+            if cs['name'] != pa['name']:
+                candidates.append(('pasta_side', [('Main', pa), ('Side', cs)]))
+                for d in desserts[:3]:
+                    if d['name'] not in (pa['name'], cs['name']):
+                        candidates.append(('pasta_side_dessert', [('Main', pa), ('Side', cs), ('Dessert', d)]))
+
+    # 5. Bowls
+    for bw in bowls:
+        candidates.append(('bowl_meal', [('Main', bw)]))
+        for d in desserts[:4]:
+            if d['name'] != bw['name']:
+                candidates.append(('bowl_dessert', [('Main', bw), ('Dessert', d)]))
+
+    # 6. Breakfasts
+    for bf in breakfasts:
+        candidates.append(('breakfast_meal', [('Main', bf)]))
+        for c in carbs[:5]:
+            if c['name'] != bf['name']:
+                candidates.append(('breakfast_carb', [('Main', bf), ('Base', c)]))
+                for d in desserts[:3]:
+                    if d['name'] not in (bf['name'], c['name']):
+                        candidates.append(('breakfast_carb_dessert', [('Main', bf), ('Base', c), ('Dessert', d)]))
+        for d in desserts[:4]:
+            if d['name'] != bf['name']:
+                candidates.append(('breakfast_dessert', [('Main', bf), ('Dessert', d)]))
+
+    return candidates
+
+
 def _generate_meal_templates(pool: list[dict], health_intensity: str) -> list[tuple[str, list[tuple[str, dict]]]]:
-    if health_intensity.strip().lower() == 'extreme':
+    tier = health_intensity.strip().lower()
+    if tier == 'extreme':
         return _generate_pure_health_templates(pool)
+    if tier == 'low':
+        return _generate_yummy_templates(pool)
 
     by_role: dict[str, list[dict]] = {}
     for it in pool:
@@ -2895,6 +3078,9 @@ def _score_meal_completeness(slots: list[tuple[str, dict]], template_name: str) 
         )
     )
 
+    if 'dessert' in roles:
+        score += 8.0
+
     if roles & {'complete_entree', 'sandwich', 'pasta_entree', 'bowl', 'breakfast_entree'}:
         score += 22.0
         if len(items) == 2:
@@ -3000,7 +3186,7 @@ def _score_nutrition_balance(
     if 0.15 <= f_share <= 0.42:
         score += 4.0
 
-    if sugar > 24.0:
+    if tier_key != 'low' and sugar > 24.0:
         score -= min((sugar - 24.0) * 0.8, 12.0)
 
     return round(max(0.0, min(score, 100.0)), 1)
@@ -3019,7 +3205,7 @@ def _score_variety_and_presentation(slots: list[tuple[str, dict]]) -> float:
     score += min((len(distinct_roles) - 1) * 14.0, 28.0)
     score += min((len(distinct_methods) - 1) * 8.0, 12.0)
 
-    if 'vegetable' in distinct_roles or 'composed_salad' in distinct_roles:
+    if 'vegetable' in distinct_roles or 'composed_salad' in distinct_roles or 'dessert' in distinct_roles:
         score += 8.0
 
     return round(max(0.0, min(score, 100.0)), 1)
@@ -3054,7 +3240,7 @@ def _build_match_summary(
     if 'verified seed-oil-free' in reasons_text:
         quality_note = 'Verified seed-oil-free'
     elif tier == 'low':
-        quality_note = 'High culinary appeal'
+        quality_note = 'Campus comfort craving'
     elif tier == 'high':
         quality_note = 'Clean whole-food plate'
     else:
@@ -3503,7 +3689,11 @@ def build_optimal_plates(
                 for _, it in slots
             )
 
-            if has_salad_bar_staples:
+            if tier_key == 'low':
+                builder_label = "Comfort Plate Guide"
+                builder_type = "plate"
+                builder_icon = "plate"
+            elif has_salad_bar_staples:
                 builder_label = "Salad & Bowl Builder"
                 builder_type = "salad"
                 builder_icon = "salad"
@@ -3517,12 +3707,14 @@ def build_optimal_plates(
                 builder_icon = "plate"
 
             is_salad_builder = (
-                tier_key == 'extreme'
-                or 'stack' in _meta.get('template', '')
-                or 'salad' in _meta.get('template', '')
-                or 'bowl' in _meta.get('template', '')
-                or is_breakfast_stack
-                or has_salad_bar_staples
+                tier_key != 'low' and (
+                    tier_key == 'extreme'
+                    or 'stack' in _meta.get('template', '')
+                    or 'salad' in _meta.get('template', '')
+                    or 'bowl' in _meta.get('template', '')
+                    or is_breakfast_stack
+                    or has_salad_bar_staples
+                )
             )
             assembly_instructions = _generate_assembly_instructions(slots, location) if is_salad_builder else []
 

@@ -445,6 +445,40 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertGreaterEqual(qual, 85.0)
         self.assertIn('SafeBytes', reason)
 
+    def test_yummy_comfort_craving_and_dessert_rules(self):
+        cookie = _make_item('Chocolate Chip Cookie', station='Dessert Line', calories=220, protein=3, carbs=32, fat=10, ingredients='Flour, Sugar, Butter, Chocolate Chips, Eggs')
+        pie = _make_item('Cherry Pie', station='Dessert Line', calories=310, protein=3, carbs=48, fat=12, ingredients='Cherries, Sugar, Flour, Butter')
+        spinach = _make_item('Fresh Baby Spinach (Salad Bar)', station='Salad Stop', calories=15, protein=2, carbs=2.5, fat=0.2, ingredients='Spinach')
+        green_beans = _make_item('Seasoned Green Beans', station='Sides', calories=40, protein=1.5, carbs=6, fat=0.2, ingredients='Green Beans, Salt, Pepper')
+
+        # Desserts excluded from High and Extreme, allowed in Low (Yummy)
+        ok_high, _, _ = evaluate_item_health(cookie, 'High')
+        self.assertFalse(ok_high)
+        ok_extreme, _, _ = evaluate_item_health(cookie, 'Extreme')
+        self.assertFalse(ok_extreme)
+        ok_low, score_low, _ = evaluate_item_health(cookie, 'Low')
+        self.assertTrue(ok_low)
+        self.assertGreaterEqual(score_low, 80.0)
+
+        # Salads and plain greens excluded from Low (Yummy)
+        ok_spinach, _, _ = evaluate_item_health(spinach, 'Low')
+        self.assertFalse(ok_spinach)
+        ok_gb, _, _ = evaluate_item_health(green_beans, 'Low')
+        self.assertFalse(ok_gb)
+
+        # Recommendations in Low include comfort entree and dessert
+        comfort_items = [
+            _make_item('Cheeseburger', station='Grill', calories=520, protein=30, carbs=40, fat=26, ingredients='Beef patty, bun, cheddar cheese'),
+            _make_item('Thin Cut Fries', station='Grill', calories=260, protein=3, carbs=34, fat=12, ingredients='Potatoes, Oil, Salt'),
+            cookie,
+        ]
+        lunch_time = datetime(2026, 11, 14, 12, 30, tzinfo=PURDUE_TZ)
+        res = recommend_meals(health_intensity='Low', prebuilt_items=comfort_items, current_time=lunch_time)
+        top_combo = res['recommendations'][0]['combos'][0]
+        combo_item_names = [it['name'] for it in top_combo['items']]
+        self.assertIn('Cheeseburger', combo_item_names)
+        self.assertIn('Chocolate Chip Cookie', combo_item_names)
+
 
 if __name__ == '__main__':
     unittest.main()
