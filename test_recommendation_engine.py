@@ -8,6 +8,8 @@ from purdue_menus_full_analysis import (
     build_optimal_plates,
     filter_open_locations,
     calculate_meal_targets,
+    generate_portion_label,
+    scale_combo_to_user,
     recommend_meals,
     _detect_cuisine_profile,
     _detect_cooking_method,
@@ -545,9 +547,172 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertNotIn('Tap any pill at the top', html)
         self.assertIn('Tap any dining hall at the top', html)
 
-        # Confirm Tailor Plates to My Goals (DRI) is disabled and hidden from public
-        self.assertIn('<!-- Tailor Plates to My Goals (DRI) - Disabled for public release -->', html)
-        self.assertIn('<div class="toggle-card" style="display: none !important;">', html)
+        # Confirm Tailor Plates to My Goals (DRI) is enabled and active in drawer
+        self.assertIn('<!-- Tailor Plates to My Goals (DRI) -->', html)
+        self.assertNotIn('style="display: none !important;"', html)
+        self.assertIn('.dish-portion-pill', html)
+
+    def test_mifflin_st_jeor_per_meal_calculation(self):
+        # Male, 160 lbs, 70 inches, 20yo, moderate (1.55), cutting, 2 meals/day
+        res = calculate_meal_targets(
+            sex='M', age=20, weight_lbs=160.0, height_in=70.0,
+            activity_level='Moderate', meals_per_day=2, meal_goal='Lean Cut / Fat Loss'
+        )
+        # BMR check: 10 * (160 * 0.453592 = 72.5747) + 6.25 * (70 * 2.54 = 177.8) - 5 * 20 + 5 = 1742.0 kcal
+        self.assertAlmostEqual(res['daily']['bmr'], 1742.0, delta=1.5)
+        # TDEE = 1742 * 1.55 = 2700.1 kcal
+        self.assertAlmostEqual(res['daily']['tdee'], 2700.1, delta=2.5)
+        # Cutting = tdee - 450 = 2250.1 kcal
+        self.assertAlmostEqual(res['daily']['calories'], 2250.1, delta=2.5)
+        # 2 meals/day -> ratio 0.50 -> 1125.0 kcal per meal
+        self.assertAlmostEqual(res['per_meal']['calories'], 1125.0, delta=2.0)
+        # Cutting protein: 160 * 0.95 = 152g -> per meal 76g
+        self.assertAlmostEqual(res['daily']['protein_target'], 152.0, delta=1.0)
+        self.assertAlmostEqual(res['per_meal']['protein_target'], 76.0, delta=1.0)
+
+        # 3 meals/day: Breakfast gets 0.25, Lunch gets 0.375
+        bk_res = calculate_meal_targets(
+            sex='M', age=20, weight_lbs=160.0, height_in=70.0,
+            activity_level='Moderate', meals_per_day=3, meal_goal='Lean Cut / Fat Loss', meal_period='Breakfast'
+        )
+        ln_res = calculate_meal_targets(
+            sex='M', age=20, weight_lbs=160.0, height_in=70.0,
+            activity_level='Moderate', meals_per_day=3, meal_goal='Lean Cut / Fat Loss', meal_period='Lunch'
+        )
+        self.assertAlmostEqual(bk_res['per_meal']['calories'], 2250.1 * 0.25, delta=2.0)
+        self.assertAlmostEqual(ln_res['per_meal']['calories'], 2250.1 * 0.375, delta=2.0)
+
+        # Bulking adds 350 kcal and uses weight * 0.80 for protein
+        bulk_res = calculate_meal_targets(
+            sex='M', age=20, weight_lbs=160.0, height_in=70.0,
+            activity_level='Moderate', meals_per_day=2, meal_goal='High Protein / Muscle Gain'
+        )
+        self.assertAlmostEqual(bulk_res['daily']['calories'], 2700.1 + 350.0, delta=2.5)
+        self.assertAlmostEqual(bulk_res['daily']['protein_target'], 160.0 * 0.80, delta=1.0)
+
+    def test_natural_portion_labels(self):
+        # Multiplier 1.0 -> no label
+        self.assertEqual(generate_portion_label({'name': 'Grilled Chicken Breast', 'serving_size': '1 breast'}, 1.0), "")
+
+        # Countable meat/item -> breasts, pieces, slices, cookies
+        self.assertEqual(generate_portion_label({'name': 'Grilled Chicken Breast', 'serving_size': '1 breast'}, 2.0), "2 breasts")
+        self.assertEqual(generate_portion_label({'name': 'Grilled Chicken Breast', 'serving_size': '1 breast'}, 1.5), "1.5 breasts")
+        self.assertEqual(generate_portion_label({'name': 'Pork Chop', 'serving_size': '1 piece'}, 2.0), "2 pieces")
+        self.assertEqual(generate_portion_label({'name': 'Pepperoni Pizza', 'serving_size': '1 slice'}, 2.0), "2 slices")
+        self.assertEqual(generate_portion_label({'name': 'Chocolate Chip Cookie', 'serving_size': '1 cookie'}, 2.0), "2 cookies")
+
+        # Scooped / grains / sides -> scoops
+        self.assertEqual(generate_portion_label({'name': 'Jasmine Rice', 'serving_size': '1 scoop'}, 1.5), "1.5 scoops")
+        self.assertEqual(generate_portion_label({'name': 'Jasmine Rice', 'serving_size': '0.5 cup'}, 2.0), "2 scoops")
+
+        # Leafy greens -> handfuls or bowl
+        self.assertEqual(generate_portion_label({'name': 'Fresh Baby Spinach (Salad Bar)', 'serving_size': '2 cups raw'}, 2.0), "2 handfuls")
+        self.assertEqual(generate_portion_label({'name': 'Mesclun Greens (Salad Bar)', 'serving_size': '2 cups raw'}, 3.0), "1 large bowl")
+
+        # Verify no "2x" or "1.5x" or raw multipliers
+        for m in (0.5, 1.5, 2.0, 2.5, 3.0):
+            lbl = generate_portion_label({'name': 'Grilled Chicken Breast'}, m)
+            self.assertNotIn('x', lbl.lower())
+            self.assertNotIn('.0', lbl)
+
+    def test_post_assembly_smart_portion_scaling(self):
+        combo = {
+            'items': [
+                {
+                    'name': 'Grilled Chicken Breast',
+                    'food_type': 'protein_entree',
+                    'role': 'Protein Entree',
+                    'calories': 185.0,
+                    'protein': 35.0,
+                    'carbs': 0.0,
+                    'fat': 4.0,
+                    'serving_size': '1 breast (5 oz)'
+                },
+                {
+                    'name': 'Jasmine Rice',
+                    'food_type': 'carb_side',
+                    'role': 'Clean Carb Side',
+                    'calories': 205.0,
+                    'protein': 4.0,
+                    'carbs': 45.0,
+                    'fat': 0.5,
+                    'serving_size': '0.75 cup'
+                },
+                {
+                    'name': 'Steamed Broccoli',
+                    'food_type': 'veg_side',
+                    'role': 'Vegetable Side',
+                    'calories': 40.0,
+                    'protein': 3.0,
+                    'carbs': 7.0,
+                    'fat': 0.5,
+                    'serving_size': '1 cup'
+                },
+                {
+                    'name': 'Olive Oil Dressing',
+                    'food_type': 'sauce_dressing',
+                    'role': 'Sauce & Dressing',
+                    'calories': 120.0,
+                    'protein': 0.0,
+                    'carbs': 1.0,
+                    'fat': 14.0,
+                    'serving_size': '1 tbsp'
+                }
+            ],
+            'totals': {'calories': 550.0, 'protein': 42.0, 'carbs': 53.0, 'fat': 19.0, 'sugar': 1.0},
+            'macro_split': {'protein_pct': 31, 'carbs_pct': 39, 'fat_pct': 30}
+        }
+
+        # User target: 800 kcal, 65g protein
+        targets = {'calories': 800.0, 'protein_target': 65.0}
+        scaled = scale_combo_to_user(combo, targets, tier_key='high')
+
+        # Locked sauce dressing must remain at multiplier 1.0
+        dressing = next(it for it in scaled['items'] if 'Dressing' in it['name'])
+        self.assertEqual(dressing.get('multiplier', 1.0), 1.0)
+        self.assertEqual(dressing['portion_label'], "")
+        self.assertFalse(dressing.get('is_scaled', False))
+
+        # Chicken anchor must be scaled up to close protein gap (snapped to 0.5 increment, e.g. 1.5 or 2.0)
+        chicken = next(it for it in scaled['items'] if 'Chicken' in it['name'])
+        self.assertGreater(chicken['multiplier'], 1.0)
+        self.assertTrue(chicken['is_scaled'])
+        self.assertIn('breast', chicken['portion_label'])
+        self.assertGreater(chicken['protein'], 35.0)
+
+        # Macro split percentages must add up to 100%
+        ms = scaled['macro_split']
+        self.assertEqual(ms['protein_pct'] + ms['carbs_pct'] + ms['fat_pct'], 100)
+
+        # Combo totals must match sum of individual dish items
+        tot = scaled['totals']
+        self.assertEqual(tot['calories'], sum(it['calories'] for it in scaled['items']))
+        self.assertEqual(tot['protein'], sum(it['protein'] for it in scaled['items']))
+        self.assertEqual(tot['carbs'], sum(it['carbs'] for it in scaled['items']))
+        self.assertEqual(tot['fat'], sum(it['fat'] for it in scaled['items']))
+
+    def test_api_recommend_with_dri_enabled(self):
+        from app import app
+        client = app.test_client()
+        sample_payload = {
+            'health_intensity': 'High',
+            'pure_health_mode': False,
+            'dri_enabled': True,
+            'meal_goal': 'Lean Cut / Fat Loss',
+            'sex': 'M',
+            'age': 21,
+            'weight_lbs': 175,
+            'height_in': 71,
+            'activity_level': 'Moderate',
+            'meals_per_day': 2
+        }
+        resp = client.post('/api/recommend', json=sample_payload)
+        self.assertEqual(resp.status_code, 200)
+        data = resp.get_json()
+        self.assertTrue(data['dri_enabled'])
+        self.assertIn('targets', data)
+        self.assertIn('per_meal', data['targets'])
+        self.assertGreater(data['targets']['per_meal']['calories'], 0)
 
 
 if __name__ == '__main__':

@@ -1164,6 +1164,8 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                         sugar = fallback['sugar']
                         if ingredients == 'N/A':
                             ingredients = fallback['ingredients']
+                        if str(serving_size).strip().upper() in ('N/A', '') and fallback.get('serving_size'):
+                            serving_size = fallback['serving_size']
                         used_fallback = True
 
                 base_record = {
@@ -1185,6 +1187,7 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                     'is_vegetarian': is_vegetarian,
                     'is_vegan': is_vegan,
                     'used_fallback': used_fallback,
+                    'serving_size': serving_size,
                 }
 
                 normalized_items.append(base_record)
@@ -1267,139 +1270,394 @@ def get_daily_menus(
 # ==============================================================================
 
 def calculate_meal_targets(
-    sex: str,
-    age: int,
-    weight_lbs: float,
-    height_in: float,
-    activity_level: str,
-    meals_per_day: int,
+    sex: Optional[str] = None,
+    age: Optional[int] = None,
+    weight_lbs: Optional[float] = None,
+    height_in: Optional[float] = None,
+    activity_level: Optional[str] = None,
+    meals_per_day: Optional[int] = None,
     meal_goal: str = 'Balanced Maintenance',
     health_intensity: str = 'High',
+    meal_period: str = 'Lunch',
+    feet: Optional[int] = None,
+    inches: Optional[int] = None,
 ) -> dict:
-    weight_kg = weight_lbs * 0.45359237
-    height_cm = height_in * 2.54
-    is_minor = int(age) < 18
+    """
+    Calculates Mifflin-St Jeor DRI daily targets and meal-period-weighted targets:
+    1. Converts user inputs safely with sensible defaults:
+       - weight_kg = weight_lbs * 0.453592 (default 160.0 lbs)
+       - height_cm = (feet * 12 + inches) * 2.54 or height_in * 2.54 (default 68.0 in)
+       - age = 20 (default college age if omitted)
+    2. BMR via Mifflin-St Jeor:
+       - Male: (10 * weight_kg) + (6.25 * height_cm) - (5 * age) + 5
+       - Female: (10 * weight_kg) + (6.25 * height_cm) - (5 * age) - 161
+       - Unspecified/Other: average (-78)
+    3. TDEE:
+       - sedentary: 1.35, moderate: 1.55 (default), active: 1.75
+    4. Goal offset:
+       - lose/cut: tdee - 450 (safeguarded for minors < 18), floored at 1400 kcal
+       - maintain: tdee, floored at 1400 kcal
+       - gain/bulk: tdee + 350, floored at 1400 kcal
+    5. Split daily calories across meals_per_day (default 2):
+       - If meals_per_day == 2: 0.50 per meal
+       - If meals_per_day == 3: 0.25 for Breakfast, 0.375 for Lunch/Late Lunch/Dinner
+       - Otherwise: 1.0 / meals_per_day
+    6. Daily protein:
+       - weight_lbs * 0.95 if cutting, else weight_lbs * 0.80
+       - split by the same meal-period ratio to get target_meal_calories and target_meal_protein
+    """
+    safe_age = int(age) if (age is not None and int(age) > 0) else 20
+    is_minor = safe_age < 18
 
-    sex_norm = sex.strip().upper()
-    if sex_norm.startswith('M'):
-        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * age) + 5.0
-        daily_aha_sugar_cap = 36.0
+    safe_weight_lbs = float(weight_lbs) if (weight_lbs is not None and float(weight_lbs) > 0) else 160.0
+    weight_kg = safe_weight_lbs * 0.453592
+
+    if feet is not None or inches is not None:
+        tot_inches = (int(feet or 0) * 12) + int(inches or 0)
+        safe_height_in = float(tot_inches) if tot_inches > 0 else 68.0
+    elif height_in is not None and float(height_in) > 0:
+        safe_height_in = float(height_in)
     else:
-        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * age) - 161.0
+        safe_height_in = 68.0
+
+    height_cm = safe_height_in * 2.54
+
+    sex_norm = str(sex or '').strip().upper()
+    if sex_norm.startswith('M'):
+        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * safe_age) + 5.0
+        daily_aha_sugar_cap = 36.0
+    elif sex_norm.startswith('F'):
+        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * safe_age) - 161.0
         daily_aha_sugar_cap = 25.0
+    else:
+        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * safe_age) - 78.0
+        daily_aha_sugar_cap = 30.0
 
-    activity_multipliers = {
-        'sedentary': 1.2,
-        'moderate': 1.375,
-        'active': 1.55,
-    }
-    multiplier = activity_multipliers.get(activity_level.strip().lower(), 1.375)
-    maintenance_calories = bmr * multiplier
+    act_norm = str(activity_level or '').strip().lower()
+    if 'sedentary' in act_norm:
+        activity_factor = 1.35
+    elif 'active' in act_norm:
+        activity_factor = 1.75
+    else:
+        activity_factor = 1.55
 
-    goal_norm = meal_goal.strip().lower()
-    safety_note = (
-        'General dining portion estimate only, not medical or clinical nutrition advice.'
-    )
+    tdee = bmr * activity_factor
 
-    if 'high protein' in goal_norm or 'muscle' in goal_norm:
-        daily_calories = maintenance_calories * 1.08
-        daily_protein_min = weight_kg * 1.35
-        daily_protein_target = weight_kg * 1.65
-        daily_protein_max = weight_kg * 1.85
-        daily_carbs_min = max((daily_calories * 0.32) / 4.0, 130.0)
-        daily_carbs_target = max((daily_calories * 0.40) / 4.0, 150.0)
-        daily_carbs_max = (daily_calories * 0.50) / 4.0
-        daily_fat_min = (daily_calories * 0.20) / 9.0
-        daily_fat_target = (daily_calories * 0.25) / 9.0
-        daily_fat_max = (daily_calories * 0.32) / 9.0
+    goal_norm = str(meal_goal or '').strip().lower()
+    is_cutting = any(k in goal_norm for k in ('cut', 'lose', 'loss', 'fat loss', 'lean'))
+    is_bulking = any(k in goal_norm for k in ('gain', 'bulk', 'muscle', 'athletic', 'high protein'))
 
-    elif 'lean cut' in goal_norm or 'fat loss' in goal_norm:
+    safety_note = 'Personalized dining court portion sizing based on Mifflin-St Jeor DRI calculation.'
+    if is_cutting:
         if is_minor:
-            daily_calories = maintenance_calories
+            daily_calories = max(1400.0, tdee)
             safety_note = (
                 'Calorie deficits are disabled for users under 18; showing balanced '
                 'maintenance portions. Consult a healthcare provider for personalized guidance.'
             )
         else:
-            daily_calories = maintenance_calories * 0.825
-        daily_protein_min = weight_kg * 1.4
-        daily_protein_target = weight_kg * 1.55
-        daily_protein_max = weight_kg * 1.75
-        daily_carbs_min = max((daily_calories * 0.25) / 4.0, 130.0)
-        daily_carbs_target = max((daily_calories * 0.33) / 4.0, 135.0)
-        daily_carbs_max = (daily_calories * 0.42) / 4.0
-        daily_fat_min = (daily_calories * 0.20) / 9.0
-        daily_fat_target = (daily_calories * 0.25) / 9.0
-        daily_fat_max = (daily_calories * 0.32) / 9.0
-
-    elif 'athletic' in goal_norm or 'endurance' in goal_norm:
-        daily_calories = maintenance_calories * 1.05
-        daily_protein_min = weight_kg * 1.15
-        daily_protein_target = weight_kg * 1.35
-        daily_protein_max = weight_kg * 1.55
-        daily_carbs_min = max((daily_calories * 0.43) / 4.0, 160.0)
-        daily_carbs_target = max((daily_calories * 0.48) / 4.0, 180.0)
-        daily_carbs_max = (daily_calories * 0.55) / 4.0
-        daily_fat_min = (daily_calories * 0.20) / 9.0
-        daily_fat_target = (daily_calories * 0.24) / 9.0
-        daily_fat_max = (daily_calories * 0.30) / 9.0
-
-    elif 'low-carb' in goal_norm or 'low carb' in goal_norm or 'blood sugar' in goal_norm:
-        daily_calories = maintenance_calories
-        daily_protein_min = weight_kg * 1.3
-        daily_protein_target = weight_kg * 1.5
-        daily_protein_max = weight_kg * 1.75
-        daily_carbs_min = 90.0 if is_minor else 60.0
-        daily_carbs_target = (daily_calories * (0.28 if is_minor else 0.20)) / 4.0
-        daily_carbs_max = (daily_calories * (0.35 if is_minor else 0.26)) / 4.0
-        daily_fat_min = (daily_calories * 0.28) / 9.0
-        daily_fat_target = (daily_calories * 0.35) / 9.0
-        daily_fat_max = (daily_calories * 0.44) / 9.0
-
+            daily_calories = max(1400.0, tdee - 450.0)
+    elif is_bulking:
+        daily_calories = max(1400.0, tdee + 350.0)
     else:
-        daily_calories = maintenance_calories
-        daily_protein_min = weight_kg * 0.8
-        daily_protein_target = weight_kg * 1.1
-        daily_protein_max = weight_kg * 1.4
-        daily_carbs_min = 130.0
-        daily_carbs_target = max((daily_calories * 0.40) / 4.0, 145.0)
-        daily_carbs_max = (daily_calories * 0.50) / 4.0
-        daily_fat_min = (daily_calories * 0.20) / 9.0
-        daily_fat_target = (daily_calories * 0.26) / 9.0
-        daily_fat_max = (daily_calories * 0.33) / 9.0
+        daily_calories = max(1400.0, tdee)
 
-    if health_intensity.strip().lower() in ('high', 'extreme'):
-        daily_sugar_max = min(daily_aha_sugar_cap, 20.0)
+    meals = max(1, int(meals_per_day or 2))
+    mp_norm = str(meal_period or '').strip().lower()
+    if meals == 2:
+        meal_ratio = 0.50
+    elif meals == 3:
+        if 'breakfast' in mp_norm:
+            meal_ratio = 0.25
+        else:
+            meal_ratio = 0.375
     else:
-        daily_sugar_max = daily_aha_sugar_cap
+        meal_ratio = 1.0 / float(meals)
 
-    meals = max(1, int(meals_per_day))
+    target_meal_calories = daily_calories * meal_ratio
+
+    daily_protein = (safe_weight_lbs * 0.95) if is_cutting else (safe_weight_lbs * 0.80)
+    target_meal_protein = daily_protein * meal_ratio
+
+    c_cal = target_meal_calories * 0.45
+    f_cal = target_meal_calories * 0.28
+    carbs_target = max(c_cal / 4.0, 30.0)
+    fat_target = max(f_cal / 9.0, 10.0)
+
+    daily_sugar_max = min(daily_aha_sugar_cap, 20.0) if health_intensity.strip().lower() in ('high', 'extreme') else daily_aha_sugar_cap
 
     return {
         'goal_label': meal_goal,
         'is_minor_safeguarded': is_minor,
         'disclaimer': safety_note,
         'daily': {
+            'bmr': round(bmr, 1),
+            'tdee': round(tdee, 1),
             'calories': round(daily_calories, 1),
-            'protein_target': round(daily_protein_target, 1),
-            'carbs_target': round(daily_carbs_target, 1),
-            'fat_target': round(daily_fat_target, 1),
+            'protein_target': round(daily_protein, 1),
+            'carbs_target': round((daily_calories * 0.45) / 4.0, 1),
+            'fat_target': round((daily_calories * 0.28) / 9.0, 1),
             'sugar_max': round(daily_sugar_max, 1),
         },
         'per_meal': {
-            'calories': round(daily_calories / meals, 1),
-            'protein_min': round(daily_protein_min / meals, 1),
-            'protein_target': round(daily_protein_target / meals, 1),
-            'protein_max': round(daily_protein_max / meals, 1),
-            'carbs_min': round(daily_carbs_min / meals, 1),
-            'carbs_target': round(daily_carbs_target / meals, 1),
-            'carbs_max': round(daily_carbs_max / meals, 1),
-            'fat_min': round(daily_fat_min / meals, 1),
-            'fat_target': round(daily_fat_target / meals, 1),
-            'fat_max': round(daily_fat_max / meals, 1),
-            'sugar_max': round(daily_sugar_max / meals, 1),
+            'calories': round(target_meal_calories, 1),
+            'protein_min': round(target_meal_protein * 0.8, 1),
+            'protein_target': round(target_meal_protein, 1),
+            'protein_max': round(target_meal_protein * 1.3, 1),
+            'carbs_min': round((target_meal_calories * 0.30) / 4.0, 1),
+            'carbs_target': round(carbs_target, 1),
+            'carbs_max': round((target_meal_calories * 0.55) / 4.0, 1),
+            'fat_min': round((target_meal_calories * 0.20) / 9.0, 1),
+            'fat_target': round(fat_target, 1),
+            'fat_max': round((target_meal_calories * 0.35) / 9.0, 1),
+            'sugar_max': round(daily_sugar_max / float(meals), 1),
         },
     }
+
+
+def _snap_multiplier(val: float, max_mult: float = 2.5, min_mult: float = 0.5) -> float:
+    """Snaps a portion multiplier to 0.5 increments within [min_mult, max_mult]."""
+    snapped = round(float(val) * 2.0) / 2.0
+    return max(min_mult, min(max_mult, snapped))
+
+
+def generate_portion_label(item: dict, multiplier: float) -> str:
+    """
+    Generates human dining-court portion labels based on item category and serving unit.
+    Returns empty string if multiplier is 1.0. Never outputs '2x', '1.5x', or raw decimal multipliers.
+    """
+    if abs(multiplier - 1.0) < 0.05:
+        return ""
+
+    name_lower = (item.get('name') or '').lower()
+    ss_lower = (item.get('serving_size') or '').lower()
+    role = (item.get('food_type') or item.get('role') or '').lower()
+    combined = f"{name_lower} {ss_lower}"
+
+    # 1. Leafy greens / Salad Bar Bases
+    is_leafy = any(k in combined for k in ('spinach', 'romaine', 'mesclun', 'greens', 'lettuce', 'spring mix', 'kale', 'salad bar')) or 'salad_base' in role
+    if is_leafy:
+        if multiplier <= 0.5:
+            return "1 small handful"
+        elif multiplier <= 1.5:
+            return "1.5 handfuls"
+        elif multiplier <= 2.0:
+            return "2 handfuls"
+        elif multiplier <= 2.5:
+            return "2.5 handfuls"
+        else:
+            return "1 large bowl"
+
+    # 2. Specific countable items (breasts, patties, eggs, slices, tacos, cookies, links, tenders)
+    count_noun = None
+    if 'breast' in combined:
+        count_noun = ('breast', 'breasts')
+    elif 'patty' in combined or 'burger' in combined:
+        count_noun = ('patty', 'patties')
+    elif 'egg' in combined:
+        count_noun = ('egg', 'eggs')
+    elif 'slice' in combined or 'pizza' in combined:
+        count_noun = ('slice', 'slices')
+    elif 'taco' in combined:
+        count_noun = ('taco', 'tacos')
+    elif 'cookie' in combined:
+        count_noun = ('cookie', 'cookies')
+    elif 'link' in combined or 'sausage' in combined:
+        count_noun = ('link', 'links')
+    elif 'tender' in combined:
+        count_noun = ('tender', 'tenders')
+    elif 'wing' in combined:
+        count_noun = ('wing', 'wings')
+    elif 'thigh' in combined:
+        count_noun = ('thigh', 'thighs')
+    elif 'fillet' in combined or 'filet' in combined:
+        count_noun = ('filet', 'filets')
+    elif any(k in ss_lower for k in ('each', 'piece', 'ea', 'pc')):
+        count_noun = ('piece', 'pieces')
+    elif any(k in combined for k in ('chicken breast', 'pork chop', 'steak', 'salmon', 'tilapia', 'drumstick', 'sandwich', 'burrito', 'quesadilla')):
+        count_noun = ('piece', 'pieces')
+
+    if count_noun:
+        sing, plur = count_noun
+        if multiplier <= 0.5:
+            return f"half {sing}"
+        elif multiplier == int(multiplier):
+            cnt = int(multiplier)
+            return f"{cnt} {plur if cnt > 1 else sing}"
+        else:
+            return f"{multiplier} {plur}"
+
+    # 3. Scooped, cup, ladle, or side items (grains, beans, pasta, potatoes, soups, roasted veggies)
+    is_scoop_or_cup = any(k in combined for k in ('cup', 'scoop', 'ladle', 'oz', 'rice', 'potato', 'grain', 'bean', 'corn', 'soup', 'chili', 'pasta', 'mac')) or 'carb_side' in role or 'veg_side' in role
+    if is_scoop_or_cup:
+        if multiplier <= 0.5:
+            return "half scoop"
+        elif multiplier == 1.5:
+            return "1.5 scoops"
+        elif multiplier == 2.0:
+            return "2 scoops"
+        elif multiplier == 2.5:
+            return "2.5 scoops"
+        elif multiplier >= 3.0:
+            return "1 full bowl"
+        elif multiplier == int(multiplier):
+            return f"{int(multiplier)} scoops"
+        else:
+            return f"{multiplier} scoops"
+
+    # Default fallback
+    if multiplier <= 0.5:
+        return "half portion"
+    elif multiplier == int(multiplier):
+        return f"{int(multiplier)} portions"
+    else:
+        return f"{multiplier} portions"
+
+
+def scale_combo_to_user(combo: dict, per_meal_targets: dict, tier_key: str = 'mid') -> dict:
+    """
+    Scales a top-3 dining combo to match the user's per-meal calorie & protein targets:
+    - Never applies blind uniform multipliers to the whole plate.
+    - Locks sauces, dressings, cheese toppings, and dense fats at 1.0 serving.
+    - Scales primary protein anchor first to close protein/calorie gap.
+    - If calories still needed, scales clean carb/base side (or secondary protein in Pure Health).
+    - Snaps multipliers to 0.5 increments (0.5, 1.0, 1.5, 2.0, 2.5, max 3.0 for leafy greens/veggies).
+    - Recomputes item macros, portion labels, and parent combo totals.
+    """
+    items = combo.get('items', [])
+    if not items or not per_meal_targets:
+        return combo
+
+    target_cal = float(per_meal_targets.get('calories', 600.0))
+    target_pro = float(per_meal_targets.get('protein_target', 35.0))
+
+    cur_cal = sum(float(it.get('calories', 0.0)) for it in items)
+    cur_pro = sum(float(it.get('protein', 0.0)) for it in items)
+
+    def _is_locked(it: dict) -> bool:
+        r = (it.get('food_type') or it.get('role') or '').lower()
+        n = (it.get('name') or '').lower()
+        if r in ('sauce_dressing', 'fat_topping', 'dessert'):
+            return True
+        locked_pattern = r'\b(sauces?|dressings?|vinaigrettes?|oils?|butters?|mayo|mayonnaise|cheeses?|gravy|gravies|syrups?|frostings?|dips?|creamers?|sour cream)\b'
+        if re.search(locked_pattern, n, re.IGNORECASE) and not any(p in n for p in ('mac & cheese', 'macaroni', 'pizza', 'quesadilla', 'cheeseburger', 'cottage cheese')):
+            return True
+        return False
+
+    non_locked = [it for it in items if not _is_locked(it)]
+    if not non_locked:
+        non_locked = list(items)
+
+    protein_candidates = [
+        it for it in non_locked
+        if (it.get('food_type') or '').lower() in ('protein_entree', 'complete_entree', 'breakfast_entree', 'sandwich')
+        or it.get('protein', 0.0) >= 12.0
+    ]
+    if protein_candidates:
+        protein_anchor = max(protein_candidates, key=lambda x: x.get('protein', 0.0))
+    else:
+        protein_anchor = max(non_locked, key=lambda x: x.get('protein', 0.0))
+
+    p0 = float(protein_anchor.get('protein', 0.0))
+    c0 = float(protein_anchor.get('calories', 0.0))
+    other_pro = cur_pro - p0
+    other_cal = cur_cal - c0
+
+    needed_p = max(5.0, target_pro - other_pro)
+    pro_mult_raw = needed_p / max(p0, 1.0) if p0 > 0 else 1.0
+
+    cal_gap = target_cal - cur_cal
+
+    if cal_gap > 220 and pro_mult_raw < 1.4:
+        raw_p_mult = max(pro_mult_raw, 1.5)
+    elif cal_gap < -220 and pro_mult_raw > 0.6:
+        raw_p_mult = min(pro_mult_raw, 0.5)
+    else:
+        raw_p_mult = pro_mult_raw
+
+    p_mult = _snap_multiplier(raw_p_mult, max_mult=2.5, min_mult=0.5)
+
+    multipliers: dict[int, float] = {id(it): 1.0 for it in items}
+    multipliers[id(protein_anchor)] = p_mult
+
+    est_cal = (c0 * p_mult) + other_cal
+    rem_cal_gap = target_cal - est_cal
+
+    remaining_candidates = [it for it in non_locked if id(it) != id(protein_anchor)]
+    if remaining_candidates and (rem_cal_gap > 75 or rem_cal_gap < -80):
+        if tier_key == 'extreme':
+            carb_candidates = [
+                it for it in remaining_candidates
+                if any(k in (it.get('name') or '').lower() for k in ('quinoa', 'rice', 'potato', 'bean', 'garbanzo', 'chickpea', 'lentil', 'edamame', 'tofu', 'egg'))
+                or (it.get('food_type') or '').lower() in ('carb_side', 'grain', 'complex_carb')
+            ]
+        else:
+            carb_candidates = [
+                it for it in remaining_candidates
+                if (it.get('food_type') or '').lower() in ('carb_side', 'grain', 'side', 'complex_carb')
+                or it.get('carbs', 0.0) >= 15.0
+            ]
+
+        if carb_candidates:
+            carb_anchor = max(carb_candidates, key=lambda x: x.get('calories', 0.0))
+        else:
+            carb_anchor = max(remaining_candidates, key=lambda x: x.get('calories', 0.0))
+
+        carb_c0 = float(carb_anchor.get('calories', 0.0))
+        if carb_c0 > 15.0:
+            raw_carb_mult = 1.0 + (rem_cal_gap / carb_c0)
+            carb_mult = _snap_multiplier(raw_carb_mult, max_mult=2.5, min_mult=0.5)
+            multipliers[id(carb_anchor)] = carb_mult
+            rem_cal_gap -= (carb_mult - 1.0) * carb_c0
+
+    # Leafy greens / veggie check: can scale up to 3.0
+    leafy_candidates = [
+        it for it in remaining_candidates
+        if id(it) not in multipliers or multipliers[id(it)] == 1.0
+    ]
+    for it in leafy_candidates:
+        n_low = (it.get('name') or '').lower()
+        if any(k in n_low for k in ('spinach', 'romaine', 'mesclun', 'lettuce', 'spring mix', 'kale', 'greens')):
+            if rem_cal_gap > 40 or tier_key == 'extreme':
+                multipliers[id(it)] = _snap_multiplier(2.0, max_mult=3.0, min_mult=0.5)
+            break
+
+    # Apply multipliers, compute new item macros and natural portion labels
+    for it in items:
+        m = multipliers.get(id(it), 1.0)
+        it['multiplier'] = m
+        if abs(m - 1.0) > 0.05:
+            it['calories'] = float(round(float(it['calories']) * m))
+            it['protein'] = float(round(float(it['protein']) * m))
+            it['carbs'] = float(round(float(it['carbs']) * m))
+            it['fat'] = float(round(float(it['fat']) * m))
+            it['portion_label'] = generate_portion_label(it, m)
+            it['is_scaled'] = True
+        else:
+            it['calories'] = float(round(float(it['calories'])))
+            it['protein'] = float(round(float(it['protein'])))
+            it['carbs'] = float(round(float(it['carbs'])))
+            it['fat'] = float(round(float(it['fat'])))
+            it['portion_label'] = ""
+            it['is_scaled'] = False
+
+    tot_c = round(sum(it['calories'] for it in items))
+    tot_p = round(sum(it['protein'] for it in items))
+    tot_cb = round(sum(it['carbs'] for it in items))
+    tot_f = round(sum(it['fat'] for it in items))
+    tot_s = round(sum(it.get('sugar', 0.0) for it in items))
+
+    combo['totals'] = {
+        'calories': float(tot_c),
+        'protein': float(tot_p),
+        'carbs': float(tot_cb),
+        'fat': float(tot_f),
+        'sugar': float(tot_s),
+    }
+    combo['macro_split'] = _compute_macro_split(tot_p, tot_cb, tot_f)
+    combo['is_scaled'] = any(it.get('is_scaled') for it in items)
+
+    return combo
 
 
 # ==============================================================================
@@ -3593,15 +3851,14 @@ def build_optimal_plates(
     location_results = []
 
     for location, loc_items in items_by_location.items():
-        # Per-dining-hall evaluation: try strict clean-ingredient mode first;
-        # Healthy ('high') and Pure Health ('extreme') NEVER relax eligibility under any circumstances.
-        # Balanced ('mid') and Yummy ('low') may softly expand if candidates < 3.
+        # Per-dining-hall evaluation: candidate plate assembly and scoring runs on the exact
+        # same dietary filtering, seed-oil screening, and culinary compatibility as the main feed.
         pool, raw_scored_candidates = _evaluate_and_assemble_location_candidates(
             location_items=loc_items,
             health_intensity=health_intensity,
             narrow_breadth=False,
-            per_meal=per_meal,
-            dri_enabled=dri_enabled,
+            per_meal=None,
+            dri_enabled=False,
             meal_goal=meal_goal,
         )
         used_hall_relaxation = False
@@ -3611,8 +3868,8 @@ def build_optimal_plates(
                 location_items=loc_items,
                 health_intensity=health_intensity,
                 narrow_breadth=True,
-                per_meal=per_meal,
-                dri_enabled=dri_enabled,
+                per_meal=None,
+                dri_enabled=False,
                 meal_goal=meal_goal,
             )
             if len(relaxed_candidates) > len(raw_scored_candidates):
@@ -3834,6 +4091,7 @@ def build_optimal_plates(
                     'ingredient_certainty': it['_certainty'],
                     'used_fallback': it['used_fallback'],
                     'reason': it['_health_reason'],
+                    'serving_size': it.get('serving_size', 'N/A'),
                 })
 
             formatted_combos.append({
@@ -3852,6 +4110,11 @@ def build_optimal_plates(
                 'builder_icon': builder_icon,
                 'assembly_instructions': assembly_instructions,
             })
+
+        # Post-Assembly Smart Portion Scaling when dri_enabled
+        if dri_enabled and per_meal:
+            for combo in formatted_combos:
+                scale_combo_to_user(combo, per_meal, tier_key=tier_key)
 
         top_combo = formatted_combos[0]
         location_results.append({
@@ -3918,17 +4181,26 @@ def recommend_meals(
 
     targets = None
     if dri_enabled:
-        if not all([sex, age, weight_lbs, height_in, activity_level, meals_per_day]):
-            raise ValueError('Please fill in all biometric fields to enable personalized portion sizing.')
+        mp_guess = 'Lunch'
+        if now:
+            h = now.hour
+            if h < 11:
+                mp_guess = 'Breakfast'
+            elif h < 16:
+                mp_guess = 'Lunch'
+            else:
+                mp_guess = 'Dinner'
+
         targets = calculate_meal_targets(
-            sex=str(sex),
-            age=int(age),
-            weight_lbs=float(weight_lbs),
-            height_in=float(height_in),
-            activity_level=str(activity_level),
-            meals_per_day=int(meals_per_day),
+            sex=str(sex) if sex else 'unspecified',
+            age=int(age) if (age is not None and int(age) > 0) else 20,
+            weight_lbs=float(weight_lbs) if (weight_lbs is not None and float(weight_lbs) > 0) else 160.0,
+            height_in=float(height_in) if (height_in is not None and float(height_in) > 0) else 68.0,
+            activity_level=str(activity_level) if activity_level else 'Moderate',
+            meals_per_day=int(meals_per_day) if (meals_per_day is not None and int(meals_per_day) > 0) else 2,
             meal_goal=meal_goal,
             health_intensity=health_intensity,
+            meal_period=mp_guess,
         )
 
     if prebuilt_items is not None:

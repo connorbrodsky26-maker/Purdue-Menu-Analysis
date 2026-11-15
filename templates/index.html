@@ -662,6 +662,42 @@
       overflow-wrap: break-word;
     }
 
+    .dish-portion-pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.12rem 0.44rem;
+      border-radius: 9999px;
+      letter-spacing: -0.01em;
+      margin-left: 0.35rem;
+      vertical-align: middle;
+      line-height: 1.2;
+      white-space: nowrap;
+      background: rgba(29, 138, 90, 0.12);
+      color: #1D8A5A;
+      border: 1px solid rgba(29, 138, 90, 0.28);
+    }
+
+    [data-active-mode="Mid"] .dish-portion-pill {
+      background: rgba(217, 119, 6, 0.12);
+      color: #D97706;
+      border-color: rgba(217, 119, 6, 0.28);
+    }
+
+    [data-active-mode="Low"] .dish-portion-pill {
+      background: rgba(220, 38, 38, 0.12);
+      color: #DC2626;
+      border-color: rgba(220, 38, 38, 0.28);
+    }
+
+    [data-active-mode="Extreme"] .dish-portion-pill,
+    .pure-mode .dish-portion-pill {
+      background: rgba(37, 99, 235, 0.12);
+      color: #2563EB;
+      border-color: rgba(37, 99, 235, 0.28);
+    }
+
     .dish-name-row {
       display: flex;
       align-items: center;
@@ -2536,8 +2572,8 @@
         </div>
       </div>
 
-      <!-- Tailor Plates to My Goals (DRI) - Disabled for public release -->
-      <div class="toggle-card" style="display: none !important;">
+      <!-- Tailor Plates to My Goals (DRI) -->
+      <div class="toggle-card">
         <label class="toggle-row">
           <span>Tailor Plates to My Goals</span>
           <span class="switch-control">
@@ -2919,6 +2955,7 @@
     function updateBadgeCount() {
       let count = getDietaryFilters().length;
       if (document.getElementById('pure_health_mode').checked) count += 1;
+      if (document.getElementById('dri_enabled').checked) count += 1;
       if (document.getElementById('sim_time').value.trim()) count += 1;
       const badge = document.getElementById('dockBadge');
       if (count > 0) {
@@ -2934,7 +2971,7 @@
         mode: activeMode,
         pure_health_mode: document.getElementById('pure_health_mode').checked,
         dietary: getDietaryFilters(),
-        dri_enabled: false,
+        dri_enabled: document.getElementById('dri_enabled').checked,
         goal: document.getElementById('dri_goal').value,
         sex: document.getElementById('dri_sex').value,
         age: document.getElementById('dri_age').value,
@@ -2966,7 +3003,7 @@
         cb.checked = dietSet.has(cb.value);
       });
 
-      document.getElementById('dri_enabled').checked = false;
+      document.getElementById('dri_enabled').checked = Boolean(p.dri_enabled);
       document.getElementById('dri_goal').value = p.goal || 'Balanced Maintenance';
       document.getElementById('dri_sex').value = p.sex || '';
       document.getElementById('dri_age').value = p.age || '';
@@ -3260,6 +3297,9 @@
 
       const dishesHtml = combo.items.map(item => {
         const badge = getItemVisualBadge(item);
+        const portionHtml = item.portion_label
+          ? ` <span class="dish-portion-pill">${escapeHtml(item.portion_label)}</span>`
+          : '';
         return `
           <div class="dish-row" onclick="if(!window.__wasDragging){ this.classList.toggle('expanded'); }">
             <div class="dish-main-line">
@@ -3272,7 +3312,7 @@
                 </div>
                 <div class="dish-name-row">
                   <span class="dish-icon-badge ${badge.className}" title="${badge.title}" aria-hidden="true">${badge.svg}</span>
-                  <div class="dish-name">${escapeHtml(item.name)}</div>
+                  <div class="dish-name">${escapeHtml(item.name)}${portionHtml}</div>
                 </div>
               </div>
               <div class="dish-right">

@@ -139,8 +139,7 @@ def api_recommend():
         raw_intensity = str(data.get('health_intensity', 'High')).strip() or 'High'
         health_intensity = 'Extreme' if pure_health_mode else raw_intensity
 
-        # Tailor Plates to My Goals (DRI) is disabled for public release
-        dri_enabled = False
+        dri_enabled = bool(data.get('dri_enabled', False))
         meal_goal = str(data.get('meal_goal', 'Balanced Maintenance')).strip() or 'Balanced Maintenance'
 
         raw_filters = data.get('dietary_filters') or []
@@ -157,32 +156,16 @@ def api_recommend():
         meals_per_day = None
 
         if dri_enabled:
-            sex = str(data.get('sex') or '').strip()
+            sex = str(data.get('sex') or '').strip() or 'unspecified'
             age_raw = data.get('age')
+            age = int(age_raw) if (age_raw not in (None, '') and int(age_raw) > 0) else 20
             weight_raw = data.get('weight_lbs')
+            weight_lbs = float(weight_raw) if (weight_raw not in (None, '') and float(weight_raw) > 0) else 160.0
             height_raw = data.get('height_in')
-            activity_level = str(data.get('activity_level') or '').strip()
+            height_in = float(height_raw) if (height_raw not in (None, '') and float(height_raw) > 0) else 68.0
+            activity_level = str(data.get('activity_level') or '').strip() or 'Moderate'
             meals_raw = data.get('meals_per_day')
-
-            if not all([
-                sex,
-                age_raw not in (None, ''),
-                weight_raw not in (None, ''),
-                height_raw not in (None, ''),
-                activity_level,
-                meals_raw not in (None, ''),
-            ]):
-                return jsonify({
-                    'error': 'Please complete all body & target fields (Sex, Age, Weight, Height, Activity, and Meals/Day) to personalize portions.'
-                }), 400
-
-            age = int(age_raw)
-            weight_lbs = float(weight_raw)
-            height_in = float(height_raw)
-            meals_per_day = int(meals_raw)
-
-            if age <= 0 or weight_lbs <= 0 or height_in <= 0 or meals_per_day <= 0:
-                return jsonify({'error': 'Biometric values must be positive numbers.'}), 400
+            meals_per_day = int(meals_raw) if (meals_raw not in (None, '') and int(meals_raw) > 0) else 2
 
         result = recommend_meals(
             sex=sex,
