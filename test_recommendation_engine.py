@@ -13,6 +13,9 @@ from purdue_menus_full_analysis import (
     _detect_cooking_method,
     _detect_flavor_tags,
     _assess_ingredient_certainty,
+    CAMPUS_PERMANENT_SALAD_STAPLES,
+    CAMPUS_PERMANENT_BREAKFAST_STAPLES,
+    _unpack_composite_items,
 )
 
 
@@ -352,6 +355,95 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         # Mid (Balanced) mode can include wholesome standard entrees (like Bang Bang Shrimp with canola oil)
         mid_item_names = {it['name'] for c in mid_combos for it in c['items']}
         self.assertTrue('Bang Bang Fried Shrimp' in mid_item_names or 'Potato Gems' in mid_item_names)
+
+    def test_ford_breakfast_eggs_and_oatmeal_appear_in_healthy(self):
+        breakfast_items = [
+            _make_item('Hard Cooked Eggs', location='Ford', station='BoilerQ', calories=155, protein=12.5, carbs=0.6, fat=11.0, ingredients='Eggs', meal_period='Breakfast', start_time='07:00:00', end_time='10:00:00'),
+            _make_item('Oatmeal', location='Ford', station='Salami and Swiss', calories=160, protein=5.5, carbs=28.0, fat=2.5, ingredients='Whole Grain Rolled Oats, Salt', meal_period='Breakfast', start_time='07:00:00', end_time='10:00:00'),
+            _make_item('Fresh Blueberries', location='Ford', station='Salami and Swiss', calories=40, protein=0.5, carbs=10.0, fat=0.2, ingredients='Blueberries', meal_period='Breakfast', start_time='07:00:00', end_time='10:00:00'),
+            _make_item('Pancake Syrup', location='Ford', station='BoilerQ', calories=200, protein=0, carbs=52, fat=0, ingredients='Corn Syrup, Water', meal_period='Breakfast', start_time='07:00:00', end_time='10:00:00'),
+        ]
+        breakfast_time = datetime(2026, 11, 14, 8, 0, tzinfo=PURDUE_TZ)
+        res_high = recommend_meals(health_intensity='High', prebuilt_items=breakfast_items, current_time=breakfast_time)
+        res_pure = recommend_meals(health_intensity='Extreme', prebuilt_items=breakfast_items, current_time=breakfast_time)
+
+        self.assertEqual(len(res_high['recommendations']), 1)
+        combos_high = res_high['recommendations'][0]['combos']
+        self.assertGreaterEqual(len(combos_high), 1)
+
+        # Combo should contain Hard Cooked Eggs and Oatmeal
+        top_high = combos_high[0]
+        item_names_high = [it['name'] for it in top_high['items']]
+        self.assertIn('Hard Cooked Eggs', item_names_high)
+        self.assertIn('Oatmeal', item_names_high)
+        self.assertTrue(top_high['is_seed_oil_free'])
+
+        # Pure Health should also stack clean eggs and oatmeal
+        combos_pure = res_pure['recommendations'][0]['combos']
+        self.assertGreaterEqual(len(combos_pure), 1)
+        item_names_pure = [it['name'] for it in combos_pure[0]['items']]
+        self.assertIn('Hard Cooked Eggs', item_names_pure)
+        self.assertIn('Oatmeal', item_names_pure)
+
+    def test_dynamic_builder_labeling_breakfast_vs_salad(self):
+        breakfast_items = [
+            _make_item('Hard Cooked Eggs', station='BoilerQ', calories=155, protein=12.5, carbs=0.6, fat=11.0, ingredients='Eggs', meal_period='Breakfast', start_time='07:00:00', end_time='10:00:00'),
+            _make_item('Oatmeal', station='Salami and Swiss', calories=160, protein=5.5, carbs=28.0, fat=2.5, ingredients='Whole Grain Rolled Oats, Salt', meal_period='Breakfast', start_time='07:00:00', end_time='10:00:00'),
+        ]
+        breakfast_time = datetime(2026, 11, 14, 8, 0, tzinfo=PURDUE_TZ)
+        res_bf = recommend_meals(health_intensity='High', prebuilt_items=breakfast_items, current_time=breakfast_time)
+        top_bf = res_bf['recommendations'][0]['combos'][0]
+        self.assertEqual(top_bf['builder_label'], 'Breakfast Assembly Guide')
+        self.assertEqual(top_bf['builder_type'], 'breakfast')
+
+        salad_items = [
+            _make_item('Fresh Baby Spinach (Salad Bar)', station='Salad Stop', calories=15, protein=2, carbs=2.5, fat=0.2, ingredients='Fresh Baby Spinach', meal_period='Dinner', start_time='17:00:00', end_time='20:00:00'),
+            _make_item('Hard Boiled Eggs (Salad Bar)', station='Salad Stop', calories=155, protein=12.5, carbs=0.6, fat=11.0, ingredients='Hard Cooked Whole Eggs', meal_period='Dinner', start_time='17:00:00', end_time='20:00:00'),
+            _make_item('Garbanzo Beans (Salad Bar)', station='Salad Stop', calories=130, protein=7, carbs=22, fat=2, ingredients='Garbanzo Beans, Salt', meal_period='Dinner', start_time='17:00:00', end_time='20:00:00'),
+            _make_item('Olive Oil (Extra Virgin) (Salad Bar)', station='Salad Stop', calories=120, protein=0, carbs=0, fat=14, ingredients='Extra Virgin Olive Oil', meal_period='Dinner', start_time='17:00:00', end_time='20:00:00'),
+        ]
+        dinner_time = datetime(2026, 11, 14, 18, 0, tzinfo=PURDUE_TZ)
+        res_dinner = recommend_meals(health_intensity='High', prebuilt_items=salad_items, current_time=dinner_time)
+        top_salad = res_dinner['recommendations'][0]['combos'][0]
+        self.assertEqual(top_salad['builder_label'], 'Salad & Bowl Builder')
+        self.assertEqual(top_salad['builder_type'], 'salad')
+
+    def test_composite_salad_bar_item_unpacks_into_clean_staples(self):
+        composite_item = {
+            'location': 'Earhart',
+            'meal_period': 'Dinner',
+            'station': 'Salad Stop',
+            'name': 'Salad Bar',
+            'calories': 0.0,
+            'protein': 0.0,
+            'carbs': 0.0,
+            'fat': 0.0,
+            'sugar': 0.0,
+            'ingredients': 'Grape Tomatoes (Tomatoes.), Bleu Cheese Dressing (Soybean Oil...), Hard Boiled Egg Slices, Garbanzo Beans, Fresh Spinach, Olive Oil',
+            'allergens': [],
+            'start_time': '17:00:00',
+            'end_time': '20:00:00',
+        }
+        unpacked = _unpack_composite_items(composite_item)
+        self.assertGreaterEqual(len(unpacked), 8)
+        unpacked_names = [it['name'] for it in unpacked]
+        self.assertIn('Fresh Baby Spinach (Salad Bar)', unpacked_names)
+        self.assertIn('Hard Boiled Eggs (Salad Bar)', unpacked_names)
+        self.assertIn('Garbanzo Beans (Salad Bar)', unpacked_names)
+        self.assertIn('Olive Oil (Extra Virgin) (Salad Bar)', unpacked_names)
+
+    def test_safebytes_station_quality_boost_and_verification(self):
+        safebytes_dish = _make_item(
+            'BoilerQ BBQ Chicken Drumstick',
+            location='Hillenbrand',
+            station='SafeBytes - Top 9 Free',
+            calories=180, protein=26, carbs=4, fat=6,
+            ingredients='Chicken Drumstick, Princess Dry Rub (Brown Sugar, Paprika, Salt, Garlic, Onion, Mustard, Ginger)'
+        )
+        ok, qual, reason = evaluate_item_health(safebytes_dish, 'High')
+        self.assertTrue(ok)
+        self.assertGreaterEqual(qual, 85.0)
+        self.assertIn('SafeBytes', reason)
 
 
 if __name__ == '__main__':

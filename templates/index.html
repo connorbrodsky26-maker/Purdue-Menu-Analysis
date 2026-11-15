@@ -2420,22 +2420,61 @@
       `).join('');
 
       const hasSaladBuilder = Boolean((isPure || combo.is_salad_builder) && combo.assembly_instructions && combo.assembly_instructions.length > 0);
+      const builderLabel = combo.builder_label || 'Plate Assembly Guide';
+      const builderType = combo.builder_type || (builderLabel.toLowerCase().includes('salad') ? 'salad' : (builderLabel.toLowerCase().includes('breakfast') ? 'breakfast' : 'plate'));
+
+      let builderIconSvg = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 6v6l4 2"></path>
+        </svg>
+      `;
+      let drawerBadge = 'Assembly Guide';
+      let drawerSub = 'Station-by-station pickup steps';
+
+      if (builderType === 'salad') {
+        builderIconSvg = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        `;
+        drawerBadge = 'Salad Bar Assembly';
+        drawerSub = 'Station-by-station salad & bowl pickup';
+      } else if (builderType === 'breakfast') {
+        builderIconSvg = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+        `;
+        drawerBadge = 'Breakfast Assembly';
+        drawerSub = 'Morning fuel station pickup steps';
+      } else {
+        builderIconSvg = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+            <line x1="6" y1="1" x2="6" y2="4"/>
+            <line x1="10" y1="1" x2="10" y2="4"/>
+            <line x1="14" y1="1" x2="14" y2="4"/>
+          </svg>
+        `;
+        drawerBadge = 'Plate Assembly';
+        drawerSub = 'Custom whole-food plate assembly';
+      }
+
       const saladBuilderHtml = hasSaladBuilder ? `
         <div class="salad-builder-wrap">
           <button type="button" class="salad-builder-btn" onclick="event.stopPropagation(); toggleSaladDrawer(this)" aria-expanded="false">
-            <span class="builder-icon" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12"/>
-                <path d="m9 12 2 2 4-4"/>
-              </svg>
-            </span>
-            <span>Salad &amp; Bowl Builder</span>
+            <span class="builder-icon" aria-hidden="true">${builderIconSvg}</span>
+            <span>${escapeHtml(builderLabel)}</span>
             <span class="builder-chev">&#9662;</span>
           </button>
           <div class="salad-builder-drawer">
             <div class="drawer-header">
-              <span class="drawer-badge">Assembly Guide</span>
-              <span class="drawer-sub">Station-by-station pickup steps</span>
+              <span class="drawer-badge">${escapeHtml(drawerBadge)}</span>
+              <span class="drawer-sub">${escapeHtml(drawerSub)}</span>
             </div>
             <div class="builder-step-list">
               ${combo.assembly_instructions.map(step => `

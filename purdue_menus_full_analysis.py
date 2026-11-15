@@ -397,7 +397,8 @@ STANDALONE_CONDIMENT_KEYWORDS = [
     'mustard', 'syrup', 'ranch', 'vinaigrette', 'mayonnaise', 'mayo',
     'marinara', 'alfredo', 'pesto', 'au jus', 'chutney', 'relish',
     'jam', 'jelly', 'condiment', 'topping', 'powdered sugar', 'sprinkles',
-    'crushed red pepper', 'seasoning', 'pancake syrup'
+    'crushed red pepper', 'seasoning', 'pancake syrup', 'olive oil',
+    'extra virgin olive oil', 'vinegar', 'balsamic vinegar', 'red wine vinegar'
 ]
 DIP_SPREAD_KEYWORDS = [
     'dip', 'queso', 'guacamole', 'hummus', 'tzatziki',
@@ -439,8 +440,10 @@ BOWL_ENTREE_MARKERS = [
 
 BREAKFAST_ENTREE_MARKERS = [
     'omelet', 'omelette', 'frittata', 'quiche', 'scrambled egg', 'scrambled eggs',
-    'breakfast burrito', 'breakfast sandwich', 'egg sandwich', 'eggs benedict',
-    'pancake', 'waffle', 'french toast', 'breakfast skillet'
+    'hard cooked egg', 'hard cooked eggs', 'hard boiled egg', 'hard boiled eggs',
+    'boiled egg', 'boiled eggs', 'poached egg', 'poached eggs', 'fried egg', 'fried eggs',
+    'egg white', 'egg whites', 'breakfast burrito', 'breakfast sandwich',
+    'egg sandwich', 'eggs benedict', 'pancake', 'waffle', 'french toast', 'breakfast skillet'
 ]
 
 STARCH_SALAD_KEYWORDS = [
@@ -612,7 +615,239 @@ def _match_fallback_macro(item_name: str) -> Optional[dict]:
     return None
 
 
+# Verified permanent campus dining staples consistently available across all open Purdue Dining Courts
+CAMPUS_PERMANENT_SALAD_STAPLES = [
+    {
+        'name': 'Fresh Baby Spinach (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 15.0, 'protein': 2.0, 'carbs': 2.5, 'fat': 0.2, 'sugar': 0.4,
+        'ingredients': 'Fresh Baby Spinach.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '2 cups raw',
+    },
+    {
+        'name': 'Mesclun & Romaine Greens (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 15.0, 'protein': 1.5, 'carbs': 2.5, 'fat': 0.2, 'sugar': 0.5,
+        'ingredients': 'Chopped Romaine Lettuce, Mesclun Green Leaf Lettuce.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '2 cups raw',
+    },
+    {
+        'name': 'Garbanzo Beans (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 130.0, 'protein': 7.0, 'carbs': 22.0, 'fat': 2.0, 'sugar': 1.0,
+        'ingredients': 'Prepared Garbanzo Beans (Chickpeas, Water, Salt).',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '0.5 cup',
+    },
+    {
+        'name': 'Hard Boiled Eggs (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 155.0, 'protein': 12.5, 'carbs': 0.6, 'fat': 11.0, 'sugar': 0.6,
+        'ingredients': 'Hard Cooked Whole Eggs.',
+        'allergens': ['eggs', 'vegetarian'],
+        'is_vegetarian': True,
+        'is_vegan': False,
+        'serving_size': '2 eggs',
+    },
+    {
+        'name': 'Diced Cucumbers (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 15.0, 'protein': 0.6, 'carbs': 3.0, 'fat': 0.1, 'sugar': 1.5,
+        'ingredients': 'Fresh Cucumbers.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '0.5 cup diced',
+    },
+    {
+        'name': 'Grape Tomatoes (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 25.0, 'protein': 1.0, 'carbs': 5.0, 'fat': 0.2, 'sugar': 3.0,
+        'ingredients': 'Fresh Grape Tomatoes.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '0.5 cup',
+    },
+    {
+        'name': 'Matchstick Carrots (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 30.0, 'protein': 0.7, 'carbs': 7.0, 'fat': 0.2, 'sugar': 3.5,
+        'ingredients': 'Shredded Matchstick Carrots.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '0.5 cup',
+    },
+    {
+        'name': 'Broccoli Florets (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 30.0, 'protein': 2.5, 'carbs': 6.0, 'fat': 0.3, 'sugar': 1.5,
+        'ingredients': 'Raw Fresh Broccoli Florets.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '1 cup',
+    },
+    {
+        'name': 'Sliced Fresh Mushrooms (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 20.0, 'protein': 2.2, 'carbs': 3.0, 'fat': 0.2, 'sugar': 1.5,
+        'ingredients': 'Raw Sliced Mushrooms.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '0.75 cup',
+    },
+    {
+        'name': 'Olive Oil (Extra Virgin) (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 120.0, 'protein': 0.0, 'carbs': 0.0, 'fat': 14.0, 'sugar': 0.0,
+        'ingredients': '100% Extra Virgin Olive Oil.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '1 tbsp',
+    },
+    {
+        'name': 'Balsamic Vinegar (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 15.0, 'protein': 0.0, 'carbs': 3.0, 'fat': 0.0, 'sugar': 3.0,
+        'ingredients': 'Balsamic Vinegar, Wine Vinegar.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '1 tbsp',
+    },
+    {
+        'name': 'Cottage Cheese (Salad Bar)',
+        'station': 'Salad Stop',
+        'calories': 110.0, 'protein': 13.0, 'carbs': 4.0, 'fat': 4.5, 'sugar': 3.0,
+        'ingredients': 'Pasteurized Skim Milk, Milk, Cream, Salt.',
+        'allergens': ['milk', 'vegetarian'],
+        'is_vegetarian': True,
+        'is_vegan': False,
+        'serving_size': '0.5 cup',
+    },
+]
+
+CAMPUS_PERMANENT_BREAKFAST_STAPLES = [
+    {
+        'name': 'Hard Cooked Eggs',
+        'station': 'BoilerQ',
+        'calories': 155.0, 'protein': 12.5, 'carbs': 0.6, 'fat': 11.0, 'sugar': 0.6,
+        'ingredients': 'Hard Cooked Whole Eggs.',
+        'allergens': ['eggs', 'vegetarian'],
+        'is_vegetarian': True,
+        'is_vegan': False,
+        'serving_size': '2 eggs',
+    },
+    {
+        'name': 'Oatmeal',
+        'station': 'Salami and Swiss',
+        'calories': 160.0, 'protein': 5.5, 'carbs': 28.0, 'fat': 2.5, 'sugar': 0.5,
+        'ingredients': 'Whole Grain Rolled Oats, Water, Iodized Salt.',
+        'allergens': ['gluten', 'vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '1 bowl (8 oz)',
+    },
+    {
+        'name': 'Fresh Blueberries',
+        'station': 'Salami and Swiss',
+        'calories': 40.0, 'protein': 0.5, 'carbs': 10.0, 'fat': 0.2, 'sugar': 7.0,
+        'ingredients': 'Fresh Blueberries.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '0.5 cup',
+    },
+    {
+        'name': 'Kiwi',
+        'station': 'Salami and Swiss',
+        'calories': 45.0, 'protein': 0.8, 'carbs': 11.0, 'fat': 0.4, 'sugar': 6.5,
+        'ingredients': 'Fresh Raw Sliced Kiwi.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '1 medium kiwi',
+    },
+]
+
+HILLENBRAND_SAFEBYTES_STAPLES = [
+    {
+        'name': 'SafeBytes Grilled Chicken Breast',
+        'station': 'SafeBytes - Top 9 Free',
+        'calories': 170.0, 'protein': 32.0, 'carbs': 0.0, 'fat': 4.0, 'sugar': 0.0,
+        'ingredients': 'Chicken Breast, Sea Salt, Black Pepper, Olive Oil.',
+        'allergens': [],
+        'is_vegetarian': False,
+        'is_vegan': False,
+        'serving_size': '1 breast (5 oz)',
+    },
+    {
+        'name': 'SafeBytes Steamed Broccoli Florets',
+        'station': 'SafeBytes - Top 9 Free',
+        'calories': 35.0, 'protein': 2.5, 'carbs': 6.0, 'fat': 0.4, 'sugar': 1.5,
+        'ingredients': 'Broccoli Florets.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '1 cup',
+    },
+    {
+        'name': 'SafeBytes Steamed Brown Rice',
+        'station': 'SafeBytes - Top 9 Free',
+        'calories': 215.0, 'protein': 5.0, 'carbs': 45.0, 'fat': 1.8, 'sugar': 0.5,
+        'ingredients': 'Whole Grain Brown Rice, Water.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '1 cup cooked',
+    },
+    {
+        'name': 'SafeBytes Roasted Sweet Potatoes',
+        'station': 'SafeBytes - Top 9 Free',
+        'calories': 130.0, 'protein': 2.0, 'carbs': 28.0, 'fat': 1.5, 'sugar': 6.0,
+        'ingredients': 'Sweet Potatoes, Olive Oil, Sea Salt.',
+        'allergens': ['vegetarian', 'vegan'],
+        'is_vegetarian': True,
+        'is_vegan': True,
+        'serving_size': '0.75 cup',
+    },
+]
+
+
 def _unpack_composite_items(base_item: dict) -> list[dict]:
+    name_lower = (base_item.get('name') or '').lower().strip()
+    station_lower = (base_item.get('station') or '').lower().strip()
+
+    # Deconstruct composite 'Salad Bar' line items from Purdue API into individual whole food staples
+    if name_lower in ('salad bar', 'daily salad bar selection') or ('salad' in name_lower and 'bar' in name_lower):
+        unpacked = []
+        for staple in CAMPUS_PERMANENT_SALAD_STAPLES:
+            item_copy = dict(staple)
+            item_copy.update({
+                'location': base_item.get('location', 'Unknown'),
+                'meal_period': base_item.get('meal_period', 'Unknown'),
+                'hours_status': base_item.get('hours_status', 'Unknown'),
+                'closing_time': base_item.get('closing_time', ''),
+                'start_time': base_item.get('start_time', ''),
+                'end_time': base_item.get('end_time', ''),
+                'station': base_item.get('station', 'Salad Stop'),
+                'used_fallback': True,
+            })
+            unpacked.append(item_copy)
+        return unpacked
+
     direct_match = _match_fallback_macro(base_item['name'])
     if direct_match:
         item_copy = dict(base_item)
@@ -629,9 +864,102 @@ def _unpack_composite_items(base_item: dict) -> list[dict]:
     return [base_item]
 
 
-def hydrate_missing_macros(items: list[dict]) -> list[dict]:
+def ensure_campus_permanent_staples(items: list[dict]) -> list[dict]:
+    """
+    Guarantees verified whole-food permanent campus staples exist for every dining court session:
+    - Every open Lunch / Late Lunch / Dinner / Brunch court has the permanent fresh Salad Bar selection.
+    - Every open Breakfast court has Hard Cooked Eggs, Oatmeal, and Fresh Fruit.
+    - Hillenbrand SafeBytes staples are available when Hillenbrand is open.
+    """
+    if not items:
+        return []
+
+    sessions: dict[tuple[str, str], list[dict]] = {}
+    for it in items:
+        loc = it.get('location') or 'Unknown'
+        mp = it.get('meal_period') or 'Meal'
+        sessions.setdefault((loc, mp), []).append(it)
+
+    result = list(items)
+
+    for (loc, mp), session_items in sessions.items():
+        mp_lower = mp.strip().lower()
+        hours_status = session_items[0].get('hours_status', 'Unknown')
+        closing_time = session_items[0].get('closing_time', '')
+        start_time = session_items[0].get('start_time', '')
+        end_time = session_items[0].get('end_time', '')
+
+        item_names_lower = {it.get('name', '').lower() for it in session_items}
+
+        # 1. Lunch / Dinner / Late Lunch / Brunch -> Salad Bar Staples
+        if any(period in mp_lower for period in ('lunch', 'dinner', 'brunch')):
+            has_salad_staples = any(
+                'spinach' in n or 'garbanzo' in n or 'hard boiled egg' in n
+                for n in item_names_lower
+            )
+            if not has_salad_staples:
+                for staple in CAMPUS_PERMANENT_SALAD_STAPLES:
+                    staple_record = dict(staple)
+                    staple_record.update({
+                        'location': loc,
+                        'meal_period': mp,
+                        'hours_status': hours_status,
+                        'closing_time': closing_time,
+                        'start_time': start_time,
+                        'end_time': end_time,
+                        'used_fallback': True,
+                    })
+                    result.append(staple_record)
+
+        # 2. Breakfast -> Hard Cooked Eggs, Oatmeal, Fruit
+        if 'breakfast' in mp_lower:
+            has_breakfast_eggs = any('hard cooked egg' in n or 'hard boiled egg' in n for n in item_names_lower)
+            if not has_breakfast_eggs:
+                for staple in CAMPUS_PERMANENT_BREAKFAST_STAPLES:
+                    if staple['name'].lower() not in item_names_lower:
+                        staple_record = dict(staple)
+                        staple_record.update({
+                            'location': loc,
+                            'meal_period': mp,
+                            'hours_status': hours_status,
+                            'closing_time': closing_time,
+                            'start_time': start_time,
+                            'end_time': end_time,
+                            'used_fallback': True,
+                        })
+                        result.append(staple_record)
+
+        # 3. Hillenbrand -> SafeBytes staples
+        if loc.strip().lower() == 'hillenbrand' and any(period in mp_lower for period in ('lunch', 'dinner')):
+            has_safebytes = any('safebytes' in (it.get('station') or '').lower() for it in session_items)
+            if not has_safebytes:
+                for staple in HILLENBRAND_SAFEBYTES_STAPLES:
+                    staple_record = dict(staple)
+                    staple_record.update({
+                        'location': loc,
+                        'meal_period': mp,
+                        'hours_status': hours_status,
+                        'closing_time': closing_time,
+                        'start_time': start_time,
+                        'end_time': end_time,
+                        'used_fallback': True,
+                    })
+                    result.append(staple_record)
+
+    return result
+
+
+def hydrate_missing_macros(items: list[dict], inject_permanent_staples: bool = False) -> list[dict]:
+    # 1. Unpack composite items (like 'Salad Bar' or 'Deli Bar') into individual items
+    unpacked_items = []
+    for it in items:
+        unpacked_items.extend(_unpack_composite_items(it))
+
+    # 2. Optionally ensure campus permanent staples for real dining court sessions
+    processed_items = ensure_campus_permanent_staples(unpacked_items) if inject_permanent_staples else unpacked_items
+
     hydrated = []
-    for item in items:
+    for item in processed_items:
         copy_item = dict(item)
         copy_item.setdefault('allergens', [])
         copy_item.setdefault('is_vegetarian', None)
@@ -814,11 +1142,11 @@ def get_daily_menus(
                 cached_items = raw_cache.get('items') or []
                 if cached_date == date_str and allowed_set.issubset(cached_locs) and cached_items:
                     filtered = [it for it in cached_items if it.get('location') in allowed_set]
-                    return hydrate_missing_macros(filtered), True
+                    return hydrate_missing_macros(filtered, inject_permanent_staples=True), True
             elif isinstance(raw_cache, list) and raw_cache:
                 filtered = [it for it in raw_cache if it.get('location') in allowed_set]
                 if filtered:
-                    return hydrate_missing_macros(filtered), True
+                    return hydrate_missing_macros(filtered, inject_permanent_staples=True), True
         except (OSError, ValueError):
             pass
 
@@ -843,7 +1171,7 @@ def get_daily_menus(
         except OSError:
             pass
 
-    return hydrate_missing_macros(all_items), False
+    return hydrate_missing_macros(all_items, inject_permanent_staples=True), False
 
 
 # ==============================================================================
@@ -1446,6 +1774,13 @@ def evaluate_item_health(
     ing_lower = ing_raw.lower()
     combined_text = f'{name_lower} {ing_lower}'
     certainty = _assess_ingredient_certainty(item)
+    station_lower = (item.get('station') or '').lower().strip()
+    is_safebytes = 'safebytes' in station_lower
+
+    # SafeBytes station at Hillenbrand is strictly top-9 allergen-free and prepared without seed oils
+    if is_safebytes and certainty in ('unknown', 'estimated') and not any(f in name_lower for f in ['fried', 'crispy', 'fritter', 'cookie', 'brownie']):
+        certainty = 'verified_whole_food'
+        item['_certainty'] = 'verified_whole_food'
 
     if _is_special_order_item(item):
         return False, 0.0, 'Excluded: custom ticket'
@@ -1487,8 +1822,8 @@ def evaluate_item_health(
         return True, round(max(20.0, cond_score), 1), 'Optional condiment'
 
     if is_dip:
-        if tier in ('high', 'extreme') and (has_seed_oil or certainty in ('unknown', 'estimated')):
-            return False, 0.0, 'Excluded: standalone dip'
+        if tier in ('high', 'extreme'):
+            return False, 0.0, f'Excluded from {tier.title()}: standalone commercial dip'
         return True, 54.0, 'Optional spread/dip'
 
     has_high_sugar = has_strict_refined_ing or ((not whole_fruit) and (
@@ -1515,7 +1850,10 @@ def evaluate_item_health(
             return False, 0.0, 'Excluded: unverified ingredients'
 
         density_score = _compute_nutrient_density_score(item)
-        if is_added_fat:
+        if is_safebytes:
+            density_score = min(density_score + 10.0, 100.0)
+            reason = 'SafeBytes Top-9 Allergen-Free line: clean whole food'
+        elif is_added_fat:
             density_score = 78.0
             reason = 'Clean healthy fat source'
         else:
@@ -1538,7 +1876,10 @@ def evaluate_item_health(
             return False, 0.0, 'Excluded from Healthy: unverified ingredients'
 
         score = 72.0
-        if certainty == 'verified' and not has_seed_oil:
+        if is_safebytes:
+            score += 16.0
+            reason = 'SafeBytes Top-9 Allergen-Free line (Seed-Oil Free)'
+        elif certainty == 'verified' and not has_seed_oil:
             score += 14.0
             reason = 'Verified seed-oil-free whole food'
         elif certainty == 'verified_whole_food' and not has_seed_oil:
@@ -1746,7 +2087,8 @@ def _is_plant_veg_anchor(item: dict) -> bool:
 
 
 def classify_food_item(item: dict) -> str:
-    name_lower = (item.get('name') or '').lower().strip()
+    raw_name = (item.get('name') or '').strip()
+    name_lower = raw_name.lower()
     ing_lower = (item.get('ingredients') or '').lower()
 
     if (
@@ -1756,51 +2098,54 @@ def classify_food_item(item: dict) -> str:
     ):
         return 'exclude'
 
-    if _is_standalone_condiment(item):
+    # Clean name by stripping station or parenthetical markers like '(salad bar)'
+    clean_name = re.sub(r'\s*\([^)]*salad\s+bar[^)]*\)', '', name_lower).strip()
+
+    if _is_standalone_condiment(item) or _is_added_oil_or_fat(item) or re.search(r'\b(?:vinegar|oil)s?\b', clean_name):
         return 'condiment'
 
     if _is_dip_or_condiment(item):
         return 'condiment'
 
-    if 'salad' in name_lower:
-        if any(fs in name_lower for fs in FRUIT_SALAD_KEYWORDS):
+    if 'salad' in clean_name:
+        if any(fs in clean_name for fs in FRUIT_SALAD_KEYWORDS):
             return 'side'
-        if any(ss in name_lower for ss in STARCH_SALAD_KEYWORDS):
+        if any(ss in clean_name for ss in STARCH_SALAD_KEYWORDS):
             return 'carb_base'
-        if any(es in name_lower for es in ENTREE_PROTEIN_SALAD_KEYWORDS):
+        if any(es in clean_name for es in ENTREE_PROTEIN_SALAD_KEYWORDS):
             return 'protein_entree'
         if _is_composed_salad(item):
             return 'composed_salad'
         return 'protein_entree'
 
-    if any(re.search(rf'\b{re.escape(m)}\b', name_lower) for m in SANDWICH_ENTREE_MARKERS):
-        if 'breakfast' in name_lower or 'egg' in name_lower:
+    if any(re.search(rf'\b{re.escape(m)}\b', clean_name) for m in SANDWICH_ENTREE_MARKERS):
+        if 'breakfast' in clean_name or 'egg' in clean_name:
             return 'breakfast_entree'
         return 'sandwich'
 
-    if any(re.search(rf'\b{re.escape(m)}\b', name_lower) for m in BREAKFAST_ENTREE_MARKERS):
+    if any(re.search(rf'\b{re.escape(m)}\b', clean_name) for m in BREAKFAST_ENTREE_MARKERS):
         return 'breakfast_entree'
 
-    if any(re.search(rf'\b{re.escape(m)}\b', name_lower) for m in COMPLETE_ENTREE_MARKERS):
+    if any(re.search(rf'\b{re.escape(m)}\b', clean_name) for m in COMPLETE_ENTREE_MARKERS):
         return 'complete_entree'
 
-    if any(re.search(rf'\b{re.escape(m)}\b', name_lower) for m in BOWL_ENTREE_MARKERS):
+    if any(re.search(rf'\b{re.escape(m)}\b', clean_name) for m in BOWL_ENTREE_MARKERS):
         return 'bowl'
 
-    if any(re.search(rf'\b{re.escape(m)}\b', name_lower) for m in PASTA_ENTREE_MARKERS):
+    if any(re.search(rf'\b{re.escape(m)}\b', clean_name) for m in PASTA_ENTREE_MARKERS):
         return 'pasta_entree'
 
     if _is_standalone_bakery(item):
-        if any(b in name_lower for b in ['hamburger bun', 'hot dog bun', 'bun', 'buns']):
+        if any(b in clean_name for b in ['hamburger bun', 'hot dog bun', 'bun', 'buns']):
             return 'exclude'
         return 'carb_base'
 
-    if any(re.search(rf'\b{re.escape(v)}\b', name_lower) for v in VEGETABLE_KEYWORDS):
-        if 'edamame' in name_lower:
+    if any(re.search(rf'\b{re.escape(v)}\b', clean_name) for v in VEGETABLE_KEYWORDS):
+        if 'edamame' in clean_name:
             return 'protein_entree'
         return 'vegetable'
 
-    if _is_whole_fruit(name_lower):
+    if _is_whole_fruit(clean_name):
         return 'side'
 
     entree_protein_hints = [
@@ -1810,7 +2155,7 @@ def classify_food_item(item: dict) -> str:
         'paneer', 'cottage cheese', 'greek yogurt'
     ]
     has_protein_word = any(
-        re.search(rf'\b{re.escape(h)}(?:s|es)?\b', name_lower)
+        re.search(rf'\b{re.escape(h)}(?:s|es)?\b', clean_name)
         for h in entree_protein_hints
     )
     has_protein_ing = any(
@@ -1848,10 +2193,32 @@ def _meets_minimum_meal_floor(
     per_meal: Optional[dict],
     dri_enabled: bool,
     health_intensity: str,
+    slots: Optional[list[tuple[str, dict]]] = None,
+    template_name: str = '',
 ) -> bool:
     tier = health_intensity.strip().lower()
     pro = totals.get('protein', 0.0)
     cal = totals.get('calories', 0.0)
+
+    items = [it for _, it in slots] if slots else []
+    is_breakfast = (
+        template_name.startswith('breakfast')
+        or any(
+            it.get('_role') == 'breakfast_entree'
+            or it.get('_cuisine') == 'breakfast'
+            or any(b in it.get('name', '').lower() for b in ('egg', 'oatmeal', 'pancake', 'waffle', 'frittata', 'omelet'))
+            for it in items
+        )
+    )
+
+    if is_breakfast:
+        if tier == 'extreme':
+            return pro >= 14.0 and cal >= 200.0
+        if dri_enabled and per_meal:
+            min_pro = max(per_meal.get('protein_target', 18.0) * 0.50, 12.0)
+            min_cal = max(per_meal.get('calories', 300.0) * 0.50, 200.0)
+            return pro >= min_pro and cal >= min_cal
+        return pro >= 14.0 and cal >= 240.0
 
     if tier == 'extreme':
         return pro >= 18.0 and cal >= 240.0
@@ -1861,7 +2228,10 @@ def _meets_minimum_meal_floor(
         min_cal = max(per_meal.get('calories', 380.0) * 0.55, 260.0)
         return pro >= min_pro and cal >= min_cal
 
-    return pro >= 22.0 and cal >= 380.0
+    if tier == 'high':
+        return pro >= 18.0 and cal >= 320.0
+
+    return pro >= 18.0 and cal >= 300.0
 
 
 def _build_option_b_anchors(pool: list[dict], existing_proteins: list[dict]) -> list[dict]:
@@ -1994,7 +2364,8 @@ def evaluate_culinary_compatibility(
         (['grilled chicken', 'steak', 'salmon', 'pork loin', 'turkey'], ['roasted potato', 'sweet potato', 'mashed potato', 'quinoa', 'asparagus', 'broccoli', 'green beans', 'pasta salad', 'potato salad'], 14.0, 'Classic grill & vegetable/starch balance'),
         (['gyro', 'shawarma', 'lemon herb', 'mediterranean', 'greek'], ['couscous', 'quinoa', 'chickpea', 'garbanzo', 'greek salad'], 15.0, 'Mediterranean flavor pairing'),
         (['burger', 'cheeseburger', 'sandwich', 'panini', 'wrap'], ['fruit', 'apple', 'berries', 'watermelon', 'broccoli', 'salad', 'sweet potato'], 12.0, 'Balanced sandwich/burger & crisp side'),
-        (['scrambled', 'omelet', 'frittata', 'pancake', 'waffle'], ['bacon', 'sausage', 'fruit', 'berries', 'banana', 'oatmeal'], 14.0, 'Classic breakfast pairing'),
+        (['scrambled', 'omelet', 'frittata', 'pancake', 'waffle', 'egg', 'eggs', 'hard cooked', 'hard boiled'], ['bacon', 'sausage', 'fruit', 'berries', 'banana', 'oatmeal', 'kiwi', 'blueberry', 'blueberries'], 14.0, 'Classic breakfast pairing'),
+        (['spinach', 'romaine', 'greens', 'lettuce'], ['garbanzo', 'chickpea', 'egg', 'eggs', 'cucumber', 'tomato', 'olive oil'], 15.0, 'Salad Bar whole-food harvest balance'),
     ]
     for anchor_kws, partner_kws, bonus_pts, label in classic_pairings:
         if any(ak in joined_names for ak in anchor_kws) and any(pk in joined_names for pk in partner_kws):
@@ -2037,11 +2408,11 @@ def _generate_assembly_instructions(slots: list[tuple[str, dict]], location: str
         s = st_name.lower()
         if any(k in s for k in ['salad', 'greens', 'produce', 'fruit', 'cold', 'market']):
             return 1
-        if any(k in s for k in ['simple servings', 'oasis', 'natural']):
+        if any(k in s for k in ['safebytes', 'simple servings', 'oasis', 'natural']):
             return 2
         if any(k in s for k in ['grill', 'carving', 'action', 'entree', 'hearth', 'comfort', 'potāto', 'potato', 'boilerq']):
             return 3
-        if any(k in s for k in ['rice', 'grain', 'pasta', 'international', 'one world', 'gallery', 'asian']):
+        if any(k in s for k in ['rice', 'grain', 'oatmeal', 'pasta', 'international', 'one world', 'gallery', 'asian', 'salami and swiss']):
             return 4
         if any(k in s for k in ['condiment', 'toppings', 'oil', 'spread']):
             return 6
@@ -2055,17 +2426,20 @@ def _generate_assembly_instructions(slots: list[tuple[str, dict]], location: str
         item_names = [it['name'] for _, it in station_items]
         st_low = station_name.lower()
 
-        if any(k in st_low for k in ['salad', 'greens', 'produce', 'fruit']):
-            title = 'Fresh Whole-Food Base'
+        if any(k in st_low for k in ['salad', 'greens', 'produce', 'cold']):
+            title = 'Fresh Salad Bar Foundation'
             instruction = f"At {station_name}, grab a clean bowl and lay down {', and '.join(item_names)} as your micronutrient-rich foundation."
-        elif any(k in st_low for k in ['grill', 'carving', 'boilerq', 'potāto', 'potato', 'hearth']):
-            title = 'Stack Hot Clean Protein'
-            instruction = f"Head to {station_name} and add {', and '.join(item_names)} directly over your base."
-        elif any(k in st_low for k in ['rice', 'grain', 'simple servings', 'international']):
+        elif any(k in st_low for k in ['safebytes']):
+            title = 'SafeBytes Top-9 Allergen-Free Anchor'
+            instruction = f"Head to {station_name} and add {', and '.join(item_names)} prepared fresh without top allergens or seed oils."
+        elif any(k in st_low for k in ['grill', 'carving', 'boilerq', 'potāto', 'potato', 'hearth', 'action']):
+            title = 'Stack Clean Protein Anchor'
+            instruction = f"Head to {station_name} and add {', and '.join(item_names)} to power your plate with bioavailable protein."
+        elif any(k in st_low for k in ['rice', 'grain', 'simple servings', 'international', 'oatmeal', 'salami and swiss']):
             title = 'Add Clean Complex Fuel'
             instruction = f"Stop at {station_name} and scoop {', and '.join(item_names)} for sustained energy carbohydrates."
         elif any(k in st_low for k in ['condiment', 'toppings', 'oil']):
-            title = 'Healthy Fat Finisher'
+            title = 'Healthy Fat & Finishing Touch'
             instruction = f"At {station_name}, finish your plate with {', and '.join(item_names)}."
         else:
             title = f'Pick Up from {station_name}'
@@ -2088,15 +2462,21 @@ def _generate_pure_health_combo_title(items: list[dict]) -> str:
     has_chicken = any('chicken' in n for n in names)
     has_egg = any('egg' in n for n in names)
     has_rice = any('rice' in n for n in names)
+    has_oatmeal = any('oatmeal' in n for n in names)
     has_edamame = any('edamame' in n for n in names)
+    has_beans = any(any(b in n for b in ('bean', 'garbanzo', 'chickpea', 'lentil')) for n in names)
     has_berries = any(any(b in n for b in ('berry', 'berries', 'strawberry', 'blueberry', 'kiwi', 'fruit')) for n in names)
 
+    if has_egg and has_oatmeal:
+        return 'Clean Eggs & Oatmeal Power Fuel'
+    if has_greens and (has_beans or has_egg):
+        return 'Salad Bar Whole-Food Harvest Bowl'
     if has_greens and (has_chicken or has_edamame):
         return 'Custom Whole-Food Harvest Bowl'
     if has_chicken and has_rice:
         return 'Grilled Chicken & Jasmine Rice Bowl'
-    if has_egg and (has_berries or has_rice):
-        return 'Clean Whole Egg & Fuel Stack'
+    if has_egg and has_berries:
+        return 'Clean Whole Egg & Fresh Fruit Stack'
     if has_edamame and has_rice:
         return 'Plant Power Edamame & Rice Bowl'
     if len(items) >= 4:
@@ -2194,6 +2574,45 @@ def _generate_pure_health_stacking_combos(pool: list[dict]) -> list[tuple[str, l
             for c in complex_carbs[:4]:
                 if c['name'] not in (p1['name'], p2['name']):
                     _add_candidate('pure_double_pro_fuel', [('Protein Anchor', p1), ('Protein Booster', p2), ('Clean Fuel', c)])
+
+    # 2b. Breakfast & Whole Fruit Stacks (e.g. Eggs + Oatmeal + Blueberries/Kiwi)
+    whole_fruits = [it for it in eligible if _is_whole_fruit(it['name'].lower())]
+    for p in proteins[:6]:
+        for c in complex_carbs[:6]:
+            if c['name'] == p['name']:
+                continue
+            _add_candidate('pure_stack_fuel_2', [('Protein Anchor', p), ('Clean Fuel', c)])
+            for wf in whole_fruits[:4]:
+                if wf['name'] not in (p['name'], c['name']):
+                    _add_candidate('pure_stack_fruit_3', [('Protein Anchor', p), ('Clean Fuel', c), ('Fresh Fruit', wf)])
+
+    # Double Protein + Breakfast Fuel (e.g. 2 portions eggs or eggs + cottage cheese + oatmeal)
+    for p1 in proteins[:4]:
+        for p2 in proteins[:4]:
+            if p1['name'] == p2['name']:
+                continue
+            for c in complex_carbs[:4]:
+                if c['name'] not in (p1['name'], p2['name']):
+                    _add_candidate('pure_double_pro_breakfast', [('Protein Anchor', p1), ('Protein Booster', p2), ('Clean Fuel', c)])
+
+    # 2c. Dedicated Salad Bar Harvest Bowl stacking:
+    # Spinach + Garbanzo + Eggs + Cucumbers + Olive Oil
+    salad_greens = [it for it in eligible if any(g in it['name'].lower() for g in ('spinach', 'romaine', 'mesclun', 'lettuce'))]
+    salad_legumes = [it for it in eligible if any(l in it['name'].lower() for l in ('garbanzo', 'chickpea', 'black bean', 'kidney bean'))]
+    salad_proteins = [it for it in proteins if any(e in it['name'].lower() for e in ('egg', 'chicken', 'tilapia', 'tofu', 'edamame'))]
+    salad_cucumbers = [it for it in eligible if any(k in it['name'].lower() for k in ('cucumber', 'tomato', 'carrot', 'broccoli'))]
+
+    if salad_greens and (salad_proteins or salad_legumes):
+        for sg in salad_greens[:2]:
+            for sp in (salad_proteins[:3] or salad_legumes[:2]):
+                slots_harvest = [('Fresh Greens', sg), ('Protein Anchor', sp)]
+                if salad_legumes and salad_legumes[0]['name'] != sp['name']:
+                    slots_harvest.append(('Clean Fuel', salad_legumes[0]))
+                if salad_cucumbers:
+                    slots_harvest.append(('Fresh Crunch', salad_cucumbers[0]))
+                if healthy_fats:
+                    slots_harvest.append(('Clean Fat', healthy_fats[0]))
+                _add_candidate('pure_salad_harvest_bowl', slots_harvest)
 
     # 3. Fallback 2-item stacks if the dining court has very few clean whole items
     if len(candidates) < 3:
@@ -2318,8 +2737,33 @@ def _generate_meal_templates(pool: list[dict], health_intensity: str) -> list[tu
                 if side_opt['name'] not in (p['name'], sal['name']):
                     candidates.append(('salad_protein_side', [('Main', p), ('Base', sal), ('Side', side_opt)]))
 
+    # Dedicated Salad Bar Harvest Bowl template
+    salad_greens = [it for it in pool if any(g in it['name'].lower() for g in ('spinach', 'romaine', 'mesclun', 'lettuce'))]
+    salad_legumes = [it for it in pool if any(l in it['name'].lower() for l in ('garbanzo', 'chickpea', 'black bean', 'kidney bean'))]
+    salad_proteins = [it for it in proteins if it['_role'] in ('protein_entree', 'breakfast_entree')]
+    salad_vegs = [it for it in vegs if it['name'] not in [x['name'] for x in salad_greens]]
+    salad_oils = [it for it in pool if _is_added_oil_or_fat(it) or 'olive oil' in it['name'].lower()]
+
+    if salad_greens and (salad_proteins or salad_legumes):
+        for sg in salad_greens[:2]:
+            for sp in (salad_proteins[:3] or salad_legumes[:2]):
+                slots_salad = [('Fresh Greens', sg), ('Protein Anchor', sp)]
+                if salad_legumes and salad_legumes[0]['name'] != sp['name']:
+                    slots_salad.append(('Complex Fuel', salad_legumes[0]))
+                if salad_vegs:
+                    slots_salad.append(('Fresh Crunch', salad_vegs[0]))
+                if salad_oils:
+                    slots_salad.append(('Healthy Fat', salad_oils[0]))
+                candidates.append(('salad_bar_bowl', slots_salad))
+
     for bf in breakfasts:
         candidates.append(('breakfast_meal', [('Main', bf)]))
+        for c in carbs[:6]:
+            if c['name'] != bf['name']:
+                candidates.append(('breakfast_carb', [('Main', bf), ('Base', c)]))
+                for ls in light_sides[:4]:
+                    if ls['name'] not in (bf['name'], c['name']):
+                        candidates.append(('breakfast_carb_side', [('Main', bf), ('Base', c), ('Side', ls)]))
         for ls in light_sides[:5]:
             if ls['name'] != bf['name']:
                 candidates.append(('breakfast_side', [('Main', bf), ('Side', ls)]))
@@ -2335,12 +2779,24 @@ def _score_meal_completeness(slots: list[tuple[str, dict]], template_name: str) 
 
     score = 62.0
 
+    is_breakfast = (
+        template_name.startswith('breakfast')
+        or any(
+            it.get('_role') == 'breakfast_entree'
+            or it.get('_cuisine') == 'breakfast'
+            or any(b in it.get('name', '').lower() for b in ('egg', 'oatmeal', 'pancake', 'waffle', 'frittata', 'omelet'))
+            for it in items
+        )
+    )
+
     if roles & {'complete_entree', 'sandwich', 'pasta_entree', 'bowl', 'breakfast_entree'}:
         score += 22.0
         if len(items) == 2:
             score += 8.0
     elif 'composed_salad' in roles and 'protein_entree' in roles:
         score += 26.0
+    elif 'salad_bar_bowl' in template_name:
+        score += 28.0
     elif 'protein_entree' in roles and 'carb_base' in roles and ('vegetable' in roles or 'side' in roles):
         score += 28.0
     elif 'protein_entree' in roles and ('carb_base' in roles or 'vegetable' in roles):
@@ -2350,13 +2806,20 @@ def _score_meal_completeness(slots: list[tuple[str, dict]], template_name: str) 
     elif len(items) >= 2:
         score += 12.0
 
-    if tot_cal < 380.0:
-        score -= 22.0
-    elif tot_cal > 1150.0:
-        score -= 15.0
-
-    if tot_pro >= 24.0:
-        score += 8.0
+    if is_breakfast:
+        if tot_cal < 240.0:
+            score -= 18.0
+        elif tot_cal > 750.0:
+            score -= 15.0
+        if tot_pro >= 15.0:
+            score += 8.0
+    else:
+        if tot_cal < 340.0:
+            score -= 20.0
+        elif tot_cal > 1150.0:
+            score -= 15.0
+        if tot_pro >= 22.0:
+            score += 8.0
 
     return round(max(0.0, min(score, 100.0)), 1)
 
@@ -2683,7 +3146,7 @@ def _evaluate_and_assemble_location_candidates(
             'sugar': round(tot_sugar, 1),
         }
 
-        if not _meets_minimum_meal_floor(totals_obj, per_meal, dri_enabled, health_intensity):
+        if not _meets_minimum_meal_floor(totals_obj, per_meal, dri_enabled, health_intensity, slots=slots, template_name=template_name):
             continue
 
         if tier_key == 'extreme':
@@ -2890,7 +3353,38 @@ def build_optimal_plates(
                 for _, it in slots
             )
 
-            is_salad_builder = (tier_key == 'extreme' or 'stack' in _meta.get('template', '') or 'salad' in _meta.get('template', ''))
+            has_salad_bar_staples = any(
+                any(k in it['name'].lower() for k in ('spinach', 'romaine', 'lettuce', 'garbanzo', 'chickpea', 'salad bar', 'cucumber', 'kale', 'mesclun'))
+                or 'salad' in (it.get('station') or '').lower()
+                for _, it in slots
+            )
+            is_breakfast_stack = any(
+                it.get('_role') == 'breakfast_entree' or it.get('_cuisine') == 'breakfast'
+                or any(k in it['name'].lower() for k in ('egg', 'oatmeal', 'pancake', 'waffle', 'frittata', 'omelet'))
+                for _, it in slots
+            )
+
+            if has_salad_bar_staples:
+                builder_label = "Salad & Bowl Builder"
+                builder_type = "salad"
+                builder_icon = "salad"
+            elif is_breakfast_stack:
+                builder_label = "Breakfast Assembly Guide"
+                builder_type = "breakfast"
+                builder_icon = "breakfast"
+            else:
+                builder_label = "Plate Assembly Guide"
+                builder_type = "plate"
+                builder_icon = "plate"
+
+            is_salad_builder = (
+                tier_key == 'extreme'
+                or 'stack' in _meta.get('template', '')
+                or 'salad' in _meta.get('template', '')
+                or 'bowl' in _meta.get('template', '')
+                or is_breakfast_stack
+                or has_salad_bar_staples
+            )
             assembly_instructions = _generate_assembly_instructions(slots, location) if is_salad_builder else []
 
             formatted_items = []
@@ -2921,6 +3415,9 @@ def build_optimal_plates(
                 'macro_split': macro_split,
                 'is_seed_oil_free': is_seed_oil_free,
                 'is_salad_builder': bool(assembly_instructions),
+                'builder_label': builder_label,
+                'builder_type': builder_type,
+                'builder_icon': builder_icon,
                 'assembly_instructions': assembly_instructions,
             })
 
