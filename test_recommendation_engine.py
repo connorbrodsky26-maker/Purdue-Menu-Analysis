@@ -541,6 +541,10 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertNotIn('Nutrition &amp; Macro Split', html)
         self.assertNotIn('Nutrition & Macro Split', html)
 
+        # Confirm tutorial step 1 does not use the word "pill"
+        self.assertNotIn('Tap any pill at the top', html)
+        self.assertIn('Tap any dining hall at the top', html)
+
 
 if __name__ == '__main__':
     unittest.main()
