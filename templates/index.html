@@ -2662,17 +2662,12 @@
       dismissFeastIntro();
     }, MIN_INTRO_DISPLAY_MS);
 
-    // Tap fallback: immediate click/touch listener so tapping the intro overlay dismisses it instantly
+    // Tap fallback & scroll prevention on intro overlay
     const introOverlayEl = document.getElementById('feastIntroOverlay');
     if (introOverlayEl) {
       introOverlayEl.style.cursor = 'pointer';
       introOverlayEl.addEventListener('click', dismissFeastIntro);
       introOverlayEl.addEventListener('touchend', dismissFeastIntro);
-    }
-
-    // Prevent any scrolling, wheeling, or swiping on the title screen
-    const introOverlayEl = document.getElementById('feastIntroOverlay');
-    if (introOverlayEl) {
       ['touchmove', 'wheel', 'scroll'].forEach(evt => {
         introOverlayEl.addEventListener(evt, e => e.preventDefault(), { passive: false });
       });
