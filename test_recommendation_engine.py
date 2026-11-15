@@ -545,6 +545,10 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertNotIn('Tap any pill at the top', html)
         self.assertIn('Tap any dining hall at the top', html)
 
+        # Confirm Tailor Plates to My Goals (DRI) is disabled and hidden from public
+        self.assertIn('<!-- Tailor Plates to My Goals (DRI) - Disabled for public release -->', html)
+        self.assertIn('<div class="toggle-card" style="display: none !important;">', html)
+
 
 if __name__ == '__main__':
     unittest.main()

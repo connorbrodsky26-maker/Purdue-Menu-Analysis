@@ -2536,8 +2536,8 @@
         </div>
       </div>
 
-      <!-- Tailor Plates to My Goals (DRI) -->
-      <div class="toggle-card">
+      <!-- Tailor Plates to My Goals (DRI) - Disabled for public release -->
+      <div class="toggle-card" style="display: none !important;">
         <label class="toggle-row">
           <span>Tailor Plates to My Goals</span>
           <span class="switch-control">
@@ -2912,7 +2912,6 @@
 
     function updateBadgeCount() {
       let count = getDietaryFilters().length;
-      if (document.getElementById('dri_enabled').checked) count += 1;
       if (document.getElementById('pure_health_mode').checked) count += 1;
       if (document.getElementById('sim_time').value.trim()) count += 1;
       const badge = document.getElementById('dockBadge');
@@ -2929,7 +2928,7 @@
         mode: activeMode,
         pure_health_mode: document.getElementById('pure_health_mode').checked,
         dietary: getDietaryFilters(),
-        dri_enabled: document.getElementById('dri_enabled').checked,
+        dri_enabled: false,
         goal: document.getElementById('dri_goal').value,
         sex: document.getElementById('dri_sex').value,
         age: document.getElementById('dri_age').value,
@@ -2961,7 +2960,7 @@
         cb.checked = dietSet.has(cb.value);
       });
 
-      document.getElementById('dri_enabled').checked = Boolean(p.dri_enabled);
+      document.getElementById('dri_enabled').checked = false;
       document.getElementById('dri_goal').value = p.goal || 'Balanced Maintenance';
       document.getElementById('dri_sex').value = p.sex || '';
       document.getElementById('dri_age').value = p.age || '';
@@ -3685,7 +3684,7 @@
         `;
       }
 
-      const driEnabled = document.getElementById('dri_enabled').checked;
+      const driEnabled = false; // Disabled for public release
       const pureHealthMode = document.getElementById('pure_health_mode').checked;
 
       const payload = {
@@ -3799,7 +3798,7 @@
         {
           targetSelector: '#bottomDock',
           title: 'Switch Styles & Filters',
-          desc: 'Choose Healthy, Balanced, or Yummy—or tap the sliders icon for Pure Health Mode, allergies, and macro targets.'
+          desc: 'Choose Healthy, Balanced, or Yummy—or tap the sliders icon for Pure Health Mode and dietary filters.'
         }
       ];
     }

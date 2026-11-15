@@ -139,7 +139,8 @@ def api_recommend():
         raw_intensity = str(data.get('health_intensity', 'High')).strip() or 'High'
         health_intensity = 'Extreme' if pure_health_mode else raw_intensity
 
-        dri_enabled = bool(data.get('dri_enabled', False))
+        # Tailor Plates to My Goals (DRI) is disabled for public release
+        dri_enabled = False
         meal_goal = str(data.get('meal_goal', 'Balanced Maintenance')).strip() or 'Balanced Maintenance'
 
         raw_filters = data.get('dietary_filters') or []
