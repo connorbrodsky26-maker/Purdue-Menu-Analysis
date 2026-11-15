@@ -1891,12 +1891,13 @@
       align-items: center;
       justify-content: center;
       opacity: 1;
-      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      visibility: visible;
+      transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.75s ease;
       overflow: hidden;
       user-select: none;
-      /* Guaranteed automatic CSS fade out after 2.0s even if JavaScript execution is delayed */
-      animation: autoDismissIntroOverlay 0.45s cubic-bezier(0.4, 0, 0.2, 1) 2.0s forwards;
       pointer-events: auto;
+      /* Guaranteed automatic CSS fade out safety net at 5.5s */
+      animation: autoDismissIntroOverlay 0.75s cubic-bezier(0.4, 0, 0.2, 1) 5.5s forwards;
     }
 
     @keyframes autoDismissIntroOverlay {
@@ -1918,10 +1919,14 @@
       }
     }
 
-    .feast-intro-overlay.dismissed {
+    .feast-intro-overlay.fading-out {
       opacity: 0 !important;
       pointer-events: none !important;
-      visibility: hidden !important;
+      visibility: hidden;
+      transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.75s ease !important;
+    }
+
+    .feast-intro-overlay.dismissed {
       display: none !important;
     }
 
@@ -2758,8 +2763,9 @@
     let initialMealsLoaded = false;
     let introHasDismissed = false;
 
-    // Adequate time (2.0s) for letters (0.06s-0.7s), leaf uncurl (0.8s-1.45s), and tagline fade (1.15s-1.65s) to complete smoothly
-    const MIN_INTRO_DISPLAY_MS = 2000;
+    // Ample time (2.8s) for letters (0.06s-0.7s), leaf uncurl (0.8s-1.45s), and tagline fade (1.15s-1.65s) plus viewing time
+    const MIN_INTRO_DISPLAY_MS = 2800;
+    const MAX_INTRO_SAFETY_TIMEOUT_MS = 5500;
 
     function dismissFeastIntro() {
       if (introHasDismissed) return;
@@ -2770,12 +2776,13 @@
       document.documentElement.style.overflow = '';
       const overlay = document.getElementById('feastIntroOverlay');
       if (overlay) {
-        overlay.classList.add('dismissed');
+        overlay.classList.add('fading-out');
         setTimeout(() => {
+          overlay.classList.add('dismissed');
           try { overlay.remove(); } catch (e) {}
-        }, 300);
+        }, 800);
       }
-      setTimeout(maybeShowFirstVisitModal, 350);
+      setTimeout(maybeShowFirstVisitModal, 850);
     }
 
     function notifyMealsLoaded() {
@@ -2785,13 +2792,21 @@
       }
     }
 
-    // Guaranteed automatic dismissal timer at 2.0s:
-    // If meals finished loading earlier, it fades out smoothly now.
-    // If meals take longer over network / cold-start, it still dismisses at 2.0s to reveal the progress bar and cards!
+    // After 2.8s, if meals are already loaded, fade out smoothly.
+    // If not loaded yet, mark introMinTimeElapsed so notifyMealsLoaded will fade out the moment they finish.
     setTimeout(() => {
       introMinTimeElapsed = true;
-      dismissFeastIntro();
+      if (initialMealsLoaded) {
+        dismissFeastIntro();
+      }
     }, MIN_INTRO_DISPLAY_MS);
+
+    // Guaranteed fallback: dismiss at 5.5s even if network stalls
+    setTimeout(() => {
+      if (!introHasDismissed) {
+        dismissFeastIntro();
+      }
+    }, MAX_INTRO_SAFETY_TIMEOUT_MS);
 
     // Tap fallback & scroll prevention on intro overlay
     const introOverlayEl = document.getElementById('feastIntroOverlay');
