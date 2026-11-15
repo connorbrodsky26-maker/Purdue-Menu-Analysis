@@ -1,5 +1,6 @@
 import os
 import json
+import threading
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import requests as rq
@@ -11,6 +12,18 @@ app = Flask(__name__)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 FEEDBACK_FILE = os.path.join(BASE_DIR, 'feast_feedback.json')
 PURDUE_TZ = ZoneInfo("America/Indiana/Indianapolis")
+
+
+def _prewarm_menus_cache():
+    """Warms the daily menu cache in the background upon server boot to eliminate user wait time."""
+    try:
+        recommend_meals(health_intensity='High')
+    except Exception:
+        pass
+
+
+# Launch background cache warming on server boot
+threading.Thread(target=_prewarm_menus_cache, daemon=True).start()
 
 # Brand logo 512x512 square icon SVG with #F7F3EE solid background and generous padding (safe zone)
 FEAST_FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">

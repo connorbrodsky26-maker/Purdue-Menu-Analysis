@@ -1034,23 +1034,35 @@ def hydrate_missing_macros(items: list[dict], inject_permanent_staples: bool = F
 
 
 _thread_local = threading.local()
+_GLOBAL_ITEM_DETAIL_CACHE: dict[str, dict] = {}
+_DETAIL_CACHE_LOCK = threading.Lock()
 
 
 def _get_thread_session() -> rq.Session:
     if not hasattr(_thread_local, 'session'):
         session = rq.Session()
         session.headers.update({'Accept': 'application/json'})
+        adapter = rq.adapters.HTTPAdapter(pool_connections=25, pool_maxsize=25, max_retries=2)
+        session.mount('https://', adapter)
+        session.mount('http://', adapter)
         _thread_local.session = session
     return _thread_local.session
 
 
 def _fetch_single_item_detail(item_id: str) -> tuple[str, Optional[dict]]:
+    with _DETAIL_CACHE_LOCK:
+        if item_id in _GLOBAL_ITEM_DETAIL_CACHE:
+            return item_id, _GLOBAL_ITEM_DETAIL_CACHE[item_id]
+
     detail_url = f'https://api.hfs.purdue.edu/menus/v2/items/{item_id}'
     session = _get_thread_session()
     try:
-        res = session.get(detail_url, timeout=10)
+        res = session.get(detail_url, timeout=8)
         if res.status_code == 200:
-            return item_id, res.json()
+            data = res.json()
+            with _DETAIL_CACHE_LOCK:
+                _GLOBAL_ITEM_DETAIL_CACHE[item_id] = data
+            return item_id, data
     except (rq.exceptions.RequestException, ValueError):
         pass
     return item_id, None
@@ -1062,7 +1074,7 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
     session = _get_thread_session()
 
     try:
-        response = session.get(url, timeout=15)
+        response = session.get(url, timeout=12)
         response.raise_for_status()
         data = response.json()
     except (rq.exceptions.RequestException, ValueError):
@@ -1080,11 +1092,17 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                     unique_item_ids.add(item_id)
 
     details_by_id: dict[str, dict] = {}
-    if unique_item_ids:
-        with ThreadPoolExecutor(max_workers=12) as executor:
+    with _DETAIL_CACHE_LOCK:
+        for iid in unique_item_ids:
+            if iid in _GLOBAL_ITEM_DETAIL_CACHE:
+                details_by_id[iid] = _GLOBAL_ITEM_DETAIL_CACHE[iid]
+
+    needed_ids = [iid for iid in unique_item_ids if iid not in details_by_id]
+    if needed_ids:
+        with ThreadPoolExecutor(max_workers=min(16, len(needed_ids))) as executor:
             futures = [
                 executor.submit(_fetch_single_item_detail, iid)
-                for iid in unique_item_ids
+                for iid in needed_ids
             ]
             for future in as_completed(futures):
                 iid, detail_data = future.result()
