@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#F7F3EE" />
+  <title>Feast — Feedback Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=6" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=6" />
+  <style>
+    :root {
+      --bg: #F7F3EE;
+      --surface: #FFFFFF;
+      --surface-alt: #EFECE6;
+      --border: #E2DDD4;
+      --text: #1E1B18;
+      --text-muted: #6E665D;
+      --terracotta: #C84B31;
+      --leaf: #1D8A5A;
+      --amber: #D97706;
+      --red: #DC2626;
+      --radius-card: 20px;
+      --radius-pill: 999px;
+      --shadow-sm: 0 3px 12px rgba(30, 27, 24, 0.05);
+      --shadow-md: 0 8px 24px rgba(30, 27, 24, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(247, 243, 238, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .feast-wordmark-svg {
+      height: 38px;
+      width: auto;
+      display: block;
+    }
+
+    .badge-admin {
+      background: rgba(200, 75, 49, 0.12);
+      color: var(--terracotta);
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.28rem 0.65rem;
+      border-radius: var(--radius-pill);
+    }
+
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.48rem 0.95rem;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-link:hover {
+      background: var(--surface-alt);
+      border-color: #D3CDC2;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem;
+    }
+
+    /* Auth card if locked */
+    .auth-card {
+      max-width: 440px;
+      margin: 4rem auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 2rem 1.75rem;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+
+    .auth-card h2 {
+      font-size: 1.35rem;
+      font-weight: 850;
+      margin-bottom: 0.4rem;
+    }
+
+    .auth-card p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .auth-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      text-align: left;
+    }
+
+    .auth-input-group label {
+      font-size: 0.8rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .auth-input-group input {
+      width: 100%;
+      padding: 0.75rem 0.95rem;
+      font-size: 0.95rem;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .auth-input-group input:focus {
+      border-color: var(--terracotta);
+      background: #FFFFFF;
+    }
+
+    .btn-primary {
+      background: var(--terracotta);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 0.75rem 1.5rem;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 14px rgba(200, 75, 49, 0.28);
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+    }
+
+    .auth-error {
+      margin-top: 0.75rem;
+      color: var(--red);
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: none;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-view {
+      display: none;
+    }
+
+    .dashboard-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dash-title-wrap h1 {
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .dash-title-wrap p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.15rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-label {
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat-card.c-total .stat-value { color: var(--text); }
+    .stat-card.c-idea .stat-value { color: var(--amber); }
+    .stat-card.c-meal .stat-value { color: var(--leaf); }
+    .stat-card.c-bug .stat-value { color: var(--red); }
+
+    /* Controls Bar */
+    .controls-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .filter-pill {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text-muted);
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 750;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-pill.active {
+      background: var(--text);
+      color: #FFFFFF;
+      border-color: var(--text);
+    }
+
+    .actions-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-action {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 750;
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-action:hover {
+      background: #E5E0D6;
+    }
+
+    .btn-action.btn-danger {
+      color: var(--red);
+      border-color: rgba(220, 38, 38, 0.2);
+    }
+
+    .btn-action.btn-danger:hover {
+      background: rgba(220, 38, 38, 0.08);
+    }
+
+    /* Feedback List */
+    .feedback-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .feedback-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .feedback-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .card-meta-left {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    .cat-badge {
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-pill);
+    }
+
+    .cat-badge.idea {
+      background: rgba(217, 119, 6, 0.12);
+      color: var(--amber);
+    }
+
+    .cat-badge.meal {
+      background: rgba(29, 138, 90, 0.12);
+      color: var(--leaf);
+    }
+
+    .cat-badge.bug {
+      background: rgba(220, 38, 38, 0.12);
+      color: var(--red);
+    }
+
+    .cat-badge.general {
+      background: rgba(110, 102, 93, 0.12);
+      color: var(--text-muted);
+    }
+
+    .contact-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-pill);
+    }
+
+    .card-time {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .card-message {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1.5rem;
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-card);
+    }
+
+    .empty-state h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+    }
+
+    .empty-state p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      max-width: 420px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="/" class="brand-wrap" aria-label="Feast Home">
+        <svg class="feast-wordmark-svg" viewBox="50 15 840 390" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Feast">
+          <path d="M 74.0 140.7 L 218.0 141.0 L 224.1 144.0 L 223.0 194.2 L 152.0 195.5 L 147.0 198.2 L 147.0 239.0 L 215.0 241.4 L 217.2 246.0 L 217.5 282.0 L 216.1 293.0 L 212.0 296.3 L 147.0 298.0 L 147.0 378.0 L 143.0 383.5 L 74.0 383.5 L 74.0 380.0 L 74.0 350.0 L 74.0 290.0 L 74.0 159.0 L 74.0 144.0 L 74.0 140.7 Z" fill="#C84B31"/>
+          <path d="M 314.5 205.8 L 331.8 206.1 L 346.0 208.0 L 357.6 211.6 L 362.9 214.3 L 372.4 221.3 L 380.6 230.2 L 387.4 240.8 L 392.8 253.2 L 396.7 267.8 L 398.1 275.2 L 399.5 289.9 L 399.0 307.6 L 397.9 312.6 L 396.3 314.1 L 390.3 316.1 L 377.7 317.0 L 307.8 317.0 L 302.3 317.4 L 300.2 319.6 L 301.1 321.6 L 302.5 323.0 L 312.0 330.0 L 320.8 334.2 L 330.5 336.7 L 339.0 338.0 L 345.5 338.2 L 371.9 334.2 L 378.5 335.5 L 383.1 339.7 L 385.6 346.8 L 386.0 364.8 L 385.2 374.2 L 384.3 375.7 L 377.8 378.9 L 358.2 383.8 L 342.1 385.9 L 327.9 385.7 L 307.5 384.3 L 290.6 382.2 L 284.6 380.9 L 276.1 377.6 L 267.6 373.1 L 259.4 367.5 L 252.1 361.3 L 245.8 354.4 L 240.3 346.6 L 233.6 332.4 L 230.2 320.4 L 228.1 309.2 L 227.4 299.8 L 228.1 289.6 L 230.0 278.0 L 232.8 267.1 L 236.5 257.8 L 244.0 244.2 L 250.3 235.6 L 257.1 228.2 L 267.9 219.3 L 275.4 214.7 L 283.8 210.9 L 293.5 208.0 L 299.5 206.9 L 314.5 205.8 Z M 315.8 248.6 L 312.8 249.9 L 309.8 252.2 L 305.4 258.1 L 301.0 269.5 L 300.7 273.4 L 301.8 275.8 L 304.0 276.9 L 310.9 277.4 L 329.0 277.4 L 336.5 276.7 L 338.4 273.9 L 338.5 270.2 L 335.5 260.0 L 332.5 254.1 L 329.4 250.9 L 325.7 249.1 L 321.4 248.3 L 315.8 248.6 Z" fill="#C84B31" fill-rule="evenodd"/>
+          <path d="M 492.6 205.2 L 507.6 205.9 L 520.6 207.9 L 526.4 209.5 L 536.8 213.7 L 545.6 219.4 L 553.2 226.7 L 559.5 235.6 L 564.2 244.7 L 567.2 253.5 L 569.5 264.9 L 571.7 280.0 L 572.4 291.4 L 572.7 345.8 L 572.0 373.5 L 571.5 379.7 L 570.9 380.9 L 558.9 382.4 L 547.5 382.8 L 521.0 382.9 L 508.7 382.0 L 507.1 379.7 L 506.5 377.4 L 505.4 367.6 L 503.9 363.0 L 500.5 364.5 L 486.9 376.0 L 474.9 382.6 L 466.2 385.0 L 461.8 385.6 L 453.3 386.1 L 445.6 385.8 L 431.8 381.8 L 421.5 376.7 L 414.0 370.6 L 411.3 367.2 L 406.9 359.5 L 403.8 350.8 L 402.1 341.4 L 401.7 331.5 L 403.2 318.0 L 405.4 310.1 L 409.0 302.8 L 413.6 296.0 L 418.8 290.3 L 424.8 285.4 L 431.6 281.1 L 443.6 275.9 L 458.8 272.4 L 496.8 267.9 L 500.3 267.0 L 501.9 266.2 L 502.5 265.0 L 501.1 261.1 L 496.4 256.3 L 489.2 252.7 L 479.6 250.8 L 473.9 250.7 L 460.5 252.4 L 424.7 261.1 L 420.5 261.3 L 418.1 260.5 L 417.1 255.2 L 417.1 242.9 L 418.0 227.4 L 419.2 219.8 L 421.5 217.9 L 431.0 213.8 L 444.2 210.6 L 474.7 206.2 L 492.6 205.2 Z M 493.9 303.1 L 484.9 304.7 L 477.9 306.8 L 472.8 309.3 L 469.4 312.1 L 466.7 316.5 L 465.7 322.2 L 466.6 329.5 L 467.9 332.2 L 469.2 333.4 L 476.5 336.7 L 483.6 337.7 L 490.5 335.3 L 495.4 331.5 L 498.4 327.4 L 501.3 321.4 L 504.0 313.4 L 505.7 305.5 L 504.5 303.1 L 502.6 302.3 L 493.9 303.1 Z" fill="#C84B31" fill-rule="evenodd"/>
+          <path d="M 673.5 204.7 L 687.1 206.0 L 699.2 207.9 L 709.1 210.2 L 714.9 212.9 L 715.8 219.6 L 715.7 233.4 L 715.0 245.3 L 713.9 252.6 L 710.9 254.4 L 705.5 255.0 L 697.6 254.3 L 678.9 251.2 L 667.4 250.8 L 659.7 253.9 L 658.2 255.2 L 656.7 258.3 L 656.8 259.8 L 658.4 262.9 L 661.7 265.1 L 693.6 280.3 L 706.4 287.7 L 714.2 294.1 L 719.0 299.8 L 721.6 305.2 L 723.8 312.4 L 725.3 321.5 L 725.2 327.0 L 723.0 339.8 L 720.0 350.2 L 718.4 353.9 L 711.8 362.2 L 698.4 373.4 L 689.0 378.5 L 676.1 383.0 L 661.2 384.9 L 628.0 385.0 L 609.0 383.1 L 590.4 378.7 L 587.7 377.3 L 586.8 376.0 L 585.7 367.0 L 585.9 336.5 L 586.2 333.1 L 587.9 330.1 L 589.6 329.4 L 592.8 329.9 L 624.8 337.4 L 638.9 338.7 L 653.9 336.4 L 657.1 334.3 L 658.5 331.4 L 658.0 329.1 L 656.4 326.6 L 651.8 322.8 L 624.0 311.0 L 608.4 303.2 L 602.9 299.4 L 595.3 291.4 L 589.6 281.8 L 586.1 271.5 L 584.7 264.2 L 586.1 255.1 L 590.6 241.5 L 595.7 232.6 L 602.2 224.6 L 609.4 218.2 L 617.6 213.5 L 627.1 209.7 L 643.0 205.9 L 660.4 204.4 L 673.5 204.7 Z" fill="#C84B31"/>
+          <path d="M 815.9 174.8 L 819.1 175.0 L 820.4 176.0 L 822.9 196.5 L 825.3 202.5 L 829.4 206.6 L 835.2 208.8 L 855.3 210.6 L 857.0 211.8 L 858.1 214.5 L 857.6 241.6 L 856.2 254.9 L 855.2 257.9 L 847.3 259.3 L 829.8 260.1 L 826.0 260.9 L 823.7 262.1 L 822.2 267.2 L 821.5 280.2 L 821.7 298.1 L 822.7 311.5 L 824.9 323.9 L 826.6 327.8 L 829.7 331.1 L 833.3 332.3 L 850.3 331.5 L 856.2 332.2 L 856.9 335.3 L 857.8 349.1 L 857.3 377.5 L 855.4 380.1 L 853.5 381.2 L 831.4 384.8 L 823.1 385.4 L 806.6 385.0 L 798.4 384.1 L 785.4 381.4 L 780.8 379.8 L 774.1 375.9 L 768.6 371.5 L 764.1 366.2 L 757.1 353.4 L 753.6 344.8 L 751.8 337.9 L 750.8 320.5 L 750.0 275.1 L 748.6 260.8 L 747.6 260.1 L 742.7 259.1 L 730.3 258.5 L 725.7 256.7 L 724.8 255.2 L 723.8 245.7 L 724.0 219.5 L 725.1 211.2 L 731.1 209.6 L 741.2 208.7 L 745.6 206.6 L 748.8 203.0 L 750.6 197.8 L 751.2 191.0 L 755.5 185.5 L 763.5 181.4 L 775.2 178.6 L 815.9 174.8 Z" fill="#C84B31"/>
+          <path d="M 858.8 32.6 L 863.3 32.4 L 865.9 33.2 L 866.5 33.9 L 866.8 37.1 L 866.1 61.2 L 865.2 70.9 L 862.5 87.9 L 858.1 102.2 L 851.4 115.9 L 843.1 128.3 L 835.0 137.4 L 826.4 143.9 L 815.6 150.0 L 809.4 152.8 L 795.4 157.2 L 779.4 159.8 L 767.4 160.5 L 761.5 159.3 L 760.2 157.6 L 759.8 155.2 L 761.8 148.0 L 765.7 139.8 L 771.2 131.4 L 782.6 119.9 L 809.1 97.7 L 818.5 89.0 L 819.9 86.9 L 818.1 87.3 L 804.8 95.0 L 793.2 102.4 L 776.0 114.8 L 770.2 119.7 L 762.4 128.6 L 749.6 146.6 L 746.2 150.1 L 743.6 150.5 L 742.1 147.7 L 741.4 141.8 L 741.5 129.2 L 743.4 115.5 L 746.3 103.0 L 749.9 92.5 L 754.4 83.2 L 759.7 75.0 L 766.8 67.0 L 776.0 59.0 L 785.2 52.4 L 793.7 47.6 L 799.2 45.4 L 813.9 40.7 L 831.2 36.4 L 843.8 34.0 L 858.8 32.6 Z" fill="#1D8A5A"/>
+        </svg>
+      </a>
+      <span class="badge-admin">Creator Hub</span>
+
+      <div class="header-links">
+        <a href="/" class="btn-link">← Back to Feast</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Auth Card -->
+    <div class="auth-card" id="authCard">
+      <h2>Feedback Access</h2>
+      <p>Enter the creator access key to inspect student feedback and bug reports.</p>
+      <form id="authForm" onsubmit="handleAuthSubmit(event)">
+        <div class="auth-input-group">
+          <label for="adminKeyInput">Access Key</label>
+          <input type="password" id="adminKeyInput" placeholder="Enter key (default: feast)" value="feast" autocomplete="current-password" required />
+        </div>
+        <div style="margin-top: 1.25rem;">
+          <button type="submit" class="btn-primary" id="authBtn">Unlock Feedback</button>
+        </div>
+        <div class="auth-error" id="authError">Incorrect access key. Please check and try again.</div>
+      </form>
+    </div>
+
+    <!-- Dashboard View -->
+    <div class="dashboard-view" id="dashboardView">
+      <div class="dashboard-header">
+        <div class="dash-title-wrap">
+          <h1>Student Feedback</h1>
+          <p>Real-time suggestions, meal feedback, and bug reports from Feast users.</p>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card c-total">
+          <div class="stat-label">Total Notes</div>
+          <div class="stat-value" id="statTotal">0</div>
+        </div>
+        <div class="stat-card c-idea">
+          <div class="stat-label">Feature Ideas</div>
+          <div class="stat-value" id="statIdea">0</div>
+        </div>
+        <div class="stat-card c-meal">
+          <div class="stat-label">Meal Suggestions</div>
+          <div class="stat-value" id="statMeal">0</div>
+        </div>
+        <div class="stat-card c-bug">
+          <div class="stat-label">Bug Reports</div>
+          <div class="stat-value" id="statBug">0</div>
+        </div>
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="controls-bar">
+        <div class="filter-pills" id="filterPills">
+          <button type="button" class="filter-pill active" onclick="setFilter('ALL')">All</button>
+          <button type="button" class="filter-pill" onclick="setFilter('Feature Idea')">Feature Ideas</button>
+          <button type="button" class="filter-pill" onclick="setFilter('Meal Suggestion')">Meal Suggestions</button>
+          <button type="button" class="filter-pill" onclick="setFilter('Bug Report')">Bug Reports</button>
+        </div>
+
+        <div class="actions-group">
+          <button type="button" class="btn-action" onclick="fetchFeedback()">&#x21bb; Refresh</button>
+          <button type="button" class="btn-action" onclick="exportJson()">Export JSON</button>
+          <button type="button" class="btn-action btn-danger" onclick="confirmClearFeedback()">Clear All</button>
+        </div>
+      </div>
+
+      <!-- Feedback Cards List -->
+      <div class="feedback-list" id="feedbackList"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentKey = '';
+    let allEntries = [];
+    let currentFilter = 'ALL';
+
+    function getInitialKey() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlKey = urlParams.get('key');
+      if (urlKey) return urlKey;
+      return localStorage.getItem('feast_admin_key') || 'feast';
+    }
+
+    async function tryUnlock(keyToTry) {
+      if (!keyToTry) return false;
+      try {
+        const res = await fetch('/api/feedback?key=' + encodeURIComponent(keyToTry));
+        if (res.ok) {
+          const data = await res.json();
+          currentKey = keyToTry;
+          localStorage.setItem('feast_admin_key', currentKey);
+          document.getElementById('authCard').style.display = 'none';
+          document.getElementById('dashboardView').style.display = 'block';
+          renderFeedbackData(data);
+          return true;
+        } else {
+          return false;
+        }
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('adminKeyInput').value.trim();
+      const errorEl = document.getElementById('authError');
+      const btn = document.getElementById('authBtn');
+      btn.textContent = 'Checking...';
+      btn.disabled = true;
+      errorEl.style.display = 'none';
+
+      const success = await tryUnlock(input);
+      btn.textContent = 'Unlock Feedback';
+      btn.disabled = false;
+
+      if (!success) {
+        errorEl.style.display = 'block';
+      }
+    }
+
+    async function fetchFeedback() {
+      if (!currentKey) return;
+      try {
+        const res = await fetch('/api/feedback?key=' + encodeURIComponent(currentKey));
+        if (res.ok) {
+          const data = await res.json();
+          renderFeedbackData(data);
+        } else if (res.status === 401) {
+          localStorage.removeItem('feast_admin_key');
+          document.getElementById('dashboardView').style.display = 'none';
+          document.getElementById('authCard').style.display = 'block';
+        }
+      } catch (err) {
+        console.error('Fetch error:', err);
+      }
+    }
+
+    function renderFeedbackData(data) {
+      allEntries = data.entries || [];
+      
+      // Update statistics
+      let ideas = 0;
+      let meals = 0;
+      let bugs = 0;
+      allEntries.forEach(e => {
+        const cat = (e.category || '').toLowerCase();
+        if (cat.includes('idea')) ideas++;
+        else if (cat.includes('meal')) meals++;
+        else if (cat.includes('bug')) bugs++;
+      });
+
+      document.getElementById('statTotal').textContent = allEntries.length;
+      document.getElementById('statIdea').textContent = ideas;
+      document.getElementById('statMeal').textContent = meals;
+      document.getElementById('statBug').textContent = bugs;
+
+      renderList();
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      const pills = document.querySelectorAll('.filter-pill');
+      pills.forEach(p => {
+        if (p.textContent.includes(filter) || (filter === 'ALL' && p.textContent === 'All')) {
+          p.classList.add('active');
+        } else {
+          p.classList.remove('active');
+        }
+      });
+      renderList();
+    }
+
+    function renderList() {
+      const listEl = document.getElementById('feedbackList');
+      listEl.innerHTML = '';
+
+      const filtered = allEntries.filter(e => {
+        if (currentFilter === 'ALL') return true;
+        return (e.category || '').toLowerCase() === currentFilter.toLowerCase();
+      });
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div class="empty-state">
+            <h3>No feedback yet</h3>
+            <p>Notes sent through the Feast app drawer will show up right here in real time.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(entry => {
+        const card = document.createElement('div');
+        card.className = 'feedback-card';
+
+        let badgeClass = 'general';
+        const catLower = (entry.category || '').toLowerCase();
+        if (catLower.includes('idea')) badgeClass = 'idea';
+        else if (catLower.includes('meal')) badgeClass = 'meal';
+        else if (catLower.includes('bug')) badgeClass = 'bug';
+
+        const contactText = entry.contact ? `From: ${escapeHtml(entry.contact)}` : 'Anonymous';
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="card-meta-left">
+              <span class="cat-badge ${badgeClass}">${escapeHtml(entry.category || 'Feedback')}</span>
+              <span class="contact-badge">${contactText}</span>
+            </div>
+            <div class="card-time">${escapeHtml(entry.timestamp || '')}</div>
+          </div>
+          <div class="card-message">${escapeHtml(entry.message || '')}</div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function exportJson() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allEntries, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `feast_feedback_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    async function confirmClearFeedback() {
+      if (!confirm("Are you sure you want to clear all feedback entries? This cannot be undone.")) return;
+      try {
+        const res = await fetch('/api/feedback/clear', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: currentKey })
+        });
+        if (res.ok) {
+          fetchFeedback();
+        } else {
+          alert('Could not clear feedback.');
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Auto-attempt unlock on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const candidateKey = getInitialKey();
+      if (candidateKey) {
+        tryUnlock(candidateKey);
+      }
+    });
+
+    // Auto refresh every 45 seconds if tab is active
+    setInterval(() => {
+      if (!document.hidden && currentKey) {
+        fetchFeedback();
+      }
+    }, 45000);
+  </script>
+</body>
+</html>

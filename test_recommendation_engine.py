@@ -509,6 +509,26 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         combo_score = compute_combo_yummy_score(slots)
         self.assertEqual(combo_score, 100.0)
 
+    def test_feedback_dashboard_and_api(self):
+        from app import app
+        client = app.test_client()
+
+        # Feedback dashboard page loads 200
+        resp = client.get('/feedback')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Feedback Dashboard', resp.get_data(as_text=True))
+
+        # Unauthorized access without key or wrong key
+        unauth = client.get('/api/feedback?key=wrongkey')
+        self.assertEqual(unauth.status_code, 401)
+
+        # Authorized access with default key 'feast'
+        auth_resp = client.get('/api/feedback?key=feast')
+        self.assertEqual(auth_resp.status_code, 200)
+        data = auth_resp.get_json()
+        self.assertIn('count', data)
+        self.assertIn('entries', data)
+
 
 if __name__ == '__main__':
     unittest.main()

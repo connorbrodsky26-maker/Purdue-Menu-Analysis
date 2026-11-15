@@ -255,23 +255,52 @@ def api_feedback():
     return jsonify({'ok': True, 'message': 'Thanks for helping shape Feast!'})
 
 
+DEFAULT_ADMIN_KEY = 'feast'
+
+
+@app.route('/feedback')
+def feedback_dashboard():
+    """Serves the Feast creator feedback dashboard."""
+    return render_template('feedback.html')
+
+
 @app.route('/api/feedback', methods=['GET'])
 def api_get_feedback():
     """Allows the creator to view submitted feedback entries with admin authorization."""
-    admin_key = os.environ.get('ADMIN_KEY') or os.environ.get('FEEDBACK_ADMIN_KEY')
+    admin_key = os.environ.get('ADMIN_KEY') or os.environ.get('FEEDBACK_ADMIN_KEY') or DEFAULT_ADMIN_KEY
     provided_key = request.headers.get('X-Admin-Key') or request.args.get('key')
 
-    if not admin_key or provided_key != admin_key:
-        return jsonify({'error': 'Unauthorized access.'}), 401
+    if not provided_key or provided_key != admin_key:
+        return jsonify({'error': 'Unauthorized access. Provide key parameter or X-Admin-Key header.'}), 401
 
     if not os.path.exists(FEEDBACK_FILE):
         return jsonify({'count': 0, 'entries': []})
     try:
         with open(FEEDBACK_FILE, 'r', encoding='utf-8') as f:
             entries = json.load(f)
+        if not isinstance(entries, list):
+            entries = []
         return jsonify({'count': len(entries), 'entries': list(reversed(entries))})
     except (OSError, ValueError):
         return jsonify({'count': 0, 'entries': []})
+
+
+@app.route('/api/feedback/clear', methods=['POST'])
+def api_clear_feedback():
+    """Allows authorized admin to clear feedback entries."""
+    admin_key = os.environ.get('ADMIN_KEY') or os.environ.get('FEEDBACK_ADMIN_KEY') or DEFAULT_ADMIN_KEY
+    data = request.get_json(silent=True) or {}
+    provided_key = request.headers.get('X-Admin-Key') or request.args.get('key') or data.get('key')
+
+    if not provided_key or provided_key != admin_key:
+        return jsonify({'error': 'Unauthorized access.'}), 401
+
+    try:
+        with open(FEEDBACK_FILE, 'w', encoding='utf-8') as f:
+            json.dump([], f, indent=2)
+        return jsonify({'ok': True, 'count': 0})
+    except OSError as err:
+        return jsonify({'error': str(err)}), 500
 
 
 if __name__ == '__main__':
