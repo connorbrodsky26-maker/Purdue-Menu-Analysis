@@ -1719,9 +1719,12 @@ def _is_dip_or_condiment(item: dict) -> bool:
 
 def _is_added_oil_or_fat(item: dict) -> bool:
     name_lower = (item.get('name') or '').lower().strip()
-    if any(w in name_lower for w in ['chicken', 'beef', 'steak', 'salmon', 'egg', 'rice', 'broccoli', 'spinach', 'salad']):
+    clean_name = re.sub(r'\(salad bar\)', '', name_lower).strip()
+    if 'olive oil' in clean_name or 'extra virgin olive oil' in clean_name or 'butter' in clean_name:
+        return True
+    if any(w in clean_name for w in ['chicken', 'beef', 'steak', 'salmon', 'egg', 'rice', 'broccoli', 'spinach', 'salad']):
         return False
-    return any(re.search(rf'\b{re.escape(kw)}s?\b', name_lower) for kw in ADDED_OIL_FAT_KEYWORDS)
+    return any(re.search(rf'\b{re.escape(kw)}s?\b', clean_name) for kw in ADDED_OIL_FAT_KEYWORDS)
 
 
 def _is_standalone_bakery(item: dict) -> bool:
@@ -2380,7 +2383,7 @@ def evaluate_culinary_compatibility(
     roles = [it['_role'] for it in items]
     names_lower = [it['name'].lower() for it in items]
 
-    if any(r == 'condiment' for r in roles):
+    if any(r == 'condiment' and not (_is_added_oil_or_fat(it) or 'oil' in it['name'].lower() or 'dressing' in it['name'].lower() or 'vinegar' in it['name'].lower()) for it, r in zip(items, roles)):
         return False, 0.0, ['Rejected: standalone condiment cannot serve as a meal component']
 
     complete_roles = {'sandwich', 'complete_entree', 'pasta_entree', 'bowl', 'breakfast_entree'}
@@ -2443,10 +2446,10 @@ def evaluate_culinary_compatibility(
 
     joined_names = ' | '.join(names_lower)
     classic_pairings = [
-        (['teriyaki', 'orange chicken', 'general tso', 'stir fry', 'bulgogi', 'curry', 'tikka'], ['jasmine rice', 'white rice', 'brown rice', 'basmati rice', 'rice'], 16.0, 'Classic Asian protein & steamed rice pairing'),
+        (['teriyaki', 'orange chicken', 'general tso', 'stir fry', 'bulgogi', 'curry', 'tikka', 'chole', 'masala'], ['jasmine rice', 'white rice', 'brown rice', 'basmati rice', 'rice', 'couscous'], 16.0, 'Classic Asian protein & steamed rice pairing'),
         (['chicken parmesan', 'meatball', 'italian chicken', 'bolognese', 'marinara'], ['pasta', 'spaghetti', 'penne', 'fettuccine', 'broccoli', 'green beans'], 15.0, 'Classic Italian entree pairing'),
         (['taco', 'carnitas', 'barbacoa', 'carne asada', 'fajita', 'chorizo'], ['spanish rice', 'mexican rice', 'cilantro lime', 'black bean', 'pinto bean'], 16.0, 'Traditional Latin plate pairing'),
-        (['grilled chicken', 'steak', 'salmon', 'pork loin', 'turkey'], ['roasted potato', 'sweet potato', 'mashed potato', 'quinoa', 'asparagus', 'broccoli', 'green beans', 'pasta salad', 'potato salad'], 14.0, 'Classic grill & vegetable/starch balance'),
+        (['chicken drumstick', 'drumstick', 'bbq chicken', 'grilled chicken', 'chicken breast', 'chicken', 'steak', 'salmon', 'pork loin', 'turkey'], ['rice', 'long grain rice', 'brown rice', 'white rice', 'roasted potato', 'sweet potato', 'mashed potato', 'quinoa', 'asparagus', 'broccoli', 'green beans', 'pasta salad', 'potato salad'], 16.0, 'Classic roasted protein & starch/vegetable plate'),
         (['gyro', 'shawarma', 'lemon herb', 'mediterranean', 'greek'], ['couscous', 'quinoa', 'chickpea', 'garbanzo', 'greek salad'], 15.0, 'Mediterranean flavor pairing'),
         (['burger', 'cheeseburger', 'sandwich', 'panini', 'wrap'], ['fruit', 'apple', 'berries', 'watermelon', 'broccoli', 'salad', 'sweet potato'], 12.0, 'Balanced sandwich/burger & crisp side'),
         (['scrambled', 'omelet', 'frittata', 'pancake', 'waffle', 'egg', 'eggs', 'hard cooked', 'hard boiled'], ['bacon', 'sausage', 'fruit', 'berries', 'banana', 'oatmeal', 'kiwi', 'blueberry', 'blueberries'], 14.0, 'Classic breakfast pairing'),
@@ -3349,6 +3352,29 @@ def build_optimal_plates(
                 [c['raw_nutrition_score'] for c in raw_scored_candidates], floor=55.0, ceiling=98.0
             )
 
+        # Check if the hall has any candidate featuring a hot line or specialty entree (not an all-staple salad bowl)
+        def _is_all_staple_salad(slots_items: list[dict]) -> bool:
+            return all(
+                (it.get('is_staple') or 'salad' in (it.get('station') or '').lower() or '(salad bar)' in it.get('name', '').lower())
+                for it in slots_items
+            ) and any(k in slots_items[0]['name'].lower() for k in ('hard boiled egg', 'hard cooked egg', 'garbanzo', 'cottage cheese', 'spinach', 'romaine'))
+
+        def _is_hot_court_entree(anchor_it: dict, slots_items: list[dict]) -> bool:
+            if _is_all_staple_salad(slots_items):
+                return False
+            role = anchor_it.get('_role')
+            st_low = (anchor_it.get('station') or '').lower()
+            return (
+                role in ('protein_entree', 'complete_entree', 'sandwich')
+                or 'safebytes' in st_low
+                or anchor_it.get('protein', 0.0) >= 15.0
+            ) and not any(s in anchor_it['name'].lower() for s in ('salad bar', 'garbanzo', 'hard boiled egg'))
+
+        has_featured_hot_entree = any(
+            _is_hot_court_entree(c['slots'][0][1], [it for _, it in c['slots']])
+            for c in raw_scored_candidates
+        )
+
         scored_candidates = []
         for cand, norm_nut in zip(raw_scored_candidates, norm_nutritions):
             slots = cand['slots']
@@ -3369,6 +3395,16 @@ def build_optimal_plates(
                 )
 
             anchor_item = slots[0][1]
+            slot_item_objs = [it for _, it in slots]
+            is_generic_salad = _is_all_staple_salad(slot_item_objs)
+            is_featured = _is_hot_court_entree(anchor_item, slot_item_objs)
+
+            # Prioritize dining-hall-unique hot entrees over generic salad bar staple bowls
+            if tier_key != 'extreme' and has_featured_hot_entree:
+                if is_featured:
+                    weighted_total += 7.0
+                elif is_generic_salad:
+                    weighted_total -= 6.0
             meta = {
                 'item_names': {it['name'] for _, it in slots},
                 'anchor_name': anchor_item['name'],
@@ -3518,6 +3554,34 @@ def build_optimal_plates(
         })
 
     location_results.sort(key=lambda r: (len(r.get('combos', [])) > 0, r['score']), reverse=True)
+
+    # Cross-Court Uniqueness: diversify Card #1 across dining halls to avoid repetitive staples
+    seen_top_anchors = set()
+    for rec in location_results:
+        combos = rec.get('combos', [])
+        if not combos:
+            continue
+
+        top_c = combos[0]
+        anchor_sig = tuple(sorted(it['name'].lower() for it in top_c['items'][:2]))
+
+        if anchor_sig in seen_top_anchors and len(combos) > 1:
+            alt_idx = None
+            for idx in range(1, len(combos)):
+                cand_sig = tuple(sorted(it['name'].lower() for it in combos[idx]['items'][:2]))
+                if cand_sig not in seen_top_anchors:
+                    alt_idx = idx
+                    break
+            if alt_idx is not None:
+                # Promote distinct alternative combo to position 0 for this hall
+                combos[0], combos[alt_idx] = combos[alt_idx], combos[0]
+                top_c = combos[0]
+                rec['items'] = top_c['items']
+                rec['totals'] = top_c['totals']
+                anchor_sig = tuple(sorted(it['name'].lower() for it in top_c['items'][:2]))
+
+        seen_top_anchors.add(anchor_sig)
+
     return location_results[:top_n] if top_n is not None and top_n > 0 else location_results
 
 
