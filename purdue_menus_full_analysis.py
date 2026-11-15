@@ -242,6 +242,13 @@ ORDERED_KEYWORD_MACROS = [
     ('grilled chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
     ('chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
     ('chicken thigh', (225.0, 26.0, 0.0, 13.0, 0.0)),
+    ('chicken drumstick', (215.0, 28.0, 2.0, 9.5, 0.0)),
+    ('drumstick', (215.0, 28.0, 2.0, 9.5, 0.0)),
+    ('chickpea chole curry', (260.0, 14.0, 38.0, 5.0, 4.0)),
+    ('chole curry', (260.0, 14.0, 38.0, 5.0, 4.0)),
+    ('chana masala', (260.0, 14.0, 38.0, 5.0, 4.0)),
+    ('chickpea curry', (260.0, 14.0, 38.0, 5.0, 4.0)),
+    ('curry', (250.0, 12.0, 35.0, 6.0, 4.0)),
     ('chicken', (215.0, 28.0, 2.0, 9.5, 0.5)),
     ('turkey breast', (175.0, 32.0, 0.0, 3.5, 0.0)),
     ('turkey', (200.0, 28.0, 1.0, 8.0, 0.5)),
@@ -316,6 +323,10 @@ ORDERED_KEYWORD_MACROS = [
     ('berry mix', (65.0, 1.0, 15.0, 0.4, 10.0)),
     ('strawberry', (55.0, 1.0, 13.0, 0.4, 8.0)),
     ('blueberry', (80.0, 1.0, 20.0, 0.4, 14.0)),
+    ('red sour cherries', (50.0, 1.0, 12.0, 0.3, 8.0)),
+    ('sour cherries', (50.0, 1.0, 12.0, 0.3, 8.0)),
+    ('cherries', (55.0, 1.0, 13.0, 0.3, 9.0)),
+    ('cherry', (55.0, 1.0, 13.0, 0.3, 9.0)),
     ('kiwi', (60.0, 1.2, 14.5, 0.5, 10.0)),
     ('peach', (60.0, 1.4, 14.0, 0.4, 13.0)),
     ('pear', (80.0, 0.5, 22.0, 0.2, 14.0)),
@@ -371,7 +382,7 @@ WHOLE_FRUIT_KEYWORDS = [
     'watermelon', 'mandarin', 'orange', 'apple', 'banana', 'berries',
     'strawberry', 'blueberry', 'grapes', 'pineapple', 'cantaloupe', 'honeydew',
     'fruit mix', 'fresh fruit', 'kiwi', 'peach', 'pear', 'plum', 'grapefruit',
-    'citrus', 'blackberry', 'raspberry', 'papaya'
+    'citrus', 'blackberry', 'raspberry', 'papaya', 'cherry', 'cherries', 'sour cherries'
 ]
 NON_WHOLE_FRUIT_MARKERS = [
     'sauce', 'syrup', 'juice', 'topping', 'filling', 'glaze', 'compote',
@@ -499,7 +510,8 @@ VERIFIED_NA_WHOLE_FOODS = [
     'cottage cheese', 'plain greek yogurt', 'greek yogurt',
     'olive oil', 'extra virgin olive oil', 'avocado',
     'kiwi', 'peach slices', 'sliced strawberries', 'orange wedges', 'berry mix',
-    'fruit cocktail', 'fruit salad', 'melon mix', 'fresh fruit'
+    'fruit cocktail', 'fruit salad', 'melon mix', 'fresh fruit',
+    'red sour cherries', 'sour cherries', 'cherries', 'cherry'
 ]
 
 PLANT_VEG_ANCHOR_KEYWORDS = [
@@ -1884,10 +1896,21 @@ def evaluate_item_health(
             return False, 0.0, f'Excluded from {tier.title()}: standalone commercial dip'
         return True, 54.0, 'Optional spread/dip'
 
-    has_high_sugar = has_strict_refined_ing or ((not whole_fruit) and (
+    # Dry spice rub exemption for whole savory meats (e.g. SafeBytes dry-rubbed drumsticks)
+    is_dry_rub_meat = (
+        ('dry rub' in ing_lower or 'seasoning rub' in ing_lower or 'spice rub' in ing_lower)
+        and item.get('sugar', 0.0) <= 2.5
+        and item.get('carbs', 0.0) <= 5.0
+        and not has_seed_oil
+        and not is_deep_fried
+    )
+    if is_dry_rub_meat:
+        has_strict_refined_ing = False
+
+    has_high_sugar = False if is_dry_rub_meat else (has_strict_refined_ing or ((not whole_fruit) and (
         item.get('sugar', 0.0) > 8.0
         or (has_sugar_marker and item.get('sugar', 0.0) > 4.0)
-    ))
+    )))
 
     if tier == 'extreme':
         # Pure Health Mode: Strict whole-food nutrient & protein density (ZERO relaxation)
@@ -2206,11 +2229,15 @@ def classify_food_item(item: dict) -> str:
     if _is_whole_fruit(clean_name):
         return 'side'
 
+    if any(re.search(rf'\b{re.escape(h)}(?:s|es)?\b', clean_name) for h in ['curry', 'chole', 'chana masala', 'drumstick']):
+        return 'protein_entree'
+
     entree_protein_hints = [
         'chicken', 'beef', 'steak', 'pork', 'salmon', 'fish', 'shrimp',
         'turkey', 'tofu', 'tempeh', 'seitan', 'egg', 'meatball',
         'carnitas', 'barbacoa', 'tilapia', 'cod', 'ham', 'tuna',
-        'paneer', 'cottage cheese', 'greek yogurt'
+        'paneer', 'cottage cheese', 'greek yogurt', 'drumstick',
+        'curry', 'chole', 'chana masala', 'dal', 'dhal'
     ]
     has_protein_word = any(
         re.search(rf'\b{re.escape(h)}(?:s|es)?\b', clean_name)
@@ -2221,8 +2248,8 @@ def classify_food_item(item: dict) -> str:
         for h in ['chicken breast', 'beef', 'pork', 'salmon', 'turkey', 'tofu', 'egg']
     )
 
-    if item['protein'] >= 12.0 and (
-        item['protein'] >= item['carbs'] * 0.65
+    if item['protein'] >= 10.0 and (
+        item['protein'] >= item['carbs'] * 0.4
         or has_protein_word
         or has_protein_ing
     ):
