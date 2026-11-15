@@ -551,6 +551,8 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertIn('<!-- Tailor Plates to My Goals (DRI) -->', html)
         self.assertNotIn('style="display: none !important;"', html)
         self.assertIn('.dish-portion-pill', html)
+        self.assertIn("const driEnabled = document.getElementById('dri_enabled').checked;", html)
+        self.assertNotIn("const driEnabled = false;", html)
 
     def test_mifflin_st_jeor_per_meal_calculation(self):
         # Male, 160 lbs, 70 inches, 20yo, moderate (1.55), cutting, 2 meals/day
