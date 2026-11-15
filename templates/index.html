@@ -2848,9 +2848,14 @@
       lastTouchTime = now;
     }, { passive: false });
 
+    let shouldScrollToTopOnRender = false;
+
     function selectMode(mode) {
       const pureCheckbox = document.getElementById('pure_health_mode');
       const pureWasOn = pureCheckbox && pureCheckbox.checked;
+
+      // Always scroll smoothly to top so user begins at top results of the section
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (activeMode === mode && !pureWasOn) {
         // Quick visual pulse to confirm selection
@@ -2862,6 +2867,7 @@
         return;
       }
       activeMode = mode;
+      shouldScrollToTopOnRender = true;
       if (pureCheckbox) {
         pureCheckbox.checked = false;
       }
@@ -3539,6 +3545,11 @@
             hintEl.classList.remove('visible');
           }, 5500);
         }
+      }
+
+      if (shouldScrollToTopOnRender) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        shouldScrollToTopOnRender = false;
       }
     }
 
