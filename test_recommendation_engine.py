@@ -529,6 +529,18 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertIn('count', data)
         self.assertIn('entries', data)
 
+    def test_card_nutrition_details_decluttered(self):
+        from app import app
+        client = app.test_client()
+        resp = client.get('/')
+        self.assertEqual(resp.status_code, 200)
+        html = resp.get_data(as_text=True)
+
+        # Confirm new button label "Nutrition Details"
+        self.assertIn('Nutrition Details', html)
+        self.assertNotIn('Nutrition &amp; Macro Split', html)
+        self.assertNotIn('Nutrition & Macro Split', html)
+
 
 if __name__ == '__main__':
     unittest.main()

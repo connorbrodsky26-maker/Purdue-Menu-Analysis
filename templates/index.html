@@ -751,7 +751,9 @@
     .card-bottom {
       background: var(--surface-alt);
       border-top: 1px solid var(--border);
-      padding: 0.75rem 0.95rem 0.85rem;
+      padding: 0.52rem 0.95rem;
+      border-radius: 0 0 var(--radius-card) var(--radius-card);
+      transition: background 0.15s ease;
     }
 
     .card-summary-bar {
@@ -759,7 +761,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.65rem;
-      margin-bottom: 0.55rem;
+      margin-bottom: 0.6rem;
       flex-wrap: wrap;
     }
 
@@ -814,31 +816,32 @@
     .macro-drawer-toggle-row {
       display: flex;
       justify-content: center;
-      margin-top: 0.55rem;
-      border-top: 1px dashed var(--border);
-      padding-top: 0.45rem;
+      align-items: center;
+      width: 100%;
     }
 
     .macro-drawer-toggle {
       display: inline-flex;
       align-items: center;
-      gap: 0.42rem;
-      background: transparent;
+      justify-content: center;
+      gap: 0.45rem;
+      background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-muted);
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       font-weight: 750;
       letter-spacing: 0.02em;
       cursor: pointer;
-      padding: 0.24rem 0.68rem;
+      padding: 0.32rem 0.85rem;
       border-radius: var(--radius-pill);
       transition: all 0.18s ease;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
     }
 
     .macro-drawer-toggle:hover {
       color: var(--terracotta);
-      border-color: rgba(200, 75, 49, 0.35);
-      background: rgba(200, 75, 49, 0.05);
+      border-color: rgba(200, 75, 49, 0.4);
+      background: #FFFFFF;
     }
 
     .macro-toggle-chev {
@@ -855,14 +858,16 @@
       max-height: 0;
       opacity: 0;
       overflow: hidden;
-      transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease, margin-top 0.22s ease;
+      transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.24s ease, margin-top 0.24s ease;
       margin-top: 0;
     }
 
     .macro-drawer-content.open {
-      max-height: 180px;
+      max-height: 240px;
       opacity: 1;
-      margin-top: 0.5rem;
+      margin-top: 0.55rem;
+      padding-top: 0.65rem;
+      border-top: 1px dashed var(--border);
     }
 
     .macro-bar-track {
@@ -3384,35 +3389,35 @@
             </div>
 
             <div class="card-bottom">
-              <div class="card-summary-bar">
-                <div class="headline-macros">
-                  <span class="macro-val">${Math.round(combo.totals.calories)} <span class="macro-lbl">kcal</span></span>
-                  <span class="headline-sep">·</span>
-                  <span class="macro-val">${Math.round(combo.totals.protein)}g <span class="macro-lbl">pro</span></span>
-                  <span class="headline-sep">·</span>
-                  <span class="macro-val">${Math.round(combo.totals.carbs)}g <span class="macro-lbl">carbs</span></span>
-                  <span class="headline-sep">·</span>
-                  <span class="macro-val">${Math.round(combo.totals.fat)}g <span class="macro-lbl">fat</span></span>
-                </div>
-                ${isSeedOilFree ? `
-                  <span class="seed-oil-badge" title="Verified Seed-Oil Free">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                    <span>Seed-Oil Free</span>
-                  </span>
-                ` : ''}
-              </div>
-
               <div class="macro-drawer-toggle-row">
-                <button type="button" class="macro-drawer-toggle" onclick="event.stopPropagation(); toggleMacroDrawer(this);" aria-expanded="false" aria-label="Toggle Nutrition Breakdown">
-                  <span>Nutrition &amp; Macro Split</span>
+                <button type="button" class="macro-drawer-toggle" onclick="event.stopPropagation(); toggleMacroDrawer(this);" aria-expanded="false" aria-label="Toggle Nutrition Details">
+                  <span>Nutrition Details</span>
                   <span class="macro-toggle-chev">&#9662;</span>
                 </button>
               </div>
 
               <div class="macro-drawer-content" aria-hidden="true">
                 <div class="card-extra-panel">
+                  <div class="card-summary-bar">
+                    <div class="headline-macros">
+                      <span class="macro-val">${Math.round(combo.totals.calories)} <span class="macro-lbl">kcal</span></span>
+                      <span class="headline-sep">·</span>
+                      <span class="macro-val">${Math.round(combo.totals.protein)}g <span class="macro-lbl">pro</span></span>
+                      <span class="headline-sep">·</span>
+                      <span class="macro-val">${Math.round(combo.totals.carbs)}g <span class="macro-lbl">carbs</span></span>
+                      <span class="headline-sep">·</span>
+                      <span class="macro-val">${Math.round(combo.totals.fat)}g <span class="macro-lbl">fat</span></span>
+                    </div>
+                    ${isSeedOilFree ? `
+                      <span class="seed-oil-badge" title="Verified Seed-Oil Free">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        <span>Seed-Oil Free</span>
+                      </span>
+                    ` : ''}
+                  </div>
+
                   <div class="macro-bar-track" aria-label="Macro split">
                     <div class="seg-p" style="width:${split.protein_pct}%" title="Protein ${split.protein_pct}%"></div>
                     <div class="seg-c" style="width:${split.carbs_pct}%" title="Carbs ${split.carbs_pct}%"></div>
