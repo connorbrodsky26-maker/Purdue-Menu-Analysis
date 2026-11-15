@@ -676,14 +676,6 @@
       transform: rotate(180deg);
     }
 
-    .card-extra-panel {
-      display: none;
-      padding-top: 0.65rem;
-      padding-bottom: 0.25rem;
-      border-top: 1px dashed var(--border);
-      margin-top: 0.45rem;
-    }
-
     .card-bottom.expanded .card-extra-panel {
       display: block;
     }
@@ -2449,30 +2441,9 @@
         const data = await res.json();
 
         if (!res.ok) {
-          const msg = data.error || 'Could not load meals.';
-          errorBanner.textContent = msg;
+          errorBanner.textContent = data.error || 'Could not load meals.';
           errorBanner.style.display = 'block';
           statusTextEl.textContent = 'Check settings';
-          const cardsEl = document.getElementById('cardsContainer');
-          if (isInitialLoad || cardsEl.querySelector('.skeleton-grid')) {
-            const isValidationErr = res.status === 400;
-            cardsEl.innerHTML = `
-              <div class="empty-state-card">
-                <div class="empty-state-icon" aria-hidden="true">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                </div>
-                <h3>${isValidationErr ? 'Finish your meal preferences' : 'Unable to load dining menus'}</h3>
-                <p>${escapeHtml(msg)}</p>
-                <button type="button" class="empty-recovery-btn" onclick="${isValidationErr ? 'openDrawer()' : 'fetchRecommendations()'}">
-                  ${isValidationErr ? 'Open Preferences' : 'Retry Loading Menus'}
-                </button>
-              </div>
-            `;
-          }
           return;
         }
 
@@ -2489,25 +2460,6 @@
         errorBanner.textContent = 'Connection issue loading menus.';
         errorBanner.style.display = 'block';
         statusTextEl.textContent = 'Offline';
-        const cardsEl = document.getElementById('cardsContainer');
-        if (isInitialLoad || cardsEl.querySelector('.skeleton-grid')) {
-          cardsEl.innerHTML = `
-            <div class="empty-state-card">
-              <div class="empty-state-icon" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-              </div>
-              <h3>Connection issue loading menus</h3>
-              <p>Could not reach the Purdue dining server right now. Check your connection and try again.</p>
-              <button type="button" class="empty-recovery-btn" onclick="fetchRecommendations()">
-                Retry Loading Menus
-              </button>
-            </div>
-          `;
-        }
       } finally {
         if (coldStartTimer) {
           clearTimeout(coldStartTimer);
