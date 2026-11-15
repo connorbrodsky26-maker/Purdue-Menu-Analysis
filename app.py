@@ -195,7 +195,13 @@ def api_feedback():
 
 @app.route('/api/feedback', methods=['GET'])
 def api_get_feedback():
-    """Allows the creator to view submitted feedback entries."""
+    """Allows the creator to view submitted feedback entries with admin authorization."""
+    admin_key = os.environ.get('ADMIN_KEY') or os.environ.get('FEEDBACK_ADMIN_KEY')
+    provided_key = request.headers.get('X-Admin-Key') or request.args.get('key')
+
+    if not admin_key or provided_key != admin_key:
+        return jsonify({'error': 'Unauthorized access.'}), 401
+
     if not os.path.exists(FEEDBACK_FILE):
         return jsonify({'count': 0, 'entries': []})
     try:

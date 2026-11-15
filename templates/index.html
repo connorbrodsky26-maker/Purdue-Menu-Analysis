@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#F7F3EE" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -1282,6 +1282,110 @@
       transform: scale(0.98);
     }
 
+    /* Honest Empty Hall Card */
+    .empty-hall-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .empty-hall-body {
+      padding: 2.1rem 1.45rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .empty-hall-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(29, 138, 90, 0.12);
+      color: var(--leaf, #1D8A5A);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .empty-hall-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-pill);
+      background: rgba(200, 75, 49, 0.1);
+      color: var(--terracotta);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .empty-hall-title {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.45rem;
+    }
+
+    .empty-hall-desc {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.45;
+      max-width: 360px;
+      margin-bottom: 0.45rem;
+    }
+
+    .empty-hall-sub {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.4;
+      max-width: 340px;
+      margin-bottom: 1.25rem;
+    }
+
+    .empty-hall-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .empty-court-alt-btn {
+      width: 100%;
+      min-height: 44px;
+    }
+
+    .verified-tag {
+      display: inline-block;
+      margin-left: 0.35rem;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--leaf, #1D8A5A);
+      background: rgba(29, 138, 90, 0.12);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .fallback-tag {
+      display: inline-block;
+      margin-left: 0.35rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+    }
+
     .skeleton-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -2100,16 +2204,42 @@
     }
 
     function buildSingleCardHtml(rec, comboIdx, isPure, showSwipeAffordance) {
-      const combos = rec.combos && rec.combos.length ? rec.combos : [{
-        combo_name: rec.items?.[0]?.name || 'Recommended Meal',
-        station_tag: rec.items?.[0]?.station || 'Dining Court',
-        score: rec.score,
-        score_breakdown: {},
-        items: rec.items || [],
-        totals: rec.totals || { calories: 0, protein: 0, carbs: 0, fat: 0 },
-        macro_split: { protein_pct: 30, carbs_pct: 40, fat_pct: 30 }
-      }];
+      if (!rec.combos || rec.combos.length === 0) {
+        const emptyReason = rec.no_qualifying_reason || (isPure
+          ? 'No verified whole foods meeting Pure Health density available right now.'
+          : (activeMode === 'High'
+            ? 'No verified seed-oil-free meals available right now at this dining hall.'
+            : 'No meal combinations matched active criteria at this dining hall.'));
+        return `
+          <div class="card-stage">
+            <article class="meal-card empty-hall-card" data-location="${escapeHtml(rec.location)}">
+              <div class="card-hall-banner ${isPure ? 'pure-mode' : ''}">
+                <div class="banner-hall-name">${escapeHtml(rec.location)}</div>
+                <span class="banner-open-pill"><span class="banner-open-dot"></span>${escapeHtml(rec.hours_status || 'Open now')}</span>
+              </div>
+              <div class="empty-hall-body">
+                <div class="empty-hall-icon-wrap" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <div class="empty-hall-badge">Strict Standards Enforced</div>
+                <h3 class="empty-hall-title">No Qualifying ${isPure ? 'Pure Health' : (activeMode === 'High' ? 'Healthy' : 'Balanced')} Meals</h3>
+                <p class="empty-hall-desc">${escapeHtml(emptyReason)}</p>
+                <p class="empty-hall-sub">Feast never lowers verification standards or invents fake combinations to fill cards.</p>
+                <div class="empty-hall-actions">
+                  ${(activeMode === 'High' || isPure) ? `<button type="button" class="empty-recovery-btn" onclick="selectMode('Mid')">View Balanced Meals</button>` : ''}
+                  ${selectedHall !== 'ALL' ? `<button type="button" class="btn-outline empty-court-alt-btn" onclick="selectHall('ALL')">View All Dining Halls</button>` : ''}
+                </div>
+              </div>
+            </article>
+          </div>
+        `;
+      }
 
+      const combos = rec.combos;
       const safeIdx = Math.max(0, Math.min(comboIdx, combos.length - 1));
       activeComboIndices[rec.location] = safeIdx;
       const combo = combos[safeIdx];
@@ -2128,7 +2258,11 @@
         <div class="dish-row" onclick="if(!window.__wasDragging){ this.classList.toggle('expanded'); }">
           <div class="dish-main-line">
             <div class="dish-info">
-              <div class="dish-meta-top">${escapeHtml(item.role)} <span>· ${escapeHtml(item.station)}</span></div>
+              <div class="dish-meta-top">
+                ${escapeHtml(item.role)} <span>· ${escapeHtml(item.station)}</span>
+                ${item.ingredient_certainty === 'verified' ? `<span class="verified-tag">✓ Clean</span>` : ''}
+                ${item.used_fallback ? `<span class="fallback-tag">Estimated</span>` : ''}
+              </div>
               <div class="dish-name">${escapeHtml(item.name)}</div>
             </div>
             <div class="dish-right">
@@ -2254,6 +2388,37 @@
       const visibleRecs = selectedHall === 'ALL'
         ? recs
         : recs.filter(r => r.location === selectedHall);
+
+      const allEmpty = recs.every(r => !r.combos || r.combos.length === 0);
+      if (allEmpty && selectedHall === 'ALL') {
+        const isHealthy = activeMode === 'High' || isPure;
+        container.innerHTML = `
+          <div class="empty-state-card">
+            <div class="empty-state-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <h3>${isHealthy ? 'No verified seed-oil-free meals open now' : 'No meal combinations matched'}</h3>
+            <p>${isHealthy
+              ? 'None of the currently open Purdue dining courts have enough verified seed-oil-free items to build complete meals. Feast never lowers its standards or fabricates meals to fill cards.'
+              : 'No open dining courts had items matching all active dietary restrictions right now.'
+            }</p>
+            ${isHealthy ? `
+              <button type="button" class="empty-recovery-btn" onclick="selectMode('Mid')">
+                View Balanced Campus Meals
+              </button>
+            ` : `
+              <button type="button" class="empty-recovery-btn" onclick="resetFiltersFromEmptyState()">
+                Reset Filters &amp; Show Balanced Plates
+              </button>
+            `}
+          </div>
+        `;
+        return;
+      }
 
       let hintDismissed = false;
       try {

@@ -327,12 +327,16 @@ STRICT_REFINED_SUGAR_INGREDIENTS = [
 
 DEEP_FRIED_MARKERS = [
     'deep fried', 'breaded', 'battered', 'tempura', 'crispy fried',
-    'panko', 'cornmeal crust', 'fried in'
+    'panko', 'cornmeal crust', 'fried in', 'country fried', 'chicken fried'
 ]
-ARTIFICIAL_ADDITIVES = [
-    'red 40', 'yellow 5', 'yellow 6', 'blue 1', 'blue 2',
+ARTIFICIAL_DYES = [
+    'red 40', 'red #40', 'yellow 5', 'yellow #5', 'yellow 6', 'yellow #6',
+    'blue 1', 'blue #1', 'blue 2', 'blue #2'
+]
+CHEMICAL_PRESERVATIVES = [
     'sodium nitrite', 'sodium benzoate', 'potassium sorbate', 'bht', 'bha', 'tbhq'
 ]
+ARTIFICIAL_ADDITIVES = ARTIFICIAL_DYES + CHEMICAL_PRESERVATIVES
 WHOLE_FRUIT_KEYWORDS = [
     'watermelon', 'mandarin', 'orange', 'apple', 'banana', 'berries',
     'strawberry', 'blueberry', 'grapes', 'pineapple', 'cantaloupe', 'honeydew',
@@ -1074,6 +1078,10 @@ def _is_special_order_item(item: dict) -> bool:
 
 
 def _assess_ingredient_certainty(item: dict) -> str:
+    if item.get('used_fallback'):
+        if _is_verified_na_whole_food(item):
+            return 'verified_whole_food'
+        return 'estimated'
     ing_raw = (item.get('ingredients') or '').strip()
     if ing_raw and ing_raw.upper() != 'N/A':
         return 'verified'
@@ -1207,6 +1215,16 @@ def _passes_dietary_filters(item: dict, dietary_filters: list[str]) -> bool:
     return True
 
 
+def _is_dessert_item(name_lower: str) -> bool:
+    if any(sav in name_lower for sav in ['pot pie', 'shepherd', "shepherd's pie", 'cottage pie', 'quiche', 'savory pie']):
+        return False
+    if any(re.search(rf'\b{re.escape(d)}s?\b', name_lower) for d in DESSERT_KEYWORDS):
+        return True
+    if any(ds in name_lower for ds in DESSERT_SALAD_KEYWORDS):
+        return True
+    return False
+
+
 def _is_whole_fruit(name_lower: str) -> bool:
     if any(d in name_lower for d in DESSERT_KEYWORDS + ['sauce', 'syrup', 'juice']):
         return False
@@ -1326,13 +1344,14 @@ def evaluate_item_health(
 ) -> tuple[bool, float, str]:
     """
     Evaluates individual item eligibility and returns (allowed, raw_quality_score, explanation).
-    When narrow_breadth=True (e.g. a dining hall has fewer than 3 strict clean-ingredient combos),
-    dynamically relaxes strict seed-oil and unverified-metadata exclusions into soft penalties
-    so complete protein-anchored meals can still be assembled from the cleanest items open now.
+    Healthy ('High') and Pure Health ('Extreme') enforce strict eligibility without exception:
+    zero seed oils, zero deep-fried foods, zero standalone desserts, and verified ingredients.
+    Balanced ('Mid') allows wholesome real food while excluding desserts and excessive sugar.
+    Yummy ('Low') prioritizes culinary appeal.
     """
     tier = health_intensity.strip().lower()
     name_lower = item['name'].lower().strip()
-    ing_raw = (item['ingredients'] or '').strip()
+    ing_raw = (item.get('ingredients') or '').strip()
     ing_lower = ing_raw.lower()
     combined_text = f'{name_lower} {ing_lower}'
     certainty = _assess_ingredient_certainty(item)
@@ -1358,46 +1377,46 @@ def evaluate_item_health(
     has_sugar_marker = any(s in combined_text for s in HIGH_SUGAR_ADDITIVES)
     has_strict_refined_ing = any(s in ing_lower for s in STRICT_REFINED_SUGAR_INGREDIENTS)
     is_deep_fried = any(f in combined_text for f in DEEP_FRIED_MARKERS)
-    has_artificial = any(a in combined_text for a in ARTIFICIAL_ADDITIVES)
-    is_dessert = any(d in name_lower for d in DESSERT_KEYWORDS) or any(ds in name_lower for ds in DESSERT_SALAD_KEYWORDS)
+    has_dye = any(d in combined_text for d in ARTIFICIAL_DYES)
+    is_dessert = _is_dessert_item(name_lower)
     whole_fruit = _is_whole_fruit(name_lower) or any(fs in name_lower for fs in FRUIT_SALAD_KEYWORDS)
 
     if is_condiment:
-        if tier in ('high', 'extreme') and (item['sugar'] > 5.0 or has_sugar_marker or has_seed_oil):
+        if tier in ('high', 'extreme') and (item.get('sugar', 0.0) > 5.0 or has_sugar_marker or has_seed_oil):
             return False, 0.0, 'Excluded: high-sugar or seed-oil condiment'
         if tier == 'extreme' and not is_added_fat:
             return False, 0.0, 'Excluded from Pure Health: condiment'
-        cond_score = 42.0 - min(item['sugar'] * 2.5, 20.0)
+        cond_score = 42.0 - min(item.get('sugar', 0.0) * 2.5, 20.0)
         return True, round(max(20.0, cond_score), 1), 'Optional condiment'
 
     if is_dip:
-        if tier in ('high', 'extreme') and (has_seed_oil or certainty == 'unknown'):
+        if tier in ('high', 'extreme') and (has_seed_oil or certainty in ('unknown', 'estimated')):
             return False, 0.0, 'Excluded: standalone dip'
         return True, 54.0, 'Optional spread/dip'
 
     has_high_sugar = (not whole_fruit) and (
-        item['sugar'] > 8.0
-        or (has_sugar_marker and item['sugar'] > 8.0)
+        item.get('sugar', 0.0) > 8.0
+        or (has_sugar_marker and item.get('sugar', 0.0) > 8.0)
         or has_strict_refined_ing
     )
 
     if tier == 'extreme':
-        # Pure Health Mode: strict whole-food nutrient & protein density
-        if has_seed_oil and not narrow_breadth:
+        # Pure Health Mode: Strict whole-food nutrient & protein density (ZERO relaxation)
+        if has_seed_oil:
             return False, 0.0, 'Excluded: contains seed oils'
-        if is_deep_fried or has_artificial or is_dessert or has_high_sugar:
-            return False, 0.0, 'Excluded from Pure Health'
-        if certainty == 'unknown' and not narrow_breadth and not is_added_fat:
+        if is_deep_fried:
+            return False, 0.0, 'Excluded: deep-fried'
+        if is_dessert:
+            return False, 0.0, 'Excluded: dessert'
+        if has_dye:
+            return False, 0.0, 'Excluded: artificial dyes'
+        if has_high_sugar:
+            return False, 0.0, 'Excluded: high sugar'
+        if (certainty in ('unknown', 'estimated')) and not is_added_fat:
             return False, 0.0, 'Excluded: unverified ingredients'
 
         density_score = _compute_nutrient_density_score(item)
-        if narrow_breadth and (has_seed_oil or certainty == 'unknown'):
-            if has_seed_oil:
-                density_score -= 18.0
-            if certainty == 'unknown':
-                density_score -= 10.0
-            reason = 'Best clean option open now'
-        elif is_added_fat:
+        if is_added_fat:
             density_score = 78.0
             reason = 'Clean healthy fat source'
         else:
@@ -1405,65 +1424,57 @@ def evaluate_item_health(
         return True, round(max(25.0, min(density_score, 100.0)), 1), reason
 
     elif tier == 'high':
-        # Healthy Mode: Strict seed-oil-free, dye-free, deep-fry-free, added-sugar-free
-        # Dynamically relaxes into soft penalties per dining hall when strict clean combos < 3
-        if is_dessert or has_artificial:
-            return False, 0.0, 'Excluded: dessert or artificial additives'
-        if is_deep_fried and not narrow_breadth:
+        # Healthy Mode: Strict seed-oil-free, whole-food, deep-fry-free (ZERO relaxation)
+        if is_dessert:
+            return False, 0.0, 'Excluded: dessert'
+        if has_seed_oil:
+            return False, 0.0, 'Excluded: contains seed oils'
+        if is_deep_fried:
             return False, 0.0, 'Excluded: deep-fried'
-        if has_high_sugar and not narrow_breadth:
+        if has_dye:
+            return False, 0.0, 'Excluded: artificial dyes'
+        if has_high_sugar:
             return False, 0.0, 'Excluded: added sugar (>8g)'
-        if not narrow_breadth:
-            if certainty == 'unknown':
-                return False, 0.0, 'Excluded from Healthy: unverified ingredients'
-            if has_seed_oil:
-                return False, 0.0, 'Excluded: contains seed oils'
+        if certainty in ('unknown', 'estimated'):
+            return False, 0.0, 'Excluded from Healthy: unverified ingredients'
 
-        score = 68.0
+        score = 72.0
         if certainty == 'verified' and not has_seed_oil:
-            score += 12.0
+            score += 14.0
             reason = 'Verified seed-oil-free whole food'
         elif certainty == 'verified_whole_food' and not has_seed_oil:
-            score += 7.0
+            score += 9.0
             reason = 'Whole food staple (N/A ingredient list)'
         else:
-            if has_seed_oil:
-                score -= 16.0
-            if certainty == 'unknown':
-                score -= 10.0
-            if is_deep_fried:
-                score -= 22.0
-            if has_high_sugar:
-                score -= 14.0
-            reason = 'Best clean option open now'
+            reason = 'Wholesome clean food'
 
         if 'olive oil' in combined_text or 'butter' in combined_text or 'avocado oil' in combined_text:
             score += 8.0
-        score += min(item['protein'] * 0.45, 14.0)
+        score += min(item.get('protein', 0.0) * 0.45, 14.0)
         return True, round(max(20.0, min(score, 100.0)), 1), reason
 
     elif tier == 'mid':
-        # Balanced Mode
+        # Balanced Mode: wholesome realistic dining court meals
+        if is_dessert:
+            return False, 0.0, 'Excluded: dessert'
         if is_deep_fried and not narrow_breadth:
             return False, 0.0, 'Excluded: deep-fried'
-        if has_artificial or is_dessert:
-            return False, 0.0, 'Excluded: dessert or artificial additives'
-        if ((has_high_sugar and item['protein'] < 10.0) or (item['sugar'] > 18.0 and not whole_fruit)) and not narrow_breadth:
+        if ((has_high_sugar and item.get('protein', 0.0) < 10.0) or (item.get('sugar', 0.0) > 20.0 and not whole_fruit)) and not narrow_breadth:
             return False, 0.0, 'Excluded: high sugar glaze'
 
-        score = 58.0
+        score = 62.0
         if certainty == 'verified' and not has_seed_oil:
-            score += 18.0
+            score += 15.0
             reason = 'Verified seed-oil-free whole food'
-        elif certainty == 'unknown':
-            score += 4.0
-            reason = 'Best clean option open now' if narrow_breadth else 'Dining court staple (unverified ingredients)'
+        elif certainty in ('unknown', 'estimated'):
+            score += 5.0
+            reason = 'Dining court staple (unverified ingredients)'
         else:
-            score += 9.0
-            reason = 'Best clean option open now' if narrow_breadth else 'Balanced dining court staple'
+            score += 10.0
+            reason = 'Balanced dining court entree'
         if is_deep_fried:
             score -= 18.0
-        score += min(item['protein'] * 0.35, 14.0)
+        score += min(item.get('protein', 0.0) * 0.35, 14.0)
         return True, round(max(20.0, min(score, 100.0)), 1), reason
 
     else:
@@ -1724,7 +1735,7 @@ def classify_food_item(item: dict) -> str:
 def _has_real_protein_entree_anchor(slots: list[tuple[str, dict]]) -> bool:
     anchor_roles = {
         'protein_entree', 'sandwich', 'complete_entree',
-        'pasta_entree', 'bowl', 'breakfast_entree'
+        'pasta_entree', 'bowl', 'breakfast_entree', 'composed_salad'
     }
     for _, it in slots:
         role = it.get('_role')
@@ -2487,8 +2498,8 @@ def build_optimal_plates(
 
     for location, loc_items in items_by_location.items():
         # Per-dining-hall evaluation: try strict clean-ingredient mode first;
-        # if fewer than 3 valid clean combos can be formed at this dining hall,
-        # automatically relax unknown-ingredient & trace seed-oil exclusions into soft penalties.
+        # Healthy ('high') and Pure Health ('extreme') NEVER relax eligibility under any circumstances.
+        # Balanced ('mid') and Yummy ('low') may softly expand if candidates < 3.
         pool, raw_scored_candidates = _evaluate_and_assemble_location_candidates(
             location_items=loc_items,
             health_intensity=health_intensity,
@@ -2499,7 +2510,7 @@ def build_optimal_plates(
         )
         used_hall_relaxation = False
 
-        if len(raw_scored_candidates) < 3:
+        if tier_key not in ('high', 'extreme') and len(raw_scored_candidates) < 3:
             relaxed_pool, relaxed_candidates = _evaluate_and_assemble_location_candidates(
                 location_items=loc_items,
                 health_intensity=health_intensity,
@@ -2514,6 +2525,26 @@ def build_optimal_plates(
                 used_hall_relaxation = True
 
         if not raw_scored_candidates:
+            location_results.append({
+                'location': location,
+                'hours_status': loc_items[0].get('hours_status', 'Open now'),
+                'closing_time': loc_items[0].get('closing_time', ''),
+                'score': 0.0,
+                'combos': [],
+                'items': [],
+                'totals': {
+                    'calories': 0.0,
+                    'protein': 0.0,
+                    'carbs': 0.0,
+                    'fat': 0.0,
+                    'sugar': 0.0,
+                },
+                'no_qualifying_reason': (
+                    'No verified seed-oil-free meals available right now at this dining hall.'
+                    if tier_key in ('high', 'extreme')
+                    else 'No meal combinations matched active dietary filters at this dining hall.'
+                ),
+            })
             continue
 
         norm_nutritions = _normalize_relative_scores(
@@ -2633,8 +2664,8 @@ def build_optimal_plates(
             'totals': top_combo['totals'],
         })
 
-    location_results.sort(key=lambda r: r['score'], reverse=True)
-    return location_results[:top_n] if top_n is not None else location_results
+    location_results.sort(key=lambda r: (len(r.get('combos', [])) > 0, r['score']), reverse=True)
+    return location_results[:top_n] if top_n is not None and top_n > 0 else location_results
 
 
 def recommend_meals(

@@ -182,10 +182,66 @@ class TestFeastRecommendationEngine(unittest.TestCase):
             _make_item('Jasmine Rice', station='One World', calories=205, protein=4.3, carbs=44.5, fat=0.4, ingredients='Jasmine Rice, Water', is_vegetarian=True, is_vegan=True),
             _make_item('Steamed Broccoli', station='Grill', calories=45, protein=3, carbs=8, fat=0.5, ingredients='Broccoli, Water', is_vegetarian=True, is_vegan=True),
         ]
+        lunch_time = datetime(2026, 11, 14, 12, 30, tzinfo=PURDUE_TZ)
         for mode in ('High', 'Mid', 'Low'):
-            res = recommend_meals(health_intensity=mode, prebuilt_items=sample_items)
+            res = recommend_meals(health_intensity=mode, prebuilt_items=sample_items, current_time=lunch_time)
             self.assertEqual(len(res['recommendations']), 1)
+            self.assertGreaterEqual(len(res['recommendations'][0]['combos']), 1)
             self.assertIn('score_breakdown', res['recommendations'][0]['combos'][0])
+
+    def test_seed_oil_rejected_from_healthy_and_pure_health(self):
+        canola_item = _make_item('Sauteed Green Beans', ingredients='Green Beans, Canola Oil, Salt')
+        soy_item = _make_item('Roast Chicken', ingredients='Chicken, Soybean Oil, Spices')
+        veg_oil_item = _make_item('Roasted Potatoes', ingredients='Potatoes, Vegetable Oil, Sea Salt')
+
+        for item in (canola_item, soy_item, veg_oil_item):
+            allowed_high, _, reason_high = evaluate_item_health(item, 'High')
+            self.assertFalse(allowed_high)
+            self.assertIn('contains seed oils', reason_high)
+
+            allowed_pure, _, reason_pure = evaluate_item_health(item, 'Extreme')
+            self.assertFalse(allowed_pure)
+            self.assertIn('contains seed oils', reason_pure)
+
+    def test_deep_fried_rejected_from_healthy(self):
+        fried_steak = _make_item('Country Fried Steak', calories=420, protein=24, carbs=30, fat=22, ingredients='Beef, Battered, Fried, Flour, Salt')
+        allowed, _, reason = evaluate_item_health(fried_steak, 'High')
+        self.assertFalse(allowed)
+        self.assertIn('deep-fried', reason)
+
+    def test_unverified_ingredients_rejected_from_healthy(self):
+        unknown_dish = _make_item('Mystery Casserole', ingredients='N/A')
+        allowed, _, reason = evaluate_item_health(unknown_dish, 'High')
+        self.assertFalse(allowed)
+        self.assertIn('unverified ingredients', reason)
+
+    def test_balanced_mode_accepts_normal_entrees_with_preservatives(self):
+        fajitas = _make_item(
+            'Shrimp Fajitas', calories=260, protein=22, carbs=12, fat=8,
+            ingredients='Shrimp, Bell Peppers, Onions, Canola Oil, Spices, Potassium Sorbate, Sodium Benzoate'
+        )
+        allowed, _, _ = evaluate_item_health(fajitas, 'Mid')
+        self.assertTrue(allowed)
+
+    def test_clean_salad_and_bowl_not_excluded_by_name(self):
+        clean_salad = _make_item(
+            'Mediterranean Quinoa Salad', calories=240, protein=9, carbs=32, fat=7,
+            ingredients='Quinoa, Cucumbers, Tomatoes, Feta Cheese, Kalamata Olives, Extra Virgin Olive Oil, Lemon Juice, Salt'
+        )
+        allowed, _, reason = evaluate_item_health(clean_salad, 'High')
+        self.assertTrue(allowed)
+        self.assertIn('Verified seed-oil-free', reason)
+
+    def test_healthy_mode_honest_empty_when_no_clean_items(self):
+        seed_oil_only = [
+            _make_item('Fried Chicken Tender', calories=320, protein=20, carbs=18, fat=18, ingredients='Chicken, Soybean Oil, Flour'),
+            _make_item('French Fries', calories=280, protein=3, carbs=38, fat=14, ingredients='Potatoes, Canola Oil, Salt'),
+        ]
+        lunch_time = datetime(2026, 11, 14, 12, 30, tzinfo=PURDUE_TZ)
+        res = recommend_meals(health_intensity='High', prebuilt_items=seed_oil_only, current_time=lunch_time)
+        self.assertEqual(len(res['recommendations']), 1)
+        self.assertEqual(res['recommendations'][0]['combos'], [])
+        self.assertIn('No verified seed-oil-free meals available', res['recommendations'][0]['no_qualifying_reason'])
 
 
 if __name__ == '__main__':
