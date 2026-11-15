@@ -243,6 +243,116 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertEqual(res['recommendations'][0]['combos'], [])
         self.assertIn('No verified seed-oil-free meals available', res['recommendations'][0]['no_qualifying_reason'])
 
+    def test_pure_health_unconstrained_macro_stacking_and_instructions(self):
+        whole_items = [
+            _make_item('Chicken Breast Strip', station='The Grill', calories=185, protein=35, carbs=0, fat=4, ingredients='Chicken Breast, Water, Sea Salt'),
+            _make_item('Hard Cooked Eggs', station='BoilerQ', calories=155, protein=12.5, carbs=1.1, fat=10.6, ingredients='Hard Cooked Egg'),
+            _make_item('Steamed Edamame', station='Simple Servings', calories=120, protein=11, carbs=9, fat=5, ingredients='Edamame, Water, Salt'),
+            _make_item('Jasmine Rice', station='Simple Servings', calories=205, protein=4.3, carbs=44.5, fat=0.4, ingredients='Jasmine Rice, Water'),
+            _make_item('Fresh Baby Spinach', station='Salad Stop', calories=15, protein=2, carbs=2, fat=0, ingredients='Fresh Baby Spinach'),
+        ]
+        lunch_time = datetime(2026, 11, 14, 12, 30, tzinfo=PURDUE_TZ)
+        res = recommend_meals(health_intensity='Extreme', prebuilt_items=whole_items, current_time=lunch_time)
+        self.assertEqual(len(res['recommendations']), 1)
+        combos = res['recommendations'][0]['combos']
+        self.assertGreaterEqual(len(combos), 1)
+
+        top_combo = combos[0]
+        self.assertTrue(top_combo['is_seed_oil_free'])
+        self.assertTrue(top_combo['is_salad_builder'])
+        self.assertIn('assembly_instructions', top_combo)
+        self.assertGreaterEqual(len(top_combo['assembly_instructions']), 2)
+
+        # Instructions should follow logical station progression (Salad Stop first, then Grill/Carving)
+        stations_in_steps = [s['station'] for s in top_combo['assembly_instructions']]
+        if 'Salad Stop' in stations_in_steps and 'The Grill' in stations_in_steps:
+            self.assertLess(stations_in_steps.index('Salad Stop'), stations_in_steps.index('The Grill'))
+
+    def test_strict_ingredient_blacklist_and_syrup_rejection(self):
+        powdered_sugar = _make_item('Powdered Sugar', calories=0, protein=0, carbs=0, fat=0, ingredients='Sugar, Cornstarch')
+        waffle_topping = _make_item('Strawberry Waffle Topping', calories=80, protein=0.5, carbs=20, fat=0, ingredients='Strawberries, High Fructose Corn Syrup, Water, Sugar')
+        country_gravy = _make_item('Country Gravy', calories=90, protein=2, carbs=10, fat=5, ingredients='Milk, Flour, Canola Oil, Salt')
+        crushed_pepper = _make_item('Crushed Red Pepper', calories=0, protein=0, carbs=0, fat=0, ingredients='Red Pepper')
+
+        for item in (powdered_sugar, waffle_topping, country_gravy, crushed_pepper):
+            ok_extreme, _, reason_ex = evaluate_item_health(item, 'Extreme')
+            ok_high, _, reason_hi = evaluate_item_health(item, 'High')
+            self.assertFalse(ok_extreme, f"Expected {item['name']} to be excluded from Pure Health, got allowed with {reason_ex}")
+            self.assertFalse(ok_high, f"Expected {item['name']} to be excluded from Healthy, got allowed with {reason_hi}")
+
+    def test_heuristic_fallback_for_missing_ingredients(self):
+        # Inherently whole foods with N/A ingredients should be permitted
+        raw_spinach_na = _make_item('Fresh Baby Spinach', station='Salad Stop', ingredients='N/A', calories=15, protein=2, carbs=2, fat=0)
+        kiwi_na = _make_item('Kiwi', station='Salad Stop', ingredients='N/A', calories=60, protein=1.2, carbs=14.5, fat=0.5)
+        boiled_eggs_na = _make_item('Hard Cooked Eggs', station='BoilerQ', ingredients='N/A', calories=155, protein=12.5, carbs=1.1, fat=10.6)
+
+        for item in (raw_spinach_na, kiwi_na, boiled_eggs_na):
+            cert = _assess_ingredient_certainty(item)
+            self.assertEqual(cert, 'verified_whole_food')
+            ok, _, _ = evaluate_item_health(item, 'Extreme')
+            self.assertTrue(ok, f"Expected {item['name']} to pass via whole food heuristic")
+
+        # Processed or sauced foods with N/A ingredients should be rejected
+        battered_fish_na = _make_item('Crispy Battered Fish Fillet', station='The Grill', ingredients='N/A', calories=310, protein=15, carbs=24, fat=18)
+        creamy_ranch_na = _make_item('Creamy Ranch Dressing', station='Salad Stop', ingredients='N/A', calories=140, protein=1, carbs=2, fat=15)
+        mystery_patty_na = _make_item('Homestyle Fried Chicken Patty', station='Granite Grill', ingredients='N/A', calories=280, protein=14, carbs=18, fat=17)
+
+        for item in (battered_fish_na, creamy_ranch_na, mystery_patty_na):
+            cert = _assess_ingredient_certainty(item)
+            self.assertEqual(cert, 'unknown')
+            ok, _, reason = evaluate_item_health(item, 'Extreme')
+            self.assertFalse(ok, f"Expected {item['name']} to be rejected by heuristic, got allowed with {reason}")
+
+    def test_pure_health_eliminates_relative_pool_normalization(self):
+        # When a dining hall only has marginal/low-density items that pass, they should not be inflated
+        low_density_items = [
+            _make_item('Steamed White Rice', calories=205, protein=4.3, carbs=44.5, fat=0.4, ingredients='Rice, Water'),
+            _make_item('Steamed Zucchini', calories=30, protein=1.2, carbs=6.0, fat=0.3, ingredients='Zucchini, Water'),
+        ]
+        # Does not meet minimum protein floor for Pure Health meal
+        lunch_time = datetime(2026, 11, 14, 12, 30, tzinfo=PURDUE_TZ)
+        res = recommend_meals(health_intensity='Extreme', prebuilt_items=low_density_items, current_time=lunch_time)
+        self.assertEqual(len(res['recommendations']), 1)
+        self.assertEqual(res['recommendations'][0]['combos'], [])
+        self.assertIn('No verified whole foods meeting Pure Health density available', res['recommendations'][0]['no_qualifying_reason'])
+
+    def test_distinct_mode_tiers_across_health_intensities(self):
+        mixed_menu = [
+            _make_item('Chicken Breast Strip', station='Grill', calories=185, protein=35, carbs=0, fat=4, ingredients='Chicken, Sea Salt'),
+            _make_item('Jasmine Rice', station='Sides', calories=205, protein=4.3, carbs=44.5, fat=0.4, ingredients='Rice, Water'),
+            _make_item('Steamed Broccoli', station='Sides', calories=45, protein=3, carbs=8, fat=0.5, ingredients='Broccoli, Water'),
+            _make_item('Bang Bang Fried Shrimp', station='Entrees', calories=320, protein=20, carbs=24, fat=18, ingredients='Shrimp, Canola Oil, Flour, Sugar, Spices'),
+            _make_item('Potato Gems', station='Sides', calories=160, protein=3.5, carbs=36, fat=0.3, ingredients='Potatoes, Vegetable Oil, Dextrose'),
+        ]
+        lunch_time = datetime(2026, 11, 14, 12, 30, tzinfo=PURDUE_TZ)
+
+        res_pure = recommend_meals(health_intensity='Extreme', prebuilt_items=mixed_menu, current_time=lunch_time)
+        res_high = recommend_meals(health_intensity='High', prebuilt_items=mixed_menu, current_time=lunch_time)
+        res_mid = recommend_meals(health_intensity='Mid', prebuilt_items=mixed_menu, current_time=lunch_time)
+
+        pure_combos = res_pure['recommendations'][0]['combos']
+        high_combos = res_high['recommendations'][0]['combos']
+        mid_combos = res_mid['recommendations'][0]['combos']
+
+        # Pure Health combos must ONLY contain verified whole foods (no seed oil items)
+        for c in pure_combos:
+            for it in c['items']:
+                self.assertNotIn('Fried', it['name'])
+                self.assertNotIn('Potato Gems', it['name'])
+            self.assertTrue(c['is_seed_oil_free'])
+            self.assertTrue(c['is_salad_builder'])
+
+        # Healthy combos must also be 100% seed-oil-free
+        for c in high_combos:
+            for it in c['items']:
+                self.assertNotIn('Fried', it['name'])
+                self.assertNotIn('Potato Gems', it['name'])
+            self.assertTrue(c['is_seed_oil_free'])
+
+        # Mid (Balanced) mode can include wholesome standard entrees (like Bang Bang Shrimp with canola oil)
+        mid_item_names = {it['name'] for c in mid_combos for it in c['items']}
+        self.assertTrue('Bang Bang Fried Shrimp' in mid_item_names or 'Potato Gems' in mid_item_names)
+
 
 if __name__ == '__main__':
     unittest.main()

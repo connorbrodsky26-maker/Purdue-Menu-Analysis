@@ -622,79 +622,63 @@
     .card-bottom {
       background: var(--surface-alt);
       border-top: 1px solid var(--border);
-      padding: 0.45rem 0.75rem 0.45rem 1.15rem;
+      padding: 0.75rem 0.95rem 0.85rem;
     }
 
     .card-summary-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
-      min-height: 44px;
+      gap: 0.65rem;
+      margin-bottom: 0.55rem;
+      flex-wrap: wrap;
     }
 
     .headline-macros {
       display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.92rem;
+      align-items: baseline;
+      gap: 0.35rem;
+      font-size: 0.88rem;
       font-weight: 900;
       color: var(--text);
+      flex-wrap: wrap;
+    }
+
+    .headline-macros .macro-val {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.15rem;
+    }
+
+    .headline-macros .macro-lbl {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
     }
 
     .headline-sep {
       color: var(--text-muted);
       font-weight: 600;
+      opacity: 0.6;
     }
 
-    .details-toggle-btn {
-      min-height: 44px;
-      padding: 0 0.85rem;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 0.78rem;
-      font-weight: 800;
-      cursor: pointer;
+    .seed-oil-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.32rem;
+      background: #e8f5e9;
+      color: var(--leaf, #1d8a5a);
+      border: 1px solid rgba(29, 138, 90, 0.28);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.22rem 0.55rem;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
       flex-shrink: 0;
     }
 
-    .details-toggle-btn:active {
-      background: var(--surface-press);
-    }
-
-    .details-toggle-btn .chev {
-      transition: transform 0.18s ease;
-      display: inline-block;
-    }
-
-    .card-bottom.expanded .details-toggle-btn .chev {
-      transform: rotate(180deg);
-    }
-
-    .card-bottom.expanded .card-extra-panel {
+    .card-extra-panel {
       display: block;
-    }
-
-    .extra-macros-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      margin-bottom: 0.55rem;
-    }
-
-    .m-pill {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.26rem 0.6rem;
-      font-size: 0.76rem;
-      font-weight: 800;
-      color: var(--text);
     }
 
     .macro-bar-track {
@@ -703,7 +687,7 @@
       overflow: hidden;
       display: flex;
       background: var(--border);
-      margin-bottom: 0.45rem;
+      margin-bottom: 0.38rem;
     }
 
     .seg-p { background: var(--terracotta); }
@@ -713,16 +697,17 @@
     .macro-pct-line {
       display: flex;
       justify-content: space-between;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: var(--text-muted);
+      margin-bottom: 0.4rem;
     }
 
     .pillar-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.38rem;
-      margin-top: 0.6rem;
+      gap: 0.35rem;
+      margin-top: 0.45rem;
     }
 
     .pillar-tag {
@@ -733,6 +718,152 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
       padding: 0.18rem 0.58rem;
+    }
+
+    /* Interactive Salad & Bowl Builder */
+    .salad-builder-wrap {
+      margin: 0.65rem 0 0.25rem;
+    }
+
+    .salad-builder-btn {
+      width: 100%;
+      min-height: 42px;
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-pill, 9999px);
+      border: none;
+      background: var(--terracotta, #c84b31);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(200, 75, 49, 0.22);
+      transition: background 0.16s ease, transform 0.14s ease, box-shadow 0.16s ease;
+    }
+
+    .salad-builder-btn:hover {
+      background: #b53e26;
+      box-shadow: 0 4px 12px rgba(200, 75, 49, 0.32);
+    }
+
+    .salad-builder-btn:active {
+      transform: scale(0.985);
+    }
+
+    .salad-builder-btn .builder-icon {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .salad-builder-btn .builder-chev {
+      margin-left: auto;
+      transition: transform 0.2s ease;
+      font-size: 0.78rem;
+    }
+
+    .salad-builder-btn.open .builder-chev {
+      transform: rotate(180deg);
+    }
+
+    .salad-builder-drawer {
+      display: none;
+      background: #fffcf8;
+      border: 1px solid rgba(200, 75, 49, 0.25);
+      border-radius: 12px;
+      padding: 0.75rem 0.9rem;
+      margin-top: 0.55rem;
+      animation: fadeInDrawer 0.18s ease forwards;
+    }
+
+    .salad-builder-drawer.open {
+      display: block;
+    }
+
+    @keyframes fadeInDrawer {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.55rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px dashed rgba(200, 75, 49, 0.2);
+    }
+
+    .drawer-badge {
+      background: rgba(200, 75, 49, 0.12);
+      color: var(--terracotta, #c84b31);
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.18rem 0.5rem;
+      border-radius: var(--radius-pill);
+    }
+
+    .drawer-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .builder-step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .builder-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      background: var(--terracotta, #c84b31);
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 0.12rem;
+    }
+
+    .step-body {
+      flex: 1;
+      font-size: 0.77rem;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    .step-station-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--terracotta, #c84b31);
+      background: rgba(200, 75, 49, 0.08);
+      padding: 0.1rem 0.4rem;
+      border-radius: 5px;
+      margin-bottom: 0.15rem;
+    }
+
+    .step-instruction {
+      color: #2b2724;
+      font-weight: 500;
+      font-size: 0.77rem;
     }
 
     /* Floating Bottom Mode & Preferences Dock */
@@ -2203,6 +2334,16 @@
       fetchRecommendations();
     }
 
+    function toggleSaladDrawer(btn) {
+      btn.classList.toggle('open');
+      const drawer = btn.nextElementSibling;
+      if (drawer) {
+        drawer.classList.toggle('open');
+        const isOpen = drawer.classList.contains('open');
+        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      }
+    }
+
     function buildSingleCardHtml(rec, comboIdx, isPure, showSwipeAffordance) {
       if (!rec.combos || rec.combos.length === 0) {
         const emptyReason = rec.no_qualifying_reason || (isPure
@@ -2247,6 +2388,7 @@
       const breakdown = combo.score_breakdown || {};
       const rationaleText = getMatchRationaleText(combo);
       const isRelaxedNotice = rationaleText === 'Best clean option open now';
+      const isSeedOilFree = Boolean(combo.is_seed_oil_free || isPure || activeMode === 'High');
 
       const dotsHtml = combos.length > 1
         ? `<div class="pager-dots" aria-label="Meal options">
@@ -2261,6 +2403,7 @@
               <div class="dish-meta-top">
                 ${escapeHtml(item.role)} <span>· ${escapeHtml(item.station)}</span>
                 ${item.ingredient_certainty === 'verified' ? `<span class="verified-tag">✓ Clean</span>` : ''}
+                ${item.ingredient_certainty === 'verified_whole_food' ? `<span class="verified-tag">✓ Whole Food</span>` : ''}
                 ${item.used_fallback ? `<span class="fallback-tag">Estimated</span>` : ''}
               </div>
               <div class="dish-name">${escapeHtml(item.name)}</div>
@@ -2275,6 +2418,39 @@
           </div>
         </div>
       `).join('');
+
+      const hasSaladBuilder = Boolean((isPure || combo.is_salad_builder) && combo.assembly_instructions && combo.assembly_instructions.length > 0);
+      const saladBuilderHtml = hasSaladBuilder ? `
+        <div class="salad-builder-wrap">
+          <button type="button" class="salad-builder-btn" onclick="event.stopPropagation(); toggleSaladDrawer(this)" aria-expanded="false">
+            <span class="builder-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </span>
+            <span>Salad &amp; Bowl Builder</span>
+            <span class="builder-chev">&#9662;</span>
+          </button>
+          <div class="salad-builder-drawer">
+            <div class="drawer-header">
+              <span class="drawer-badge">Assembly Guide</span>
+              <span class="drawer-sub">Station-by-station pickup steps</span>
+            </div>
+            <div class="builder-step-list">
+              ${combo.assembly_instructions.map(step => `
+                <div class="builder-step">
+                  <span class="step-num">${step.step}</span>
+                  <div class="step-body">
+                    <span class="step-station-tag">${escapeHtml(step.station)}</span>
+                    <div class="step-instruction">${escapeHtml(step.instruction)}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      ` : '';
 
       const peekEdgeHtml = (showSwipeAffordance && combos.length > 1)
         ? `<div class="card-peek-edge" aria-hidden="true"></div>`
@@ -2317,30 +2493,35 @@
               ` : ''}
 
               <div class="items-list">${dishesHtml}</div>
+              ${saladBuilderHtml}
             </div>
 
             <div class="card-bottom">
               <div class="card-summary-bar">
                 <div class="headline-macros">
-                  <span>${Math.round(combo.totals.calories)} kcal</span>
+                  <span class="macro-val">${Math.round(combo.totals.calories)} <span class="macro-lbl">kcal</span></span>
                   <span class="headline-sep">·</span>
-                  <span>${Math.round(combo.totals.protein)}g pro</span>
+                  <span class="macro-val">${Math.round(combo.totals.protein)}g <span class="macro-lbl">pro</span></span>
+                  <span class="headline-sep">·</span>
+                  <span class="macro-val">${Math.round(combo.totals.carbs)}g <span class="macro-lbl">carbs</span></span>
+                  <span class="headline-sep">·</span>
+                  <span class="macro-val">${Math.round(combo.totals.fat)}g <span class="macro-lbl">fat</span></span>
                 </div>
-                <button type="button" class="details-toggle-btn" onclick="event.stopPropagation(); this.closest('.card-bottom').classList.toggle('expanded')">
-                  <span>Macros</span>
-                  <span class="chev">&#9662;</span>
-                </button>
+                ${isSeedOilFree ? `
+                  <span class="seed-oil-badge" title="Verified Seed-Oil Free">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <span>Seed-Oil Free</span>
+                  </span>
+                ` : ''}
               </div>
 
               <div class="card-extra-panel">
-                <div class="extra-macros-row">
-                  <span class="m-pill">${Math.round(combo.totals.carbs)}g carbs</span>
-                  <span class="m-pill">${Math.round(combo.totals.fat)}g fat</span>
-                </div>
-                <div class="macro-bar-track">
-                  <div class="seg-p" style="width:${split.protein_pct}%"></div>
-                  <div class="seg-c" style="width:${split.carbs_pct}%"></div>
-                  <div class="seg-f" style="width:${split.fat_pct}%"></div>
+                <div class="macro-bar-track" aria-label="Macro split">
+                  <div class="seg-p" style="width:${split.protein_pct}%" title="Protein ${split.protein_pct}%"></div>
+                  <div class="seg-c" style="width:${split.carbs_pct}%" title="Carbs ${split.carbs_pct}%"></div>
+                  <div class="seg-f" style="width:${split.fat_pct}%" title="Fat ${split.fat_pct}%"></div>
                 </div>
                 <div class="macro-pct-line">
                   <span>Protein ${split.protein_pct}%</span>

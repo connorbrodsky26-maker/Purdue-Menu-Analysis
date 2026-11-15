@@ -79,19 +79,34 @@ MODE_SCORING_PROFILES = {
         'target_cal_range': (400.0, 1050.0),
         'min_protein_ideal': 15.0,
     },
-    'extreme': {  # Pure Health Mode
+    'extreme': {  # Pure Health Mode (Unconstrained Macro Assembler & Whole-Food Stacking)
         'label': 'Pure Health',
         'weights': {
             'culinary_compatibility': 0.00,
-            'meal_completeness': 0.15,
-            'food_quality': 0.45,
-            'nutrition_balance': 0.30,
-            'variety_presentation': 0.10,
+            'meal_completeness': 0.10,
+            'food_quality': 0.50,
+            'nutrition_balance': 0.40,
+            'variety_presentation': 0.00,
         },
         'strict_clean_ingredients': True,
-        'target_cal_range': (360.0, 880.0),
-        'min_protein_ideal': 30.0,
+        'target_cal_range': (700.0, 1350.0),
+        'min_protein_ideal': 45.0,
     },
+}
+
+# Sensible default macro targets for Pure Health mode (tailored for 155 lbs individual maintaining on 2 meals/day)
+DEFAULT_PURE_HEALTH_PER_MEAL = {
+    'calories': 1150.0,
+    'protein_min': 42.0,
+    'protein_target': 55.0,
+    'protein_max': 75.0,
+    'carbs_min': 75.0,
+    'carbs_target': 115.0,
+    'carbs_max': 145.0,
+    'fat_min': 22.0,
+    'fat_target': 35.0,
+    'fat_max': 48.0,
+    'sugar_max': 20.0,
 }
 
 FALLBACK_MACROS = {
@@ -298,10 +313,20 @@ ORDERED_KEYWORD_MACROS = [
     ('banana', (105.0, 1.3, 27.0, 0.4, 14.0)),
     ('apple', (80.0, 0.4, 21.0, 0.3, 16.0)),
     ('berries', (65.0, 1.0, 15.0, 0.4, 10.0)),
+    ('berry mix', (65.0, 1.0, 15.0, 0.4, 10.0)),
     ('strawberry', (55.0, 1.0, 13.0, 0.4, 8.0)),
     ('blueberry', (80.0, 1.0, 20.0, 0.4, 14.0)),
+    ('kiwi', (60.0, 1.2, 14.5, 0.5, 10.0)),
+    ('peach', (60.0, 1.4, 14.0, 0.4, 13.0)),
+    ('pear', (80.0, 0.5, 22.0, 0.2, 14.0)),
     ('grapes', (90.0, 0.9, 23.0, 0.2, 20.0)),
+    ('fruit cocktail', (75.0, 0.8, 19.0, 0.2, 14.0)),
+    ('fruit salad', (75.0, 0.8, 19.0, 0.2, 14.0)),
     ('fruit', (75.0, 0.8, 19.0, 0.2, 14.0)),
+    ('chicken breast strip', (185.0, 35.0, 0.0, 4.0, 0.0)),
+    ('hard cooked egg', (155.0, 12.5, 1.1, 10.6, 1.1)),
+    ('steamed edamame', (120.0, 11.0, 9.0, 5.0, 2.0)),
+    ('monterey vegetables', (50.0, 2.0, 9.0, 1.0, 3.0)),
 ]
 
 SEED_OILS = [
@@ -313,21 +338,26 @@ SEED_OILS = [
     'safflower oil', 'high oleic safflower oil',
     'rapeseed oil', 'grapeseed oil', 'rice bran oil',
     'vegetable oil', 'vegetable shortening',
-    'margarine', 'shortening', 'hydrogenated'
+    'margarine', 'shortening', 'hydrogenated', 'partially hydrogenated'
 ]
 
 HIGH_SUGAR_ADDITIVES = [
     'high fructose corn syrup', 'corn syrup', 'cane sugar', 'brown sugar',
-    'dextrose', 'maltodextrin', 'invert sugar', 'icing', 'frosting', 'glaze'
+    'powdered sugar', 'dextrose', 'maltodextrin', 'invert sugar', 'icing',
+    'frosting', 'glaze', 'waffle topping', 'pancake syrup', 'artificial syrup',
+    'maple syrup flavored'
 ]
 
 STRICT_REFINED_SUGAR_INGREDIENTS = [
-    'high fructose corn syrup', 'corn syrup', 'invert sugar', 'icing', 'frosting'
+    'high fructose corn syrup', 'corn syrup', 'powdered sugar',
+    'invert sugar', 'icing', 'frosting', 'waffle topping', 'pancake syrup',
+    'artificial syrup'
 ]
 
 DEEP_FRIED_MARKERS = [
     'deep fried', 'breaded', 'battered', 'tempura', 'crispy fried',
-    'panko', 'cornmeal crust', 'fried in', 'country fried', 'chicken fried'
+    'panko', 'cornmeal crust', 'fried in', 'country fried', 'chicken fried',
+    'fritter', 'nugget', 'nuggets', 'tenders', 'patty', 'patties'
 ]
 ARTIFICIAL_DYES = [
     'red 40', 'red #40', 'yellow 5', 'yellow #5', 'yellow 6', 'yellow #6',
@@ -340,24 +370,34 @@ ARTIFICIAL_ADDITIVES = ARTIFICIAL_DYES + CHEMICAL_PRESERVATIVES
 WHOLE_FRUIT_KEYWORDS = [
     'watermelon', 'mandarin', 'orange', 'apple', 'banana', 'berries',
     'strawberry', 'blueberry', 'grapes', 'pineapple', 'cantaloupe', 'honeydew',
-    'fruit mix', 'fresh fruit'
+    'fruit mix', 'fresh fruit', 'kiwi', 'peach', 'pear', 'plum', 'grapefruit',
+    'citrus', 'blackberry', 'raspberry', 'papaya'
+]
+NON_WHOLE_FRUIT_MARKERS = [
+    'sauce', 'syrup', 'juice', 'topping', 'filling', 'glaze', 'compote',
+    'jam', 'jelly', 'canned', 'pie', 'crisp', 'cobbler', 'puree', 'powder',
+    'dried', 'candied', 'sugar'
 ]
 
 STATION_HEADER_NAMES = {
     'pasta bar', 'salad bar', 'deli bar', 'taco bar', 'nacho bar',
     'baked potato bar', 'omelet bar', 'waffle bar', 'cereal bar',
-    'soup bar', 'toppings bar', 'condiment bar'
+    'soup bar', 'toppings bar', 'condiment bar', 'pizza toppers',
+    'waffle brinner bar', 'build your own pizza bar', 'bread and condiments',
+    'la fonda station'
 }
 DESSERT_KEYWORDS = [
     'pie', 'cake', 'cookie', 'brownie', 'cobbler', 'pudding',
-    'ice cream', 'donut', 'muffin', 'pastry', 'tart', 'cupcake', 'gelato'
+    'ice cream', 'donut', 'muffin', 'pastry', 'tart', 'cupcake', 'gelato',
+    'italian ice', 'sherbet', 'sorbet'
 ]
 
 STANDALONE_CONDIMENT_KEYWORDS = [
     'sauce', 'glaze', 'dressing', 'gravy', 'salsa', 'aioli', 'ketchup',
     'mustard', 'syrup', 'ranch', 'vinaigrette', 'mayonnaise', 'mayo',
     'marinara', 'alfredo', 'pesto', 'au jus', 'chutney', 'relish',
-    'jam', 'jelly', 'condiment', 'topping'
+    'jam', 'jelly', 'condiment', 'topping', 'powdered sugar', 'sprinkles',
+    'crushed red pepper', 'seasoning', 'pancake syrup'
 ]
 DIP_SPREAD_KEYWORDS = [
     'dip', 'queso', 'guacamole', 'hummus', 'tzatziki',
@@ -437,18 +477,26 @@ VERIFIED_NA_WHOLE_FOODS = [
     'plain white rice', 'long grain rice', 'jasmine rice', 'basmati rice',
     'plain brown rice', 'brown rice', 'steamed rice', 'steamed white rice',
     'steamed brown rice', 'baked potato', 'plain potato', 'baked sweet potato',
-    'sweet potato', 'sweet potatoes', 'steamed broccoli', 'steamed vegetables',
-    'steamed asparagus', 'steamed green beans', 'green beans',
-    'steamed cauliflower', 'cauliflower', 'steamed carrots',
-    'zucchini', 'brussels sprouts', 'mixed greens', 'romaine',
-    'garbanzo beans', 'chickpeas', 'black beans', 'kidney beans', 'pinto beans',
-    'lentils', 'edamame', 'quinoa', 'oatmeal',
-    'plain grilled chicken breast', 'grilled chicken breast',
-    'chicken thigh', 'turkey breast', 'pork loin', 'roast beef',
-    'egg', 'eggs', 'hard boiled egg', 'hard boiled eggs',
-    'hard-boiled egg', 'boiled egg', 'poached egg',
+    'sweet potato', 'sweet potatoes', 'steamed broccoli', 'broccoli',
+    'steamed vegetables', 'monterey vegetables', 'steamed asparagus', 'asparagus',
+    'steamed green beans', 'green beans', 'steamed cauliflower', 'cauliflower',
+    'steamed carrots', 'carrots', 'baby carrots', 'zucchini', 'brussels sprouts',
+    'mixed greens', 'romaine', 'fresh spinach', 'baby spinach', 'spinach', 'raw spinach',
+    'kale', 'cucumber', 'cucumbers', 'tomato', 'tomatoes', 'cherry tomatoes',
+    'bell pepper', 'bell peppers', 'celery', 'radish', 'mushrooms', 'fresh mushrooms',
+    'onion', 'red onion', 'peas', 'sweet peas', 'garbanzo beans', 'garbanzo',
+    'chickpeas', 'black beans', 'kidney beans', 'pinto beans', 'lentils',
+    'edamame', 'steamed edamame', 'plain edamame', 'quinoa', 'oatmeal', 'plain oatmeal',
+    'plain grilled chicken breast', 'grilled chicken breast', 'chicken breast strip',
+    'chicken breast strips', 'plain grilled chicken', 'baked chicken breast',
+    'chicken thigh', 'turkey breast', 'pork loin', 'roast beef', 'tilapia',
+    'salmon', 'baked salmon', 'cod', 'egg', 'eggs', 'hard boiled egg',
+    'hard boiled eggs', 'hard-boiled egg', 'boiled egg', 'poached egg',
+    'hard cooked eggs', 'hard cooked egg', 'scrambled eggs',
     'cottage cheese', 'plain greek yogurt', 'greek yogurt',
-    'olive oil', 'spinach', 'kale', 'avocado'
+    'olive oil', 'extra virgin olive oil', 'avocado',
+    'kiwi', 'peach slices', 'sliced strawberries', 'orange wedges', 'berry mix',
+    'fruit cocktail', 'fruit salad', 'melon mix', 'fresh fruit'
 ]
 
 PLANT_VEG_ANCHOR_KEYWORDS = [
@@ -1078,15 +1126,20 @@ def _is_special_order_item(item: dict) -> bool:
 
 
 def _assess_ingredient_certainty(item: dict) -> str:
-    if item.get('used_fallback'):
-        if _is_verified_na_whole_food(item):
-            return 'verified_whole_food'
-        return 'estimated'
     ing_raw = (item.get('ingredients') or '').strip()
-    if ing_raw and ing_raw.upper() != 'N/A':
+    has_real_ing = bool(ing_raw and ing_raw.upper() != 'N/A')
+
+    if has_real_ing:
         return 'verified'
-    if _is_verified_na_whole_food(item):
+
+    # Missing or N/A ingredients: apply heuristic fallback
+    is_clean_whole, cert_flag, _ = _heuristic_evaluate_missing_ingredients(item)
+    if is_clean_whole:
         return 'verified_whole_food'
+
+    if item.get('used_fallback'):
+        return 'estimated'
+
     return 'unknown'
 
 
@@ -1226,7 +1279,7 @@ def _is_dessert_item(name_lower: str) -> bool:
 
 
 def _is_whole_fruit(name_lower: str) -> bool:
-    if any(d in name_lower for d in DESSERT_KEYWORDS + ['sauce', 'syrup', 'juice']):
+    if any(d in name_lower for d in DESSERT_KEYWORDS + NON_WHOLE_FRUIT_MARKERS):
         return False
     return any(fr in name_lower for fr in WHOLE_FRUIT_KEYWORDS)
 
@@ -1312,6 +1365,44 @@ def _is_verified_na_whole_food(item: dict) -> bool:
     return any(pat.search(name_lower) for pat in _VERIFIED_NA_REGEXES)
 
 
+def _heuristic_evaluate_missing_ingredients(item: dict) -> tuple[bool, str, str]:
+    """
+    Evaluates items whose ingredient list is missing ('N/A' or empty).
+    Per Purdue Dining Optimizer rules:
+    - If station or item name strongly implies processed preparation, heavy saucing,
+      frying, or seed oil use (e.g. battered fish, patties, fried nuggets, creamy commercial dressings,
+      stir fry, roasted vegetables cooked with standard oil), flag and exclude from strict modes.
+    - If inherently a single-ingredient whole food (raw spinach, whole fruit, boiled eggs,
+      plain steamed rice, plain potato, steamed edamame, etc.), permit it with 'verified_whole_food'.
+    """
+    name_lower = (item.get('name') or '').lower().strip()
+    station_lower = (item.get('station') or '').lower().strip()
+
+    # Immediate rejection if processed preparation or seed oils implied
+    processed_markers = [
+        'battered', 'breaded', 'crispy', 'fried', 'deep fried', 'tempura', 'fritter',
+        'patty', 'patties', 'nugget', 'nuggets', 'tender', 'tenders', 'stick', 'sticks',
+        'sauce', 'creamy', 'cream', 'dressing', 'marinated', 'glazed', 'glaze', 'gravy',
+        'casserole', 'pot pie', 'shepherd', 'sausage', 'bacon', 'hot dog', 'frank',
+        'syrup', 'topping', 'waffle', 'pancake', 'french toast', 'biscuit',
+        'cookie', 'cake', 'pie', 'brownie', 'donut', 'muffin', 'pastry', 'turnover',
+        'croissant', 'danish', 'cinnamon roll', 'aioli', 'mayo', 'mayonnaise',
+        'roasted', 'sauteed', 'stir fried', 'stir-fry', 'seasoned'
+    ]
+    if any(pm in name_lower for pm in processed_markers):
+        return False, 'unknown', 'Missing ingredients: implies processed preparation or seed-oil cooking'
+
+    high_risk_stations = ['fryer', 'deep fry', 'granite grill', 'the grill', 'boilerq', 'pizza', 'bakery', 'pastry', 'dessert']
+    if any(hrs in station_lower for hrs in high_risk_stations) and not any(pat.search(name_lower) for pat in _VERIFIED_NA_REGEXES):
+        return False, 'unknown', 'Missing ingredients from high-risk processed food station'
+
+    # Check if inherently single-ingredient whole food
+    if _is_whole_fruit(name_lower) or any(pat.search(name_lower) for pat in _VERIFIED_NA_REGEXES):
+        return True, 'verified_whole_food', 'Inherently whole food staple (verified via nutrition heuristic)'
+
+    return False, 'unknown', 'Missing ingredient list: unable to verify seed-oil-free status'
+
+
 def _compute_nutrient_density_score(item: dict) -> float:
     cal = max(item.get('calories', 0.0), 15.0)
     pro = item.get('protein', 0.0)
@@ -1363,29 +1454,35 @@ def evaluate_item_health(
     if _is_standalone_bakery(item) and any(b in name_lower for b in ['hamburger bun', 'hot dog bun', 'sesame bun', 'wheat bun', 'white bun', 'bun', 'buns']):
         return False, 0.0, 'Excluded: standalone bun'
 
+    # Explicit exclusion of standalone sugars, syrups, and zero-macro spices
+    if name_lower in ('powdered sugar', 'sugar', 'brown sugar', 'pancake syrup', 'sugar free maple pancake syrup', 'artificial syrup', 'waffle topping', 'sprinkles'):
+        return False, 0.0, 'Excluded: refined sugar topping'
+    if name_lower in ('crushed red pepper', 'salt', 'black pepper', 'seasoning', 'water', 'ice', 'tea', 'black coffee', 'vinegar'):
+        return False, 0.0, 'Negligible macro contribution: standalone spice / beverage'
+
     is_condiment = _is_standalone_condiment(item)
     is_dip = _is_dip_or_condiment(item) and not is_condiment
     is_added_fat = _is_added_oil_or_fat(item)
-
-    zero_cal_items = ('water', 'ice', 'salt', 'black pepper', 'tea', 'black coffee', 'vinegar')
-    if any(z == name_lower or f' {z}' in name_lower for z in zero_cal_items):
-        return False, 0.0, 'Negligible macro contribution'
 
     has_seed_oil = any(
         re.search(rf'\b{re.escape(oil)}s?\b', combined_text) for oil in SEED_OILS
     )
     has_sugar_marker = any(s in combined_text for s in HIGH_SUGAR_ADDITIVES)
-    has_strict_refined_ing = any(s in ing_lower for s in STRICT_REFINED_SUGAR_INGREDIENTS)
+    has_strict_refined_ing = (
+        any(s in ing_lower for s in STRICT_REFINED_SUGAR_INGREDIENTS)
+        or any(s in name_lower for s in ('powdered sugar', 'pancake syrup', 'waffle topping', 'icing', 'frosting', 'glaze'))
+        or (ing_lower.startswith('sugar') or ', sugar' in ing_lower or 'corn syrup' in ing_lower)
+    )
     is_deep_fried = any(f in combined_text for f in DEEP_FRIED_MARKERS)
     has_dye = any(d in combined_text for d in ARTIFICIAL_DYES)
     is_dessert = _is_dessert_item(name_lower)
     whole_fruit = _is_whole_fruit(name_lower) or any(fs in name_lower for fs in FRUIT_SALAD_KEYWORDS)
 
     if is_condiment:
+        if tier in ('high', 'extreme') and not is_added_fat:
+            return False, 0.0, f'Excluded from {tier.title()}: standalone condiment or sauce'
         if tier in ('high', 'extreme') and (item.get('sugar', 0.0) > 5.0 or has_sugar_marker or has_seed_oil):
             return False, 0.0, 'Excluded: high-sugar or seed-oil condiment'
-        if tier == 'extreme' and not is_added_fat:
-            return False, 0.0, 'Excluded from Pure Health: condiment'
         cond_score = 42.0 - min(item.get('sugar', 0.0) * 2.5, 20.0)
         return True, round(max(20.0, cond_score), 1), 'Optional condiment'
 
@@ -1394,11 +1491,10 @@ def evaluate_item_health(
             return False, 0.0, 'Excluded: standalone dip'
         return True, 54.0, 'Optional spread/dip'
 
-    has_high_sugar = (not whole_fruit) and (
+    has_high_sugar = has_strict_refined_ing or ((not whole_fruit) and (
         item.get('sugar', 0.0) > 8.0
-        or (has_sugar_marker and item.get('sugar', 0.0) > 8.0)
-        or has_strict_refined_ing
-    )
+        or (has_sugar_marker and item.get('sugar', 0.0) > 4.0)
+    ))
 
     if tier == 'extreme':
         # Pure Health Mode: Strict whole-food nutrient & protein density (ZERO relaxation)
@@ -1410,8 +1506,11 @@ def evaluate_item_health(
             return False, 0.0, 'Excluded: dessert'
         if has_dye:
             return False, 0.0, 'Excluded: artificial dyes'
+        has_preservative = any(p in combined_text for p in CHEMICAL_PRESERVATIVES)
+        if has_preservative and not is_added_fat:
+            return False, 0.0, 'Excluded from Pure Health: chemical preservatives'
         if has_high_sugar:
-            return False, 0.0, 'Excluded: high sugar'
+            return False, 0.0, 'Excluded: high sugar or refined syrup'
         if (certainty in ('unknown', 'estimated')) and not is_added_fat:
             return False, 0.0, 'Excluded: unverified ingredients'
 
@@ -1434,8 +1533,8 @@ def evaluate_item_health(
         if has_dye:
             return False, 0.0, 'Excluded: artificial dyes'
         if has_high_sugar:
-            return False, 0.0, 'Excluded: added sugar (>8g)'
-        if certainty in ('unknown', 'estimated'):
+            return False, 0.0, 'Excluded: added sugar or refined syrup'
+        if certainty in ('unknown', 'estimated') and not is_added_fat:
             return False, 0.0, 'Excluded from Healthy: unverified ingredients'
 
         score = 72.0
@@ -1444,7 +1543,7 @@ def evaluate_item_health(
             reason = 'Verified seed-oil-free whole food'
         elif certainty == 'verified_whole_food' and not has_seed_oil:
             score += 9.0
-            reason = 'Whole food staple (N/A ingredient list)'
+            reason = 'Whole food staple (verified via nutrition heuristic)'
         else:
             reason = 'Wholesome clean food'
 
@@ -1924,77 +2023,193 @@ def evaluate_culinary_compatibility(
     return True, round(min(score, 100.0), 1), reasons
 
 
-def _generate_pure_health_templates(pool: list[dict]) -> list[tuple[str, list[tuple[str, dict]]]]:
+def _generate_assembly_instructions(slots: list[tuple[str, dict]], location: str) -> list[dict]:
     """
-    Pure Health Mode ('Extreme') assembly:
-    Builds 3-4 distinct whole-food combos across stations within the same dining hall
-    (max 1 added oil/fat serving), and allows 2-item pure combos (e.g., 1 high-protein
-    anchor + 1 leafy green/vegetable or legume/whole fuel) when a dining hall does not
-    have 3+ distinct whole-food sides open.
+    Builds clean, step-by-step assembly instructions telling the user exactly what to grab
+    from each station in the dining court and how to combine them into the recommended custom bowl/plate.
     """
-    eligible = [it for it in pool if it['_role'] not in ('exclude', 'condiment') or _is_added_oil_or_fat(it)]
+    by_station: dict[str, list[tuple[str, dict]]] = {}
+    for role_label, item in slots:
+        st = item.get('station') or 'Main Line'
+        by_station.setdefault(st, []).append((role_label, item))
+
+    def _station_order(st_name: str) -> int:
+        s = st_name.lower()
+        if any(k in s for k in ['salad', 'greens', 'produce', 'fruit', 'cold', 'market']):
+            return 1
+        if any(k in s for k in ['simple servings', 'oasis', 'natural']):
+            return 2
+        if any(k in s for k in ['grill', 'carving', 'action', 'entree', 'hearth', 'comfort', 'potāto', 'potato', 'boilerq']):
+            return 3
+        if any(k in s for k in ['rice', 'grain', 'pasta', 'international', 'one world', 'gallery', 'asian']):
+            return 4
+        if any(k in s for k in ['condiment', 'toppings', 'oil', 'spread']):
+            return 6
+        return 5
+
+    ordered_stations = sorted(by_station.keys(), key=_station_order)
+    steps = []
+
+    for step_num, station_name in enumerate(ordered_stations, start=1):
+        station_items = by_station[station_name]
+        item_names = [it['name'] for _, it in station_items]
+        st_low = station_name.lower()
+
+        if any(k in st_low for k in ['salad', 'greens', 'produce', 'fruit']):
+            title = 'Fresh Whole-Food Base'
+            instruction = f"At {station_name}, grab a clean bowl and lay down {', and '.join(item_names)} as your micronutrient-rich foundation."
+        elif any(k in st_low for k in ['grill', 'carving', 'boilerq', 'potāto', 'potato', 'hearth']):
+            title = 'Stack Hot Clean Protein'
+            instruction = f"Head to {station_name} and add {', and '.join(item_names)} directly over your base."
+        elif any(k in st_low for k in ['rice', 'grain', 'simple servings', 'international']):
+            title = 'Add Clean Complex Fuel'
+            instruction = f"Stop at {station_name} and scoop {', and '.join(item_names)} for sustained energy carbohydrates."
+        elif any(k in st_low for k in ['condiment', 'toppings', 'oil']):
+            title = 'Healthy Fat Finisher'
+            instruction = f"At {station_name}, finish your plate with {', and '.join(item_names)}."
+        else:
+            title = f'Pick Up from {station_name}'
+            instruction = f"At {station_name}, pick up {', and '.join(item_names)} to complete your balanced macro targets."
+
+        steps.append({
+            'step': step_num,
+            'station': station_name,
+            'title': title,
+            'items': item_names,
+            'instruction': instruction,
+        })
+
+    return steps
+
+
+def _generate_pure_health_combo_title(items: list[dict]) -> str:
+    names = [it['name'].lower() for it in items]
+    has_greens = any(any(g in n for g in ('spinach', 'romaine', 'greens', 'salad', 'lettuce', 'broccoli', 'kale')) for n in names)
+    has_chicken = any('chicken' in n for n in names)
+    has_egg = any('egg' in n for n in names)
+    has_rice = any('rice' in n for n in names)
+    has_edamame = any('edamame' in n for n in names)
+    has_berries = any(any(b in n for b in ('berry', 'berries', 'strawberry', 'blueberry', 'kiwi', 'fruit')) for n in names)
+
+    if has_greens and (has_chicken or has_edamame):
+        return 'Custom Whole-Food Harvest Bowl'
+    if has_chicken and has_rice:
+        return 'Grilled Chicken & Jasmine Rice Bowl'
+    if has_egg and (has_berries or has_rice):
+        return 'Clean Whole Egg & Fuel Stack'
+    if has_edamame and has_rice:
+        return 'Plant Power Edamame & Rice Bowl'
+    if len(items) >= 4:
+        return 'Custom Macro Stacking Plate'
+    first_clean = re.sub(r'\s*\([^)]*\)', '', items[0]['name']).strip()
+    return f'{first_clean} Whole-Food Stack'
+
+
+def _generate_pure_health_stacking_combos(pool: list[dict]) -> list[tuple[str, list[tuple[str, dict]]]]:
+    """
+    Pure Health Mode ('Extreme') Unconstrained Macro Assembler & Stacking:
+    Decoupled from rigid plate structures. Pulls individual clean whole-food items
+    across any open station in the dining court (e.g. plain eggs, grilled chicken breast strips,
+    garbanzo beans, fresh spinach, steamed edamame, jasmine rice, berries) and combines
+    them into custom power bowls or stacked plates.
+    """
+    eligible = [it for it in pool if it['_role'] != 'exclude']
     if len(eligible) < 2:
         return []
 
+    # Categorize items into functional whole-food categories
     proteins = sorted(
-        [it for it in eligible if it['_role'] in ('protein_entree', 'breakfast_entree', 'bowl', 'complete_entree') and it['protein'] >= 10.0],
-        key=lambda x: x['_quality_score'] + x['protein'] * 0.6,
+        [it for it in eligible if it.get('protein', 0.0) >= 7.0 or it['_role'] in ('protein_entree', 'breakfast_entree') or any(k in it['name'].lower() for k in ('chicken', 'egg', 'edamame', 'tilapia', 'salmon', 'turkey', 'beef', 'beans', 'lentil', 'tofu'))],
+        key=lambda x: x.get('protein', 0.0),
         reverse=True,
-    )[:8]
+    )
 
-    greens_vegs = sorted(
-        [it for it in eligible if it['_role'] in ('vegetable', 'composed_salad')],
-        key=lambda x: x['_quality_score'],
+    greens_and_vegs = sorted(
+        [it for it in eligible if it['_role'] in ('vegetable', 'composed_salad') or any(v in it['name'].lower() for v in ('spinach', 'romaine', 'broccoli', 'zucchini', 'cucumber', 'pepper', 'asparagus', 'cauliflower', 'greens', 'beans', 'edamame'))],
+        key=lambda x: x.get('_raw_quality', 50.0),
         reverse=True,
-    )[:8]
+    )
 
-    legumes_grains_fruits = sorted(
-        [it for it in eligible if it['_role'] in ('carb_base', 'side') and not _is_standalone_bakery(it) and not _is_added_oil_or_fat(it)],
-        key=lambda x: x['_quality_score'],
+    complex_carbs = sorted(
+        [it for it in eligible if (it['_role'] in ('carb_base', 'side') or _is_whole_fruit(it['name'].lower())) and not _is_standalone_bakery(it) and not _is_added_oil_or_fat(it) and it not in proteins],
+        key=lambda x: x.get('_raw_quality', 50.0),
         reverse=True,
-    )[:8]
+    )
 
-    added_fats = sorted(
-        [it for it in eligible if _is_added_oil_or_fat(it)],
-        key=lambda x: x['_quality_score'],
-        reverse=True,
-    )[:2]
+    healthy_fats = [it for it in eligible if _is_added_oil_or_fat(it)]
 
     candidates: list[tuple[str, list[tuple[str, dict]]]] = []
+    seen_combos = set()
 
-    for p in proteins:
-        # 3-item and 4-item whole-food combos
-        for v in greens_vegs[:5]:
-            if v['name'] == p['name']:
+    def _add_candidate(tpl_name: str, slots: list[tuple[str, dict]]):
+        names = tuple(sorted(it['name'] for _, it in slots))
+        if names in seen_combos or len(names) != len(slots):
+            return
+        seen_combos.add(names)
+        candidates.append((tpl_name, slots))
+
+    # 1. Stacks with 3 items: Protein + Veg/Green + Complex Fuel
+    for p in proteins[:8]:
+        for g in greens_and_vegs[:6]:
+            if g['name'] == p['name']:
                 continue
-            for lg in legumes_grains_fruits[:5]:
-                if lg['name'] in (p['name'], v['name']):
+            for c in complex_carbs[:6]:
+                if c['name'] in (p['name'], g['name']):
                     continue
-                slots3 = [('Anchor', p), ('Greens', v), ('Whole Fuel', lg)]
-                candidates.append(('pure_whole_3', slots3))
+                _add_candidate('pure_stack_3', [('Protein Anchor', p), ('Fresh Greens', g), ('Clean Fuel', c)])
 
-                for fat_item in added_fats[:1]:
-                    if fat_item['name'] not in (p['name'], v['name'], lg['name']):
-                        slots4 = [('Anchor', p), ('Greens', v), ('Whole Fuel', lg), ('Healthy Fat', fat_item)]
-                        candidates.append(('pure_whole_4_fat', slots4))
+                # 4-item stack: add healthy fat
+                for f in healthy_fats[:1]:
+                    if f['name'] not in (p['name'], g['name'], c['name']):
+                        _add_candidate('pure_stack_4_fat', [('Protein Anchor', p), ('Fresh Greens', g), ('Clean Fuel', c), ('Clean Fat', f)])
 
-                for v2 in greens_vegs[:4]:
-                    if v2['name'] not in (p['name'], v['name'], lg['name']):
-                        slots4_veg = [('Anchor', p), ('Greens', v), ('Micros', v2), ('Whole Fuel', lg)]
-                        candidates.append(('pure_whole_4_micro', slots4_veg))
+                # 4-item stack: add second vegetable / micro
+                for g2 in greens_and_vegs[:4]:
+                    if g2['name'] not in (p['name'], g['name'], c['name']):
+                        _add_candidate('pure_stack_4_veg', [('Protein Anchor', p), ('Fresh Greens', g), ('Micronutrients', g2), ('Clean Fuel', c)])
 
-    # Allow 2-item pure combos (1 high-protein anchor + 1 leafy green/veg or legume/whole fuel)
-    # when a dining hall does not have enough distinct whole-food sides for 3+ item templates
-    if len(candidates) < 3 or len(greens_vegs) < 2 or len(legumes_grains_fruits) < 2:
-        for p in proteins:
-            for v in greens_vegs[:6]:
-                if v['name'] != p['name']:
-                    candidates.append(('pure_whole_2_veg', [('Anchor', p), ('Greens', v)]))
-            for lg in legumes_grains_fruits[:6]:
-                if lg['name'] != p['name']:
-                    candidates.append(('pure_whole_2_fuel', [('Anchor', p), ('Whole Fuel', lg)]))
+                # 5-item stack: Double Protein + Greens + Complex Fuel + Fruit/Fat
+                for p2 in proteins[:4]:
+                    if p2['name'] not in (p['name'], g['name'], c['name']):
+                        slots5 = [('Protein Anchor', p), ('Protein Booster', p2), ('Fresh Greens', g), ('Clean Fuel', c)]
+                        if healthy_fats and healthy_fats[0]['name'] not in (p['name'], p2['name'], g['name'], c['name']):
+                            slots5.append(('Clean Fat', healthy_fats[0]))
+                        elif len(complex_carbs) > 1 and complex_carbs[1]['name'] not in (p['name'], p2['name'], g['name'], c['name']):
+                            slots5.append(('Whole Fruit', complex_carbs[1]))
+                        _add_candidate('pure_stack_5', slots5)
+
+            # High-protein + double greens
+            for g2 in greens_and_vegs[:4]:
+                if g2['name'] not in (p['name'], g['name']):
+                    _add_candidate('pure_stack_3_veg', [('Protein Anchor', p), ('Fresh Greens', g), ('Micronutrients', g2)])
+
+    # 2. Double Protein Stacks (e.g. Eggs + Chicken + Fuel)
+    for p1 in proteins[:6]:
+        for p2 in proteins[:6]:
+            if p1['name'] == p2['name']:
+                continue
+            for g in greens_and_vegs[:4]:
+                if g['name'] not in (p1['name'], p2['name']):
+                    _add_candidate('pure_double_pro_greens', [('Protein Anchor', p1), ('Protein Booster', p2), ('Fresh Greens', g)])
+            for c in complex_carbs[:4]:
+                if c['name'] not in (p1['name'], p2['name']):
+                    _add_candidate('pure_double_pro_fuel', [('Protein Anchor', p1), ('Protein Booster', p2), ('Clean Fuel', c)])
+
+    # 3. Fallback 2-item stacks if the dining court has very few clean whole items
+    if len(candidates) < 3:
+        for p in proteins[:6]:
+            for g in greens_and_vegs[:6]:
+                if g['name'] != p['name']:
+                    _add_candidate('pure_stack_2_veg', [('Protein Anchor', p), ('Fresh Greens', g)])
+            for c in complex_carbs[:6]:
+                if c['name'] != p['name']:
+                    _add_candidate('pure_stack_2_fuel', [('Protein Anchor', p), ('Clean Fuel', c)])
 
     return candidates
+
+
+def _generate_pure_health_templates(pool: list[dict]) -> list[tuple[str, list[tuple[str, dict]]]]:
+    return _generate_pure_health_stacking_combos(pool)
 
 
 def _generate_meal_templates(pool: list[dict], health_intensity: str) -> list[tuple[str, list[tuple[str, dict]]]]:
@@ -2177,6 +2392,22 @@ def _score_nutrition_balance(
         return round(max(0.0, min(100.0 - penalty, 100.0)), 1)
 
     tier_key = health_intensity.strip().lower()
+
+    if tier_key == 'extreme':
+        target = per_meal or DEFAULT_PURE_HEALTH_PER_MEAL
+        cal_err = abs(cal - target['calories']) / target['calories']
+        pro_err = abs(pro - target['protein_target']) / target['protein_target']
+        carb_err = _range_error(carb, target['carbs_min'], target['carbs_max'])
+        fat_err = _range_error(fat, target['fat_min'], target['fat_max'])
+
+        penalty = (cal_err * 24.0) + (pro_err * 28.0) + (carb_err * 14.0) + (fat_err * 14.0)
+        if pro < target['protein_min']:
+            penalty += ((target['protein_min'] - pro) / target['protein_min']) * 32.0
+        if sugar > target.get('sugar_max', 20.0):
+            penalty += min((sugar - target.get('sugar_max', 20.0)) * 1.5, 15.0)
+
+        return round(max(20.0, min(100.0 - penalty, 100.0)), 1)
+
     profile = MODE_SCORING_PROFILES.get(tier_key, MODE_SCORING_PROFILES['mid'])
     low_cal, high_cal = profile['target_cal_range']
 
@@ -2193,16 +2424,12 @@ def _score_nutrition_balance(
     c_share = (carb * 4.0) / total_macro_cal
     f_share = (fat * 9.0) / total_macro_cal
 
-    if tier_key == 'extreme':
-        pro_per_100kcal = (pro / max(cal, 1.0)) * 100.0
-        score += min(pro_per_100kcal * 2.2, 16.0)
-    else:
-        if 0.16 <= p_share <= 0.45:
-            score += 8.0
-        if 0.20 <= c_share <= 0.60:
-            score += 4.0
-        if 0.15 <= f_share <= 0.42:
-            score += 4.0
+    if 0.16 <= p_share <= 0.45:
+        score += 8.0
+    if 0.20 <= c_share <= 0.60:
+        score += 4.0
+    if 0.15 <= f_share <= 0.42:
+        score += 4.0
 
     if sugar > 24.0:
         score -= min((sugar - 24.0) * 0.8, 12.0)
@@ -2398,11 +2625,16 @@ def _evaluate_and_assemble_location_candidates(
     if not evaluated_items:
         return [], []
 
-    norm_qualities = _normalize_relative_scores(
-        [it['_raw_quality'] for it in evaluated_items], floor=52.0, ceiling=98.0
-    )
-    for it, nq in zip(evaluated_items, norm_qualities):
-        it['_quality_score'] = nq
+    if tier_key == 'extreme':
+        # Pure Health Mode: eliminate relative pool normalization; use raw nutrient density
+        for it in evaluated_items:
+            it['_quality_score'] = it['_raw_quality']
+    else:
+        norm_qualities = _normalize_relative_scores(
+            [it['_raw_quality'] for it in evaluated_items], floor=52.0, ceiling=98.0
+        )
+        for it, nq in zip(evaluated_items, norm_qualities):
+            it['_quality_score'] = nq
 
     unique_items: dict[str, dict] = {}
     for it in evaluated_items:
@@ -2426,11 +2658,16 @@ def _evaluate_and_assemble_location_candidates(
         if tier_key != 'extreme' and not _has_real_protein_entree_anchor(slots):
             continue
 
-        compatible, compat_score, compat_reasons = evaluate_culinary_compatibility(
-            slots, template_name, health_intensity=health_intensity
-        )
-        if not compatible:
-            continue
+        if tier_key == 'extreme':
+            compatible = True
+            compat_score = 92.0
+            compat_reasons = ['Unconstrained clean whole-food stack']
+        else:
+            compatible, compat_score, compat_reasons = evaluate_culinary_compatibility(
+                slots, template_name, health_intensity=health_intensity
+            )
+            if not compatible:
+                continue
 
         tot_cal = sum(it['calories'] for _, it in slots)
         tot_pro = sum(it['protein'] for _, it in slots)
@@ -2449,12 +2686,17 @@ def _evaluate_and_assemble_location_candidates(
         if not _meets_minimum_meal_floor(totals_obj, per_meal, dri_enabled, health_intensity):
             continue
 
-        completeness_score = _score_meal_completeness(slots, template_name)
+        if tier_key == 'extreme':
+            completeness_score = 92.0
+            variety_score = 90.0
+        else:
+            completeness_score = _score_meal_completeness(slots, template_name)
+            variety_score = _score_variety_and_presentation(slots)
+
         food_quality_score = round(sum(it['_quality_score'] for _, it in slots) / len(slots), 1)
         raw_nutrition_score = _score_nutrition_balance(
             totals_obj, per_meal, dri_enabled, meal_goal, health_intensity
         )
-        variety_score = _score_variety_and_presentation(slots)
 
         raw_scored_candidates.append({
             'template_name': template_name,
@@ -2540,16 +2782,24 @@ def build_optimal_plates(
                     'sugar': 0.0,
                 },
                 'no_qualifying_reason': (
-                    'No verified seed-oil-free meals available right now at this dining hall.'
-                    if tier_key in ('high', 'extreme')
-                    else 'No meal combinations matched active dietary filters at this dining hall.'
+                    'No verified whole foods meeting Pure Health density available right now at this dining hall.'
+                    if tier_key == 'extreme'
+                    else (
+                        'No verified seed-oil-free meals available right now at this dining hall.'
+                        if tier_key == 'high'
+                        else 'No meal combinations matched active dietary filters at this dining hall.'
+                    )
                 ),
             })
             continue
 
-        norm_nutritions = _normalize_relative_scores(
-            [c['raw_nutrition_score'] for c in raw_scored_candidates], floor=55.0, ceiling=98.0
-        )
+        if tier_key == 'extreme':
+            # Pure Health Mode: absolute nutrition proximity scoring without relative pool scaling
+            norm_nutritions = [c['raw_nutrition_score'] for c in raw_scored_candidates]
+        else:
+            norm_nutritions = _normalize_relative_scores(
+                [c['raw_nutrition_score'] for c in raw_scored_candidates], floor=55.0, ceiling=98.0
+            )
 
         scored_candidates = []
         for cand, norm_nut in zip(raw_scored_candidates, norm_nutritions):
@@ -2559,13 +2809,16 @@ def build_optimal_plates(
             food_quality_score = cand['food_quality_score']
             variety_score = cand['variety_score']
 
-            weighted_total = (
-                (compat_score * weights['culinary_compatibility']) +
-                (completeness_score * weights['meal_completeness']) +
-                (food_quality_score * weights['food_quality']) +
-                (norm_nut * weights['nutrition_balance']) +
-                (variety_score * weights['variety_presentation'])
-            )
+            if tier_key == 'extreme':
+                weighted_total = (food_quality_score * 0.55) + (norm_nut * 0.45)
+            else:
+                weighted_total = (
+                    (compat_score * weights['culinary_compatibility']) +
+                    (completeness_score * weights['meal_completeness']) +
+                    (food_quality_score * weights['food_quality']) +
+                    (norm_nut * weights['nutrition_balance']) +
+                    (variety_score * weights['variety_presentation'])
+                )
 
             anchor_item = slots[0][1]
             meta = {
@@ -2620,10 +2873,25 @@ def build_optimal_plates(
         for idx, (score_val, anchor_item, slots, totals_obj, breakdown, _meta) in enumerate(selected_combos, start=1):
             slot_items = [it for _, it in slots]
             dominant_cuisine = anchor_item['_cuisine']
-            combo_name = _generate_combo_title(slot_items, dominant_cuisine, health_intensity=health_intensity)
+            if tier_key == 'extreme':
+                combo_name = _generate_pure_health_combo_title(slot_items)
+            else:
+                combo_name = _generate_combo_title(slot_items, dominant_cuisine, health_intensity=health_intensity)
+
             macro_split = _compute_macro_split(
                 totals_obj['protein'], totals_obj['carbs'], totals_obj['fat']
             )
+
+            is_seed_oil_free = all(
+                it.get('_certainty') in ('verified', 'verified_whole_food')
+                for _, it in slots
+            ) and not any(
+                any(re.search(rf'\b{re.escape(oil)}s?\b', f"{it.get('name','')} {it.get('ingredients','')}".lower()) for oil in SEED_OILS)
+                for _, it in slots
+            )
+
+            is_salad_builder = (tier_key == 'extreme' or 'stack' in _meta.get('template', '') or 'salad' in _meta.get('template', ''))
+            assembly_instructions = _generate_assembly_instructions(slots, location) if is_salad_builder else []
 
             formatted_items = []
             for role_label, it in slots:
@@ -2645,12 +2913,15 @@ def build_optimal_plates(
             formatted_combos.append({
                 'combo_id': f"{location.lower().replace(' ', '_')}_{idx}",
                 'combo_name': combo_name,
-                'station_tag': anchor_item['station'],
+                'station_tag': 'Custom Whole-Food Stack' if tier_key == 'extreme' else anchor_item['station'],
                 'score': round(score_val, 1),
                 'score_breakdown': breakdown,
                 'items': formatted_items,
                 'totals': totals_obj,
                 'macro_split': macro_split,
+                'is_seed_oil_free': is_seed_oil_free,
+                'is_salad_builder': bool(assembly_instructions),
+                'assembly_instructions': assembly_instructions,
             })
 
         top_combo = formatted_combos[0]
