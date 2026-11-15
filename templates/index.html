@@ -573,23 +573,62 @@
       overflow-wrap: break-word;
     }
 
+    .dish-name-row {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .dish-icon-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      flex-shrink: 0;
+      transition: transform 0.16s ease;
+    }
+
+    .dish-row:hover .dish-icon-badge {
+      transform: scale(1.08);
+    }
+
+    .dish-icon-badge svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .dish-badge-entree { background: rgba(200, 75, 49, 0.12); color: #C84B31; }
+    .dish-badge-fish { background: rgba(13, 148, 136, 0.14); color: #0D9488; }
+    .dish-badge-plant { background: rgba(217, 119, 6, 0.14); color: #D97706; }
+    .dish-badge-grain { background: rgba(180, 83, 9, 0.12); color: #B45309; }
+    .dish-badge-greens { background: rgba(29, 138, 90, 0.13); color: #1D8A5A; }
+    .dish-badge-egg { background: rgba(234, 179, 8, 0.18); color: #854D0E; }
+    .dish-badge-fruit { background: rgba(225, 29, 72, 0.12); color: #E11D48; }
+    .dish-badge-oil { background: rgba(101, 163, 13, 0.15); color: #4D7C0F; }
+    .dish-badge-dairy { background: rgba(245, 158, 11, 0.15); color: #D97706; }
+    .dish-badge-bowl { background: rgba(99, 102, 241, 0.12); color: #6366F1; }
+    .dish-badge-default { background: rgba(107, 114, 128, 0.12); color: #4B5563; }
+
     .dish-right {
       text-align: right;
       flex-shrink: 0;
-    }
-
-    .dish-pro {
-      font-size: 0.9rem;
-      font-weight: 900;
-      color: var(--text);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.28rem;
+      padding-top: 0.12rem;
     }
 
     .dish-cal {
-      font-size: 0.76rem;
-      font-weight: 700;
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.32rem;
+    }
+
+    .dish-cal .dish-cal-unit {
+      font-size: 0.72rem;
+      font-weight: 600;
       color: var(--text-muted);
     }
 
@@ -598,6 +637,7 @@
       color: var(--text-muted);
       transition: transform 0.18s ease;
       display: inline-block;
+      margin-left: 0.15rem;
     }
 
     .dish-row.expanded .dish-chevron {
@@ -679,6 +719,61 @@
 
     .card-extra-panel {
       display: block;
+      padding-top: 0.15rem;
+    }
+
+    .macro-drawer-toggle-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 0.55rem;
+      border-top: 1px dashed var(--border);
+      padding-top: 0.45rem;
+    }
+
+    .macro-drawer-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.42rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      font-weight: 750;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      padding: 0.24rem 0.68rem;
+      border-radius: var(--radius-pill);
+      transition: all 0.18s ease;
+    }
+
+    .macro-drawer-toggle:hover {
+      color: var(--terracotta);
+      border-color: rgba(200, 75, 49, 0.35);
+      background: rgba(200, 75, 49, 0.05);
+    }
+
+    .macro-toggle-chev {
+      font-size: 0.72rem;
+      transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1);
+      display: inline-block;
+    }
+
+    .macro-drawer-toggle[aria-expanded="true"] .macro-toggle-chev {
+      transform: rotate(180deg);
+    }
+
+    .macro-drawer-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease, margin-top 0.22s ease;
+      margin-top: 0;
+    }
+
+    .macro-drawer-content.open {
+      max-height: 180px;
+      opacity: 1;
+      margin-top: 0.5rem;
     }
 
     .macro-bar-track {
@@ -885,38 +980,47 @@
       pointer-events: auto;
       display: inline-flex;
       align-items: center;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--border);
+      background: #181715;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
       border-radius: var(--radius-pill);
-      padding: 0.26rem;
-      box-shadow: var(--shadow-lg);
-      gap: 0.14rem;
+      padding: 0.28rem;
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.42), 0 3px 12px rgba(0, 0, 0, 0.26);
+      gap: 0.2rem;
     }
 
     .mode-dock.pure-overridden {
-      opacity: 0.58;
+      opacity: 0.65;
     }
 
     .dock-mode-btn {
       border: none;
       background: transparent;
-      color: var(--text-muted);
-      font-size: 0.86rem;
-      font-weight: 800;
+      color: rgba(247, 243, 238, 0.74);
+      font-size: 0.88rem;
+      font-weight: 750;
       min-height: 44px;
-      padding: 0 1.05rem;
+      padding: 0 1.15rem;
       border-radius: var(--radius-pill);
       cursor: pointer;
-      transition: all 0.16s ease;
+      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.3, 1);
       white-space: nowrap;
+    }
+
+    .dock-mode-btn:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .dock-mode-btn:active {
+      transform: scale(0.95);
     }
 
     .dock-mode-btn.active {
       background: var(--terracotta);
       color: #FFFFFF;
-      box-shadow: 0 3px 10px rgba(200, 75, 49, 0.28);
+      box-shadow: 0 3px 12px rgba(200, 75, 49, 0.45);
     }
 
     .dock-filter-btn {
@@ -925,20 +1029,27 @@
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      box-shadow: var(--shadow-lg);
+      background: #181715;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      color: rgba(247, 243, 238, 0.88);
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.42), 0 3px 12px rgba(0, 0, 0, 0.26);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+      transition: background 0.18s ease, color 0.18s ease, transform 0.14s ease;
+    }
+
+    .dock-filter-btn:hover {
+      color: #FFFFFF;
+      background: #252320;
     }
 
     .dock-filter-btn:active {
-      transform: scale(0.95);
+      transform: scale(0.94);
     }
 
     .dock-badge {
@@ -1532,17 +1643,309 @@
 
     .skeleton-card {
       width: 100%;
-      height: 300px;
+      min-height: 290px;
       border-radius: var(--radius-card);
-      background: linear-gradient(90deg, var(--surface) 25%, var(--surface-alt) 50%, var(--surface) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.3s infinite;
+      background: var(--surface);
       border: 1px solid var(--border);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.95rem;
+      box-shadow: var(--shadow-sm);
     }
+
+    .skeleton-line {
+      background: linear-gradient(90deg, rgba(200, 75, 49, 0.04) 25%, rgba(200, 75, 49, 0.1) 50%, rgba(200, 75, 49, 0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.35s infinite;
+      border-radius: 6px;
+    }
+
+    .skeleton-title { height: 26px; width: 62%; }
+    .skeleton-sub { height: 16px; width: 38%; margin-bottom: 0.35rem; }
+    .skeleton-row { height: 42px; width: 100%; border-radius: 8px; }
 
     @keyframes shimmer {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
+    }
+
+    /* Top Glowing Progress Bar */
+    .top-loading-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3.5px;
+      width: 0%;
+      z-index: 999999;
+      background: linear-gradient(90deg, #C84B31 0%, #E28743 45%, #1D8A5A 90%, #2A9D8F 100%);
+      background-size: 200% 100%;
+      box-shadow: 0 1px 8px rgba(200, 75, 49, 0.6), 0 0 4px rgba(29, 138, 90, 0.5);
+      opacity: 0;
+      transition: width 0.3s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .top-loading-bar.active {
+      opacity: 1;
+      width: 78%;
+      animation: topBarShimmer 1.5s linear infinite;
+    }
+
+    .top-loading-bar.finishing {
+      width: 100% !important;
+      opacity: 1;
+      transition: width 0.16s ease-out, opacity 0.25s ease 0.18s;
+    }
+
+    @keyframes topBarShimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* Card Switch Transitions & Staggered Animations */
+    .court-card-wrap {
+      animation: cardEntrance 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes cardEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(18px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .cards-switching {
+      opacity: 0.45;
+      transform: scale(0.99);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      pointer-events: none;
+    }
+
+    /* Plate Visual Tag & Composition Chips */
+    .plate-visual-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.38rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 0.2rem 0.55rem;
+      font-size: 0.72rem;
+      font-weight: 750;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    .plate-composition-chips {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.24rem;
+    }
+
+    /* Feast Brand Cinematic App Intro Splash Screen */
+    .feast-intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: #F7F3EE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      user-select: none;
+      cursor: pointer;
+    }
+
+    .feast-intro-overlay.dismissed {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .intro-svg-wrap {
+      width: min(82vw, 340px);
+      margin-bottom: 1.25rem;
+    }
+
+    .intro-feast-svg {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    /* Letters bounce in from all corners */
+    .intro-letter {
+      transform-box: fill-box;
+      transform-origin: center center;
+      animation-duration: 0.65s;
+      animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation-fill-mode: both;
+    }
+
+    /* F bounces in from top-left */
+    .intro-letter-f {
+      animation-name: letterBounceFromTopLeft;
+      animation-delay: 0.06s;
+    }
+    @keyframes letterBounceFromTopLeft {
+      0% {
+        transform: translate3d(-180px, -160px, 0) rotate(-35deg) scale(0.6);
+        opacity: 0;
+      }
+      65% {
+        transform: translate3d(5px, 4px, 0) rotate(3deg) scale(1.04);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* E bounces in from bottom-left */
+    .intro-letter-e {
+      animation-name: letterBounceFromBottomLeft;
+      animation-delay: 0.12s;
+    }
+    @keyframes letterBounceFromBottomLeft {
+      0% {
+        transform: translate3d(-160px, 160px, 0) rotate(28deg) scale(0.6);
+        opacity: 0;
+      }
+      65% {
+        transform: translate3d(-4px, -4px, 0) rotate(-3deg) scale(1.04);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* A drops from top-center */
+    .intro-letter-a {
+      animation-name: letterBounceFromTop;
+      animation-delay: 0.18s;
+    }
+    @keyframes letterBounceFromTop {
+      0% {
+        transform: translate3d(0, -180px, 0) scale(0.5);
+        opacity: 0;
+      }
+      65% {
+        transform: translate3d(0, 6px, 0) scale(1.05);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* S bounces in from bottom-right */
+    .intro-letter-s {
+      animation-name: letterBounceFromBottomRight;
+      animation-delay: 0.24s;
+    }
+    @keyframes letterBounceFromBottomRight {
+      0% {
+        transform: translate3d(160px, 160px, 0) rotate(-28deg) scale(0.6);
+        opacity: 0;
+      }
+      65% {
+        transform: translate3d(4px, -4px, 0) rotate(3deg) scale(1.04);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* T sweeps in from top-right */
+    .intro-letter-t {
+      animation-name: letterBounceFromTopRight;
+      animation-delay: 0.30s;
+    }
+    @keyframes letterBounceFromTopRight {
+      0% {
+        transform: translate3d(180px, -160px, 0) rotate(35deg) scale(0.6);
+        opacity: 0;
+      }
+      65% {
+        transform: translate3d(-4px, 4px, 0) rotate(-3deg) scale(1.04);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* The Leaf growing and uncurling on top of the T */
+    .intro-leaf-group {
+      transform-box: fill-box;
+      transform-origin: bottom left;
+      animation: leafGrowIn 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.8s both;
+    }
+
+    @keyframes leafGrowIn {
+      0% {
+        transform: scale(0) rotate(-45deg);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.22) rotate(6deg);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+
+    .intro-tagline {
+      font-family: var(--font-serif, serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--terracotta);
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: introTaglineFade 0.5s ease-out 1.15s forwards;
+    }
+
+    @keyframes introTaglineFade {
+      to {
+        opacity: 0.92;
+        transform: translateY(0);
+      }
+    }
+
+    .intro-tap-prompt {
+      margin-top: 1.25rem;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      color: var(--text-muted);
+      opacity: 0;
+      animation: introTaglineFade 0.4s ease-out 1.45s forwards;
     }
 
     /* First-Visit Welcome Modal */
@@ -1741,6 +2144,46 @@
 </head>
 <body>
 
+  <!-- Top Glowing Progress Bar -->
+  <div id="topLoadingBar" class="top-loading-bar" aria-hidden="true"></div>
+
+  <!-- Feast Brand Cinematic App Intro Splash Overlay -->
+  <div id="feastIntroOverlay" class="feast-intro-overlay" onclick="dismissFeastIntro()" aria-label="Feast Intro - Tap anywhere to skip">
+    <div class="intro-content">
+      <div class="intro-svg-wrap">
+        <svg class="intro-feast-svg" viewBox="0 0 160 84" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Feast">
+          <!-- Letter F: bounces in from top-left -->
+          <g class="intro-letter intro-letter-f">
+            <path d="M15.4 28H39.4V36.2H23.9V46.6H36.3V54.7H23.9V71.3H15.4V28Z" fill="#C84B31"/>
+          </g>
+          <!-- Letter E: bounces in from bottom-left -->
+          <g class="intro-letter intro-letter-e">
+            <path d="M54.1 39.4C63.1 39.4 68.7 45.9 68.7 55.4V58.3H47.4C48.2 63.1 51.5 65.7 56.3 65.7C59.9 65.7 62.3 64.2 64.0 62.1L69.1 67C66.1 70.8 61.6 73.1 55.5 73.1C45.3 73.1 38.6 66.2 38.6 56.3C38.6 46.2 45.3 39.4 54.1 39.4ZM47.6 52.6H59.9C59.3 48.6 57.0 46.4 53.8 46.4C50.5 46.4 48.2 48.7 47.6 52.6Z" fill="#C84B31"/>
+          </g>
+          <!-- Letter A: drops in from top-center -->
+          <g class="intro-letter intro-letter-a">
+            <path d="M85.4 39.4C94.4 39.4 99.8 44.2 99.8 52.6V71.3H91.1V67.6C89.1 70.5 85.8 72.2 81.7 72.2C75.5 72.2 71.4 68.2 71.4 62.5C71.4 56.2 76.2 52.9 84.3 52.2L91.0 51.6V50.5C91.0 47.1 88.7 45.2 85.1 45.2C81.7 45.2 79.5 46.6 78.5 48.9L71.9 45.7C74.1 41.1 79.0 39.4 85.4 39.4ZM91.0 57.3L85.4 57.8C81.7 58.2 79.9 59.7 79.9 62.1C79.9 64.5 81.8 66 84.6 66C88.5 66 91.0 63.4 91.0 59.7V57.3Z" fill="#C84B31"/>
+          </g>
+          <!-- Letter S: bounces in from bottom-right -->
+          <g class="intro-letter intro-letter-s">
+            <path d="M115.8 39.4C122.1 39.4 126.7 42.1 128.5 46.6L121.8 49.5C120.7 47.1 118.7 45.9 115.8 45.9C113.2 45.9 111.5 47 111.5 48.8C111.5 50.5 113.1 51.4 116.7 52.3L120.5 53.1C126.6 54.6 129.6 57.8 129.6 63.1C129.6 69.5 124.0 73.1 115.7 73.1C108.5 73.1 103.5 69.9 101.8 65.1L108.8 62.1C110.0 65 112.4 66.6 115.9 66.6C118.9 66.6 120.7 65.4 120.7 63.5C120.7 61.7 119.3 60.7 115.7 59.9L111.7 59.1C106.0 57.8 102.9 54.5 102.9 49.3C102.9 43.1 108.2 39.4 115.8 39.4Z" fill="#C84B31"/>
+          </g>
+          <!-- Letter T: sweeps in from top-right -->
+          <g class="intro-letter intro-letter-t">
+            <path d="M135.8 31.4H144.7V40.1H150.9V47.2H144.7V61.0C144.7 64.2 146.1 65.7 149.2 65.7H151.2V72.3H147.6C140.0 72.3 135.8 68.7 135.8 61.3V47.2H131.5V40.1H135.8V31.4Z" fill="#C84B31"/>
+          </g>
+          <!-- Leaf Group: grows and uncurls into place on top of the T -->
+          <g class="intro-leaf-group">
+            <path d="M133.5 31.5C132.5 19.3 140.6 8.5 151.1 5.3C152.0 17.5 144.5 28.5 133.5 31.5Z" fill="#1D8A5A"/>
+            <path d="M134.3 30.6C141.0 23.3 145.4 15.6 148.9 7.3" stroke="#F7F3EE" stroke-width="1.6" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+      <div class="intro-tagline">Campus Dining, Elevated</div>
+      <div class="intro-tap-prompt">tap anywhere to skip</div>
+    </div>
+  </div>
+
   <header>
     <div class="header-inner">
       <div class="brand" aria-label="Feast" onclick="selectHall('ALL')">
@@ -1779,7 +2222,20 @@
 
     <div id="cardsContainer">
       <div class="skeleton-grid">
-        <div class="skeleton-card"></div>
+        <div class="skeleton-card">
+          <div class="skeleton-line skeleton-title"></div>
+          <div class="skeleton-line skeleton-sub"></div>
+          <div class="skeleton-line skeleton-row"></div>
+          <div class="skeleton-line skeleton-row"></div>
+          <div class="skeleton-line skeleton-row"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-line skeleton-title"></div>
+          <div class="skeleton-line skeleton-sub"></div>
+          <div class="skeleton-line skeleton-row"></div>
+          <div class="skeleton-line skeleton-row"></div>
+          <div class="skeleton-line skeleton-row"></div>
+        </div>
       </div>
     </div>
   </main>
@@ -2129,11 +2585,57 @@
       });
     }
 
+    let topProgressBarTimer = null;
+
+    function startTopProgressBar() {
+      const bar = document.getElementById('topLoadingBar');
+      if (!bar) return;
+      if (topProgressBarTimer) clearTimeout(topProgressBarTimer);
+      bar.classList.remove('finishing');
+      bar.classList.add('active');
+    }
+
+    function finishTopProgressBar() {
+      const bar = document.getElementById('topLoadingBar');
+      if (!bar) return;
+      bar.classList.remove('active');
+      bar.classList.add('finishing');
+      topProgressBarTimer = setTimeout(() => {
+        bar.classList.remove('finishing');
+      }, 400);
+    }
+
+    function dismissFeastIntro() {
+      const overlay = document.getElementById('feastIntroOverlay');
+      if (!overlay || overlay.classList.contains('dismissed')) return;
+      overlay.classList.add('dismissed');
+      setTimeout(() => {
+        try { overlay.remove(); } catch (e) {}
+      }, 450);
+    }
+
+    // Auto dismiss Feast Intro after 2.2 seconds if user does not tap
+    setTimeout(dismissFeastIntro, 2200);
+
     function selectMode(mode) {
+      if (activeMode === mode && !document.getElementById('pure_health_mode').checked) {
+        // Quick visual pulse to confirm selection
+        const container = document.getElementById('cardsContainer');
+        if (container) {
+          container.classList.add('cards-switching');
+          setTimeout(() => container.classList.remove('cards-switching'), 180);
+        }
+        return;
+      }
       activeMode = mode;
       document.getElementById('pure_health_mode').checked = false;
       updateDockUI();
       savePreferences();
+
+      const container = document.getElementById('cardsContainer');
+      if (container) {
+        container.classList.add('cards-switching');
+      }
       fetchRecommendations();
     }
 
@@ -2344,6 +2846,109 @@
       }
     }
 
+    function getItemVisualBadge(item) {
+      const name = (item.name || '').toLowerCase();
+      const role = (item.role || '').toLowerCase();
+
+      // 1. Poultry / Meat / BBQ
+      if (name.includes('chicken') || name.includes('turkey') || name.includes('drumstick') || name.includes('wing') || name.includes('beef') || name.includes('pork') || name.includes('steak') || name.includes('meatball') || name.includes('bbq') || name.includes('boilerq')) {
+        return {
+          type: 'entree',
+          className: 'dish-badge-entree',
+          title: 'Protein Entree',
+          svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11c-1.5 0-3-1-3.5-2.5A4.5 4.5 0 0 0 6 12a4.5 4.5 0 0 0 8.5 2c1.5-.5 2.5-2 3.5-2z"/><path d="M6 12l-2 2a2 2 0 1 0 3 3l2-2"/></svg>`
+        };
+      }
+
+      // 2. Fish / Seafood
+      if (name.includes('fish') || name.includes('salmon') || name.includes('tilapia') || name.includes('cod') || name.includes('tuna') || name.includes('shrimp')) {
+        return {
+          type: 'fish',
+          className: 'dish-badge-fish',
+          title: 'Seafood Protein',
+          svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16s9-14 20-4c-4 1-8 0-11-2-3-2-6-1-9 6z"/><path d="M19 12a1 1 0 1 0 2 0 1 1 0 0 0-2 0z"/></svg>`
+        };
+      }
+
+      // 3. Whole Eggs / Breakfast Fuel
+      if (name.includes('egg') || role.includes('egg')) {
+        return {
+          type: 'egg',
+          className: 'dish-badge-egg',
+          title: 'Whole Egg Protein',
+          svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4.97 0 9-4.03 9-9 0-5.5-4-11-9-11s-9 5.5-9 11c0 4.97 4.03 9 9 9z"/></svg>`
+        };
+      }
+
+      // 4. Plant Protein / Beans / Legumes / Curry / Tofu
+      if (name.includes('chickpea') || name.includes('chole') || name.includes('bean') || name.includes('garbanzo') || name.includes('lentil') || name.includes('tofu') || name.includes('edamame')) {
+        return {
+          type: 'plant',
+          className: 'dish-badge-plant',
+          title: 'Plant Protein & Legumes',
+          svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-9"/><path d="M12 13a5 5 0 0 1 5-5h2a7 7 0 0 1-7 7z"/><path d="M12 13a5 5 0 0 0-5-5H5a7 7 0 0 0 7 7z"/></svg>`
+        };
+      }
+
+      // 5. Whole Grains / Rice / Couscous / Oats / Quinoa
+      if (name.includes('rice') || name.includes('oat') || name.includes('couscous') || name.includes('quinoa') || name.includes('grain') || name.includes('potato') || role.includes('grain')) {
+        return {
+          type: 'grain',
+          className: 'dish-badge-grain',
+          title: 'Whole Grain / Complex Carb',
+          svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11c0 5 4 9 9 9s9-4 9-9H3z"/><path d="M7 6c0-1.5 1-2.5 2-2.5s2 1 2 2.5"/><path d="M13 6c0-1.5 1-2.5 2-2.5s2 1 2 2.5"/><path d="M4 11V9a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg>`
+        };
+      }
+
+      // 6. Fresh Greens / Steamed Veggies / Broccoli / Spinach
+      if (name.includes('broccoli') || name.includes('spinach') || name.includes('green bean') || name.includes('kale') || name.includes('pepper') || name.includes('vegetable') || name.includes('cucumber') || role.includes('vegetable') || role.includes('greens')) {
+        return {
+          type: 'greens',
+          className: 'dish-badge-greens',
+          title: 'Fresh Greens & Veggies',
+          svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13c0-4 3.5-7 8.5-7 1 0 2 .5 2 .5s-.5 1-.5 2c0 5 3 8.5 7 8.5a7 7 0 0 1-7 7h-3z"/><line x1="12.5" y1="6.5" x2="8" y2="18"/></svg>`
+        };
+      }
+
+      // 7. Berries / Cherries / Whole Fruit
+      if (name.includes('cherri') || name.includes('cherry') || name.includes('berr') || name.includes('apple') || name.includes('orange') || name.includes('banana') || name.includes('fruit') || role.includes('fruit')) {
+        return {
+          type: 'fruit',
+          className: 'dish-badge-fruit',
+          title: 'Whole Fruit & Antioxidants',
+          svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="17" r="4"/><circle cx="17" cy="17" r="4"/><path d="M7 13c1.5-4 5-8 9-9"/><path d="M17 13c-1.5-4-5-8-9-9"/></svg>`
+        };
+      }
+
+      // 8. Healthy Oil / EVOO / Dressing
+      if (name.includes('oil') || name.includes('vinegar') || name.includes('dressing')) {
+        return {
+          type: 'oil',
+          className: 'dish-badge-oil',
+          title: 'Pure EVOO / Healthy Dressing',
+          svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`
+        };
+      }
+
+      // 9. Cheese / Cultured Dairy
+      if (name.includes('cheese') || name.includes('cheddar') || name.includes('parmesan') || name.includes('feta') || name.includes('yogurt')) {
+        return {
+          type: 'dairy',
+          className: 'dish-badge-dairy',
+          title: 'Cultured Dairy & Cheese',
+          svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l18-5v14H3z"/><circle cx="8" cy="13" r="1.5"/><circle cx="14" cy="15" r="1.2"/></svg>`
+        };
+      }
+
+      // Default Clean Meal Component
+      return {
+        type: 'default',
+        className: 'dish-badge-default',
+        title: 'Nutritious Campus Item',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>`
+      };
+    }
+
     function buildSingleCardHtml(rec, comboIdx, isPure, showSwipeAffordance) {
       if (!rec.combos || rec.combos.length === 0) {
         const emptyReason = rec.no_qualifying_reason || (isPure
@@ -2396,28 +3001,38 @@
            </div>`
         : '';
 
-      const dishesHtml = combo.items.map(item => `
-        <div class="dish-row" onclick="if(!window.__wasDragging){ this.classList.toggle('expanded'); }">
-          <div class="dish-main-line">
-            <div class="dish-info">
-              <div class="dish-meta-top">
-                ${escapeHtml(item.role)} <span>· ${escapeHtml(item.station)}</span>
-                ${item.ingredient_certainty === 'verified' ? `<span class="verified-tag">✓ Clean</span>` : ''}
-                ${item.ingredient_certainty === 'verified_whole_food' ? `<span class="verified-tag">✓ Whole Food</span>` : ''}
-                ${item.used_fallback ? `<span class="fallback-tag">Estimated</span>` : ''}
+      const plateBadgesHtml = combo.items.slice(0, 4).map(it => {
+        const b = getItemVisualBadge(it);
+        return `<span class="dish-icon-badge ${b.className}" style="width:20px; height:20px; border-radius:5px;" title="${escapeHtml(it.name)}">${b.svg}</span>`;
+      }).join('');
+
+      const dishesHtml = combo.items.map(item => {
+        const badge = getItemVisualBadge(item);
+        return `
+          <div class="dish-row" onclick="if(!window.__wasDragging){ this.classList.toggle('expanded'); }">
+            <div class="dish-main-line">
+              <div class="dish-info">
+                <div class="dish-meta-top">
+                  ${escapeHtml(item.role)} <span>· ${escapeHtml(item.station)}</span>
+                  ${item.ingredient_certainty === 'verified' ? `<span class="verified-tag">✓ Clean</span>` : ''}
+                  ${item.ingredient_certainty === 'verified_whole_food' ? `<span class="verified-tag">✓ Whole Food</span>` : ''}
+                  ${item.used_fallback ? `<span class="fallback-tag">Estimated</span>` : ''}
+                </div>
+                <div class="dish-name-row">
+                  <span class="dish-icon-badge ${badge.className}" title="${badge.title}" aria-hidden="true">${badge.svg}</span>
+                  <div class="dish-name">${escapeHtml(item.name)}</div>
+                </div>
               </div>
-              <div class="dish-name">${escapeHtml(item.name)}</div>
+              <div class="dish-right">
+                <div class="dish-cal">${Math.round(item.calories)} <span class="dish-cal-unit">kcal</span> <span class="dish-chevron">&#9662;</span></div>
+              </div>
             </div>
-            <div class="dish-right">
-              <div class="dish-pro">${Math.round(item.protein)}g <span style="font-weight:600; font-size:0.75rem; color:var(--text-muted);">pro</span> <span class="dish-chevron">&#9662;</span></div>
-              <div class="dish-cal">${Math.round(item.calories)} kcal</div>
+            <div class="dish-details">
+              ${Math.round(item.protein)}g protein · ${Math.round(item.carbs)}g carbs · ${Math.round(item.fat)}g fat · ${escapeHtml(item.reason || 'Balanced dining court item')}
             </div>
           </div>
-          <div class="dish-details">
-            ${Math.round(item.carbs)}g carbs · ${Math.round(item.fat)}g fat · ${escapeHtml(item.reason || 'Balanced dining court item')}
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
       const hasSaladBuilder = Boolean((isPure || combo.is_salad_builder) && combo.assembly_instructions && combo.assembly_instructions.length > 0);
       const builderLabel = combo.builder_label || 'Plate Assembly Guide';
@@ -2518,7 +3133,13 @@
               </div>
 
               <div class="card-header">
-                <h2 class="combo-title">${escapeHtml(combo.combo_name)}</h2>
+                <div>
+                  <h2 class="combo-title">${escapeHtml(combo.combo_name)}</h2>
+                  <div class="plate-visual-tag">
+                    <div class="plate-composition-chips">${plateBadgesHtml}</div>
+                    <span>${combo.items.length}-Item Balanced Plate</span>
+                  </div>
+                </div>
                 ${dotsHtml}
               </div>
 
@@ -2556,30 +3177,50 @@
                 ` : ''}
               </div>
 
-              <div class="card-extra-panel">
-                <div class="macro-bar-track" aria-label="Macro split">
-                  <div class="seg-p" style="width:${split.protein_pct}%" title="Protein ${split.protein_pct}%"></div>
-                  <div class="seg-c" style="width:${split.carbs_pct}%" title="Carbs ${split.carbs_pct}%"></div>
-                  <div class="seg-f" style="width:${split.fat_pct}%" title="Fat ${split.fat_pct}%"></div>
-                </div>
-                <div class="macro-pct-line">
-                  <span>Protein ${split.protein_pct}%</span>
-                  <span>Carbs ${split.carbs_pct}%</span>
-                  <span>Fat ${split.fat_pct}%</span>
-                </div>
-                ${breakdown.food_quality !== undefined ? `
-                  <div class="pillar-row">
-                    ${!isPure ? `<span class="pillar-tag">Pairing ${Math.round(breakdown.culinary_compatibility || 0)}%</span>` : ''}
-                    <span class="pillar-tag">${isPure ? 'Nutrient Density' : 'Quality'} ${Math.round(breakdown.food_quality)}%</span>
-                    <span class="pillar-tag">Balance ${Math.round(breakdown.nutrition_balance)}%</span>
+              <div class="macro-drawer-toggle-row">
+                <button type="button" class="macro-drawer-toggle" onclick="event.stopPropagation(); toggleMacroDrawer(this);" aria-expanded="false" aria-label="Toggle Nutrition Breakdown">
+                  <span>Nutrition &amp; Macro Split</span>
+                  <span class="macro-toggle-chev">&#9662;</span>
+                </button>
+              </div>
+
+              <div class="macro-drawer-content" aria-hidden="true">
+                <div class="card-extra-panel">
+                  <div class="macro-bar-track" aria-label="Macro split">
+                    <div class="seg-p" style="width:${split.protein_pct}%" title="Protein ${split.protein_pct}%"></div>
+                    <div class="seg-c" style="width:${split.carbs_pct}%" title="Carbs ${split.carbs_pct}%"></div>
+                    <div class="seg-f" style="width:${split.fat_pct}%" title="Fat ${split.fat_pct}%"></div>
                   </div>
-                ` : ''}
+                  <div class="macro-pct-line">
+                    <span>Protein ${split.protein_pct}%</span>
+                    <span>Carbs ${split.carbs_pct}%</span>
+                    <span>Fat ${split.fat_pct}%</span>
+                  </div>
+                  ${breakdown.food_quality !== undefined ? `
+                    <div class="pillar-row">
+                      ${!isPure ? `<span class="pillar-tag">Pairing ${Math.round(breakdown.culinary_compatibility || 0)}%</span>` : ''}
+                      <span class="pillar-tag">${isPure ? 'Nutrient Density' : 'Quality'} ${Math.round(breakdown.food_quality)}%</span>
+                      <span class="pillar-tag">Balance ${Math.round(breakdown.nutrition_balance)}%</span>
+                    </div>
+                  ` : ''}
+                </div>
               </div>
             </div>
           </article>
           ${swipeHintHtml}
         </div>
       `;
+    }
+
+    function toggleMacroDrawer(btn) {
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!isExpanded));
+      const drawer = btn.closest('.card-bottom').querySelector('.macro-drawer-content');
+      if (drawer) {
+        drawer.classList.toggle('open', !isExpanded);
+        drawer.setAttribute('aria-hidden', String(isExpanded));
+      }
+    }
     }
 
     function renderRecommendations(recs) {
@@ -2650,7 +3291,7 @@
       container.innerHTML = `<div class="${gridClass}">${visibleRecs.map((rec, idx) => {
         const currentIdx = activeComboIndices[rec.location] || 0;
         const showAffordance = !hintDismissed && idx === 0;
-        return `<div class="court-card-wrap" data-wrap-location="${escapeHtml(rec.location)}">${buildSingleCardHtml(rec, currentIdx, isPure, showAffordance)}</div>`;
+        return `<div class="court-card-wrap" style="animation-delay: ${idx * 0.06}s;" data-wrap-location="${escapeHtml(rec.location)}">${buildSingleCardHtml(rec, currentIdx, isPure, showAffordance)}</div>`;
       }).join('')}</div>`;
 
       attachCardTouchGestures();
@@ -2776,6 +3417,7 @@
     }
 
     async function fetchRecommendations() {
+      startTopProgressBar();
       const errorBanner = document.getElementById('errorBanner');
       errorBanner.style.display = 'none';
 
@@ -2794,7 +3436,20 @@
       if (isInitialLoad) {
         document.getElementById('cardsContainer').innerHTML = `
           <div class="skeleton-grid">
-            <div class="skeleton-card"></div>
+            <div class="skeleton-card">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-sub"></div>
+              <div class="skeleton-line skeleton-row"></div>
+              <div class="skeleton-line skeleton-row"></div>
+              <div class="skeleton-line skeleton-row"></div>
+            </div>
+            <div class="skeleton-card">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-sub"></div>
+              <div class="skeleton-line skeleton-row"></div>
+              <div class="skeleton-line skeleton-row"></div>
+              <div class="skeleton-line skeleton-row"></div>
+            </div>
           </div>
         `;
       }
@@ -2846,6 +3501,11 @@
         errorBanner.style.display = 'block';
         statusTextEl.textContent = 'Offline';
       } finally {
+        finishTopProgressBar();
+        const container = document.getElementById('cardsContainer');
+        if (container) {
+          container.classList.remove('cards-switching');
+        }
         if (coldStartTimer) {
           clearTimeout(coldStartTimer);
           coldStartTimer = null;
@@ -2990,7 +3650,7 @@
       installDynamicAppleTouchIcon();
       loadPreferences();
       fetchRecommendations();
-      setTimeout(maybeShowFirstVisitModal, 450);
+      setTimeout(maybeShowFirstVisitModal, 2600);
     });
   </script>
 </body>
