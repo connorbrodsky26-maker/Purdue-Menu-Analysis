@@ -15,8 +15,9 @@
   <meta property="og:type" content="website" />
 
   <title>Feast — Campus Dining</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=5" />
-  <link rel="manifest" href="/manifest.webmanifest?v=5" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=6" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=6" />
+  <link rel="manifest" href="/manifest.webmanifest?v=6" />
   <style>
     :root {
       --bg: #F7F3EE;
@@ -57,10 +58,8 @@
     }
 
     html.intro-active, body.intro-active {
-      overflow: hidden !important;
-      height: 100% !important;
-      overscroll-behavior: none !important;
-      touch-action: none !important;
+      overflow: hidden;
+      overscroll-behavior: none;
     }
 
     body {
@@ -1768,16 +1767,38 @@
       align-items: center;
       justify-content: center;
       opacity: 1;
-      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden !important;
+      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
       user-select: none;
-      touch-action: none !important;
-      overscroll-behavior: none !important;
+      /* Guaranteed automatic CSS fade out after 2.0s even if JavaScript execution is delayed */
+      animation: autoDismissIntroOverlay 0.45s cubic-bezier(0.4, 0, 0.2, 1) 2.0s forwards;
+      pointer-events: auto;
+    }
+
+    @keyframes autoDismissIntroOverlay {
+      0% {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      85% {
+        opacity: 0.1;
+        visibility: visible;
+        pointer-events: none;
+      }
+      100% {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        display: none !important;
+      }
     }
 
     .feast-intro-overlay.dismissed {
-      opacity: 0;
-      pointer-events: none;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+      display: none !important;
     }
 
     .intro-content {
@@ -2149,7 +2170,7 @@
   <div id="topLoadingBar" class="top-loading-bar" aria-hidden="true"></div>
 
   <!-- Feast Brand Cinematic App Intro Splash Overlay -->
-  <div id="feastIntroOverlay" class="feast-intro-overlay" aria-label="Feast Intro">
+  <div id="feastIntroOverlay" class="feast-intro-overlay" aria-label="Feast Intro" onclick="dismissFeastIntro()" ontouchend="dismissFeastIntro()">
     <div class="intro-content">
       <div class="intro-svg-wrap">
         <svg class="intro-feast-svg" viewBox="50 15 840 390" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Feast">
@@ -2539,8 +2560,8 @@
     function installDynamicAppleTouchIcon() {
       try {
         const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
-          <rect width="512" height="512" rx="112" fill="#F7F3EE"/>
-          <g transform="translate(11.3, 147.3) scale(0.52)">
+          <rect width="512" height="512" fill="#F7F3EE"/>
+          <g transform="translate(55.45, 165.98) scale(0.43)">
             <path d="M 74.0 140.7 L 218.0 141.0 L 224.1 144.0 L 223.0 194.2 L 152.0 195.5 L 147.0 198.2 L 147.0 239.0 L 215.0 241.4 L 217.2 246.0 L 217.5 282.0 L 216.1 293.0 L 212.0 296.3 L 147.0 298.0 L 147.0 378.0 L 143.0 383.5 L 74.0 383.5 L 74.0 380.0 L 74.0 350.0 L 74.0 290.0 L 74.0 159.0 L 74.0 144.0 L 74.0 140.7 Z" fill="#C84B31"/>
             <path d="M 314.5 205.8 L 331.8 206.1 L 346.0 208.0 L 357.6 211.6 L 362.9 214.3 L 372.4 221.3 L 380.6 230.2 L 387.4 240.8 L 392.8 253.2 L 396.7 267.8 L 398.1 275.2 L 399.5 289.9 L 399.0 307.6 L 397.9 312.6 L 396.3 314.1 L 390.3 316.1 L 377.7 317.0 L 307.8 317.0 L 302.3 317.4 L 300.2 319.6 L 301.1 321.6 L 302.5 323.0 L 312.0 330.0 L 320.8 334.2 L 330.5 336.7 L 339.0 338.0 L 345.5 338.2 L 371.9 334.2 L 378.5 335.5 L 383.1 339.7 L 385.6 346.8 L 386.0 364.8 L 385.2 374.2 L 384.3 375.7 L 377.8 378.9 L 358.2 383.8 L 342.1 385.9 L 327.9 385.7 L 307.5 384.3 L 290.6 382.2 L 284.6 380.9 L 276.1 377.6 L 267.6 373.1 L 259.4 367.5 L 252.1 361.3 L 245.8 354.4 L 240.3 346.6 L 233.6 332.4 L 230.2 320.4 L 228.1 309.2 L 227.4 299.8 L 228.1 289.6 L 230.0 278.0 L 232.8 267.1 L 236.5 257.8 L 244.0 244.2 L 250.3 235.6 L 257.1 228.2 L 267.9 219.3 L 275.4 214.7 L 283.8 210.9 L 293.5 208.0 L 299.5 206.9 L 314.5 205.8 Z M 315.8 248.6 L 312.8 249.9 L 309.8 252.2 L 305.4 258.1 L 301.0 269.5 L 300.7 273.4 L 301.8 275.8 L 304.0 276.9 L 310.9 277.4 L 329.0 277.4 L 336.5 276.7 L 338.4 273.9 L 338.5 270.2 L 335.5 260.0 L 332.5 254.1 L 329.4 250.9 L 325.7 249.1 L 321.4 248.3 L 315.8 248.6 Z" fill="#C84B31" fill-rule="evenodd"/>
             <path d="M 492.6 205.2 L 507.6 205.9 L 520.6 207.9 L 526.4 209.5 L 536.8 213.7 L 545.6 219.4 L 553.2 226.7 L 559.5 235.6 L 564.2 244.7 L 567.2 253.5 L 569.5 264.9 L 571.7 280.0 L 572.4 291.4 L 572.7 345.8 L 572.0 373.5 L 571.5 379.7 L 570.9 380.9 L 558.9 382.4 L 547.5 382.8 L 521.0 382.9 L 508.7 382.0 L 507.1 379.7 L 506.5 377.4 L 505.4 367.6 L 503.9 363.0 L 500.5 364.5 L 486.9 376.0 L 474.9 382.6 L 466.2 385.0 L 461.8 385.6 L 453.3 386.1 L 445.6 385.8 L 431.8 381.8 L 421.5 376.7 L 414.0 370.6 L 411.3 367.2 L 406.9 359.5 L 403.8 350.8 L 402.1 341.4 L 401.7 331.5 L 403.2 318.0 L 405.4 310.1 L 409.0 302.8 L 413.6 296.0 L 418.8 290.3 L 424.8 285.4 L 431.6 281.1 L 443.6 275.9 L 458.8 272.4 L 496.8 267.9 L 500.3 267.0 L 501.9 266.2 L 502.5 265.0 L 501.1 261.1 L 496.4 256.3 L 489.2 252.7 L 479.6 250.8 L 473.9 250.7 L 460.5 252.4 L 424.7 261.1 L 420.5 261.3 L 418.1 260.5 L 417.1 255.2 L 417.1 242.9 L 418.0 227.4 L 419.2 219.8 L 421.5 217.9 L 431.0 213.8 L 444.2 210.6 L 474.7 206.2 L 492.6 205.2 Z M 493.9 303.1 L 484.9 304.7 L 477.9 306.8 L 472.8 309.3 L 469.4 312.1 L 466.7 316.5 L 465.7 322.2 L 466.6 329.5 L 467.9 332.2 L 469.2 333.4 L 476.5 336.7 L 483.6 337.7 L 490.5 335.3 L 495.4 331.5 L 498.4 327.4 L 501.3 321.4 L 504.0 313.4 L 505.7 305.5 L 504.5 303.1 L 502.6 302.3 L 493.9 303.1 Z" fill="#C84B31" fill-rule="evenodd"/>
@@ -2614,41 +2635,40 @@
       introHasDismissed = true;
       document.body.classList.remove('intro-active');
       document.documentElement.classList.remove('intro-active');
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       const overlay = document.getElementById('feastIntroOverlay');
       if (overlay) {
         overlay.classList.add('dismissed');
         setTimeout(() => {
           try { overlay.remove(); } catch (e) {}
-        }, 450);
+        }, 300);
       }
-      setTimeout(maybeShowFirstVisitModal, 450);
+      setTimeout(maybeShowFirstVisitModal, 350);
     }
 
     function notifyMealsLoaded() {
       initialMealsLoaded = true;
-      // If the intro animation has completed its minimum display time, dismiss immediately
       if (introMinTimeElapsed) {
         dismissFeastIntro();
       }
     }
 
-    // Guaranteed intro timer: at 2.0s, the title screen ALWAYS fades out smoothly.
-    // If meals finished loading earlier, it fades out now.
-    // If meals are still fetching over the network (e.g. cold start), it still fades out so the user sees the active loading progress bar and skeleton cards!
+    // Guaranteed automatic dismissal timer at 2.0s:
+    // If meals finished loading earlier, it fades out smoothly now.
+    // If meals take longer over network / cold-start, it still dismisses at 2.0s to reveal the progress bar and cards!
     setTimeout(() => {
       introMinTimeElapsed = true;
       dismissFeastIntro();
     }, MIN_INTRO_DISPLAY_MS);
 
-    // Safety fallback: after 1.5s, clicking or tapping anywhere on the title screen will dismiss it immediately
-    setTimeout(() => {
-      const overlay = document.getElementById('feastIntroOverlay');
-      if (overlay) {
-        overlay.style.cursor = 'pointer';
-        overlay.addEventListener('click', dismissFeastIntro, { once: true });
-        overlay.addEventListener('touchend', dismissFeastIntro, { once: true });
-      }
-    }, 1500);
+    // Tap fallback: immediate click/touch listener so tapping the intro overlay dismisses it instantly
+    const introOverlayEl = document.getElementById('feastIntroOverlay');
+    if (introOverlayEl) {
+      introOverlayEl.style.cursor = 'pointer';
+      introOverlayEl.addEventListener('click', dismissFeastIntro);
+      introOverlayEl.addEventListener('touchend', dismissFeastIntro);
+    }
 
     // Prevent any scrolling, wheeling, or swiping on the title screen
     const introOverlayEl = document.getElementById('feastIntroOverlay');
