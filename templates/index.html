@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#F7F3EE" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -53,6 +53,14 @@
       max-width: 100%;
       overflow-x: hidden;
       -webkit-text-size-adjust: 100%;
+      touch-action: manipulation;
+    }
+
+    html.intro-active, body.intro-active {
+      overflow: hidden !important;
+      height: 100% !important;
+      overscroll-behavior: none !important;
+      touch-action: none !important;
     }
 
     body {
@@ -1751,6 +1759,9 @@
     .feast-intro-overlay {
       position: fixed;
       inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       z-index: 999999;
       background: #F7F3EE;
       display: flex;
@@ -1758,8 +1769,10 @@
       justify-content: center;
       opacity: 1;
       transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden;
+      overflow: hidden !important;
       user-select: none;
+      touch-action: none !important;
+      overscroll-behavior: none !important;
     }
 
     .feast-intro-overlay.dismissed {
@@ -2130,7 +2143,7 @@
     }
   </style>
 </head>
-<body>
+<body class="intro-active">
 
   <!-- Top Glowing Progress Bar -->
   <div id="topLoadingBar" class="top-loading-bar" aria-hidden="true"></div>
@@ -2629,6 +2642,8 @@
     function dismissFeastIntro() {
       if (introHasDismissed) return;
       introHasDismissed = true;
+      document.body.classList.remove('intro-active');
+      document.documentElement.classList.remove('intro-active');
       const overlay = document.getElementById('feastIntroOverlay');
       if (!overlay || overlay.classList.contains('dismissed')) return;
       overlay.classList.add('dismissed');
@@ -2637,6 +2652,38 @@
         setTimeout(maybeShowFirstVisitModal, 350);
       }, 450);
     }
+
+    // Prevent any scrolling, wheeling, or swiping on the title screen
+    const introOverlayEl = document.getElementById('feastIntroOverlay');
+    if (introOverlayEl) {
+      ['touchmove', 'wheel', 'scroll'].forEach(evt => {
+        introOverlayEl.addEventListener(evt, e => e.preventDefault(), { passive: false });
+      });
+    }
+
+    // Globally prevent pinch-to-zoom gestures (including iOS Safari)
+    ['gesturestart', 'gesturechange', 'gestureend'].forEach(eventName => {
+      document.addEventListener(eventName, e => e.preventDefault(), { passive: false });
+    });
+
+    // Disable multi-touch zoom
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Disable double-tap zoom globally on non-form elements
+    let lastTouchTime = 0;
+    document.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTouchTime <= 300) {
+        if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+          e.preventDefault();
+        }
+      }
+      lastTouchTime = now;
+    }, { passive: false });
 
     function selectMode(mode) {
       if (activeMode === mode && !document.getElementById('pure_health_mode').checked) {
