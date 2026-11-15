@@ -138,6 +138,34 @@ FALLBACK_MACROS = {
         'calories': 185.0, 'protein': 35.0, 'carbs': 0.0, 'fat': 4.0, 'sugar': 0.0,
         'ingredients': 'Boneless Skinless Chicken Breast, Sea Salt, Black Pepper (4 oz)'
     },
+    'chicken drumstick': {
+        'calories': 135.0, 'protein': 14.0, 'carbs': 2.0, 'fat': 7.5, 'sugar': 1.0,
+        'ingredients': 'Chicken Drumstick, Seasoning, Oil (1 drumstick, approx 45g meat)'
+    },
+    'drumstick': {
+        'calories': 135.0, 'protein': 14.0, 'carbs': 2.0, 'fat': 7.5, 'sugar': 1.0,
+        'ingredients': 'Chicken Drumstick, Seasoning, Oil (1 drumstick, approx 45g meat)'
+    },
+    'chicken wing': {
+        'calories': 85.0, 'protein': 9.0, 'carbs': 0.0, 'fat': 5.5, 'sugar': 0.0,
+        'ingredients': 'Chicken Wing, Seasoning (1 wing)'
+    },
+    'chicken thigh': {
+        'calories': 200.0, 'protein': 21.0, 'carbs': 0.0, 'fat': 12.0, 'sugar': 0.0,
+        'ingredients': 'Chicken Thigh, Seasoning (1 thigh)'
+    },
+    'crinkle cut fries': {
+        'calories': 220.0, 'protein': 2.8, 'carbs': 28.0, 'fat': 11.0, 'sugar': 0.5,
+        'ingredients': 'Potatoes, Vegetable Oil, Sea Salt (1 serving, approx 3 oz)'
+    },
+    'french fries': {
+        'calories': 220.0, 'protein': 2.8, 'carbs': 28.0, 'fat': 11.0, 'sugar': 0.5,
+        'ingredients': 'Potatoes, Vegetable Oil, Sea Salt (1 serving, approx 3 oz)'
+    },
+    'fries': {
+        'calories': 220.0, 'protein': 2.8, 'carbs': 28.0, 'fat': 11.0, 'sugar': 0.5,
+        'ingredients': 'Potatoes, Vegetable Oil, Sea Salt (1 serving, approx 3 oz)'
+    },
 }
 
 ORDERED_KEYWORD_MACROS = [
@@ -184,6 +212,8 @@ ORDERED_KEYWORD_MACROS = [
     ('cherry pie', (325.0, 2.5, 47.0, 14.5, 25.0)),
     ('pie', (320.0, 3.0, 45.0, 14.0, 22.0)),
     ('cheesecake', (350.0, 6.0, 32.0, 22.0, 24.0)),
+    ('coffeecake', (280.0, 3.5, 42.0, 11.0, 22.0)),
+    ('coffee cake', (280.0, 3.5, 42.0, 11.0, 22.0)),
     ('cake', (310.0, 3.5, 46.0, 12.0, 28.0)),
     ('brownie', (290.0, 3.5, 38.0, 14.0, 24.0)),
     ('cookie', (210.0, 2.5, 28.0, 10.0, 16.0)),
@@ -241,9 +271,14 @@ ORDERED_KEYWORD_MACROS = [
     ('egg', (155.0, 12.5, 1.1, 10.6, 1.0)),
     ('grilled chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
     ('chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
-    ('chicken thigh', (225.0, 26.0, 0.0, 13.0, 0.0)),
-    ('chicken drumstick', (215.0, 28.0, 2.0, 9.5, 0.0)),
-    ('drumstick', (215.0, 28.0, 2.0, 9.5, 0.0)),
+    ('chicken thigh', (200.0, 21.0, 0.0, 12.0, 0.0)),
+    ('chicken drumstick', (135.0, 14.0, 2.0, 7.5, 1.0)),
+    ('drumstick', (135.0, 14.0, 2.0, 7.5, 1.0)),
+    ('chicken wing', (85.0, 9.0, 0.0, 5.5, 0.0)),
+    ('wing', (85.0, 9.0, 0.0, 5.5, 0.0)),
+    ('chicken tender', (110.0, 11.0, 6.0, 4.5, 0.0)),
+    ('chicken tenders', (110.0, 11.0, 6.0, 4.5, 0.0)),
+    ('tender', (110.0, 11.0, 6.0, 4.5, 0.0)),
     ('chickpea chole curry', (260.0, 14.0, 38.0, 5.0, 4.0)),
     ('chole curry', (260.0, 14.0, 38.0, 5.0, 4.0)),
     ('chana masala', (260.0, 14.0, 38.0, 5.0, 4.0)),
@@ -258,6 +293,7 @@ ORDERED_KEYWORD_MACROS = [
     ('hamburger patty', (250.0, 26.0, 1.0, 15.0, 0.0)),
     ('ground beef', (250.0, 26.0, 1.0, 15.0, 0.0)),
     ('beef', (250.0, 26.0, 1.5, 15.0, 0.5)),
+    ('pork tenderloin', (240.0, 25.0, 2.0, 14.0, 0.0)),
     ('pork loin', (220.0, 27.0, 0.0, 11.0, 0.0)),
     ('pork', (240.0, 25.0, 2.0, 14.0, 1.0)),
     ('ham', (180.0, 22.0, 2.0, 9.0, 1.5)),
@@ -291,7 +327,19 @@ ORDERED_KEYWORD_MACROS = [
     ('quinoa', (220.0, 8.0, 39.0, 3.5, 1.5)),
     ('couscous', (180.0, 6.0, 36.0, 0.5, 0.5)),
     ('sweet potato', (165.0, 3.5, 38.0, 0.3, 7.0)),
+    ('crinkle cut fries', (220.0, 2.8, 28.0, 11.0, 0.5)),
+    ('french fries', (220.0, 2.8, 28.0, 11.0, 0.5)),
+    ('fries', (220.0, 2.8, 28.0, 11.0, 0.5)),
+    ('french fry', (220.0, 2.8, 28.0, 11.0, 0.5)),
+    ('tater tots', (210.0, 2.5, 26.0, 11.0, 0.5)),
+    ('tots', (210.0, 2.5, 26.0, 11.0, 0.5)),
+    ('hash brown', (200.0, 2.0, 24.0, 11.0, 0.5)),
+    ('hashbrown', (200.0, 2.0, 24.0, 11.0, 0.5)),
     ('potato', (160.0, 3.5, 36.0, 0.3, 1.5)),
+    ('rotini', (210.0, 7.0, 42.0, 1.2, 1.5)),
+    ('penne', (210.0, 7.0, 42.0, 1.2, 1.5)),
+    ('spaghetti', (210.0, 7.0, 42.0, 1.2, 1.5)),
+    ('fettuccine', (210.0, 7.0, 42.0, 1.2, 1.5)),
     ('pasta', (210.0, 7.0, 42.0, 1.2, 1.5)),
     ('noodle', (210.0, 7.0, 42.0, 1.2, 1.5)),
     ('oatmeal', (160.0, 5.5, 28.0, 3.0, 1.0)),
@@ -395,12 +443,14 @@ STATION_HEADER_NAMES = {
     'baked potato bar', 'omelet bar', 'waffle bar', 'cereal bar',
     'soup bar', 'toppings bar', 'condiment bar', 'pizza toppers',
     'waffle brinner bar', 'build your own pizza bar', 'bread and condiments',
-    'la fonda station'
+    'la fonda station', 'sundae brunch bar', 'sundae bar', 'yogurt bar',
+    'ice cream bar', 'dessert bar'
 }
 DESSERT_KEYWORDS = [
     'pie', 'cake', 'cookie', 'brownie', 'cobbler', 'pudding',
     'ice cream', 'donut', 'muffin', 'pastry', 'tart', 'cupcake', 'gelato',
-    'italian ice', 'sherbet', 'sorbet'
+    'italian ice', 'sherbet', 'sorbet', 'coffeecake', 'coffee cake',
+    'crumb cake', 'pound cake', 'crumble', 'crisp'
 ]
 
 STANDALONE_CONDIMENT_KEYWORDS = [
@@ -622,8 +672,18 @@ def _match_fallback_macro(item_name: str) -> Optional[dict]:
     if lower_name in FALLBACK_MACROS:
         return FALLBACK_MACROS[lower_name]
     for key, macros in FALLBACK_MACROS.items():
-        if key in lower_name:
+        if re.search(rf'\b{re.escape(key)}(?:s|es)?\b', lower_name):
             return macros
+    for kw, (cal, pro, carb, fat, sug) in ORDERED_KEYWORD_MACROS:
+        if re.search(rf'\b{re.escape(kw)}(?:s|es)?\b', lower_name):
+            return {
+                'calories': cal,
+                'protein': pro,
+                'carbs': carb,
+                'fat': fat,
+                'sugar': sug,
+                'ingredients': f'{item_name.title()} (Standard campus dining preparation)'
+            }
     return None
 
 
@@ -1003,11 +1063,11 @@ def hydrate_missing_macros(items: list[dict], inject_permanent_staples: bool = F
         copy_item.setdefault('allergens', [])
         copy_item.setdefault('is_vegetarian', None)
         copy_item.setdefault('is_vegan', None)
-        if copy_item['calories'] == 0.0 and copy_item['protein'] == 0.0:
+        if (copy_item['calories'] == 0.0 and copy_item['protein'] == 0.0) or copy_item.get('used_fallback'):
             name_lower = copy_item['name'].lower().strip()
             if name_lower not in STATION_HEADER_NAMES:
                 for kw, (cal, pro, carb, fat, sug) in ORDERED_KEYWORD_MACROS:
-                    if kw in name_lower:
+                    if re.search(rf'\b{re.escape(kw)}(?:s|es)?\b', name_lower):
                         copy_item['calories'] = cal
                         copy_item['protein'] = pro
                         copy_item['carbs'] = carb
@@ -1466,6 +1526,8 @@ def generate_portion_label(item: dict, multiplier: float) -> str:
         count_noun = ('link', 'links')
     elif 'tender' in combined:
         count_noun = ('tender', 'tenders')
+    elif 'drumstick' in combined:
+        count_noun = ('drumstick', 'drumsticks')
     elif 'wing' in combined:
         count_noun = ('wing', 'wings')
     elif 'thigh' in combined:
@@ -1474,7 +1536,7 @@ def generate_portion_label(item: dict, multiplier: float) -> str:
         count_noun = ('filet', 'filets')
     elif any(k in ss_lower for k in ('each', 'piece', 'ea', 'pc')):
         count_noun = ('piece', 'pieces')
-    elif any(k in combined for k in ('chicken breast', 'pork chop', 'steak', 'salmon', 'tilapia', 'drumstick', 'sandwich', 'burrito', 'quesadilla')):
+    elif any(k in combined for k in ('chicken breast', 'pork chop', 'steak', 'salmon', 'tilapia', 'sandwich', 'burrito', 'quesadilla')):
         count_noun = ('piece', 'pieces')
 
     if count_noun:
@@ -1539,6 +1601,8 @@ def scale_combo_to_user(combo: dict, per_meal_targets: dict, tier_key: str = 'mi
         n = (it.get('name') or '').lower()
         if r in ('sauce_dressing', 'fat_topping', 'dessert'):
             return True
+        if _is_dessert_item(n):
+            return True
         locked_pattern = r'\b(sauces?|dressings?|vinaigrettes?|oils?|butters?|mayo|mayonnaise|cheeses?|gravy|gravies|syrups?|frostings?|dips?|creamers?|sour cream)\b'
         if re.search(locked_pattern, n, re.IGNORECASE) and not any(p in n for p in ('mac & cheese', 'macaroni', 'pizza', 'quesadilla', 'cheeseburger', 'cottage cheese')):
             return True
@@ -1575,7 +1639,19 @@ def scale_combo_to_user(combo: dict, per_meal_targets: dict, tier_key: str = 'mi
     else:
         raw_p_mult = pro_mult_raw
 
-    p_mult = _snap_multiplier(raw_p_mult, max_mult=2.5, min_mult=0.5)
+    pa_name = (protein_anchor.get('name') or '').lower()
+    is_discrete_protein = any(d in pa_name for d in ('drumstick', 'wing', 'thigh', 'hard boiled egg', 'egg', 'taco', 'cookie', 'link'))
+    if is_discrete_protein:
+        if raw_p_mult < 1.4:
+            p_mult = 1.0
+        elif raw_p_mult < 2.4:
+            p_mult = 2.0
+        elif raw_p_mult < 3.4:
+            p_mult = 3.0
+        else:
+            p_mult = 4.0
+    else:
+        p_mult = _snap_multiplier(raw_p_mult, max_mult=2.5, min_mult=0.5)
 
     multipliers: dict[int, float] = {id(it): 1.0 for it in items}
     multipliers[id(protein_anchor)] = p_mult
@@ -1606,7 +1682,19 @@ def scale_combo_to_user(combo: dict, per_meal_targets: dict, tier_key: str = 'mi
         carb_c0 = float(carb_anchor.get('calories', 0.0))
         if carb_c0 > 15.0:
             raw_carb_mult = 1.0 + (rem_cal_gap / carb_c0)
-            carb_mult = _snap_multiplier(raw_carb_mult, max_mult=2.5, min_mult=0.5)
+            ca_name = (carb_anchor.get('name') or '').lower()
+            is_discrete_carb = any(d in ca_name for d in ('cookie', 'taco', 'roll', 'biscuit', 'link', 'slice'))
+            if is_discrete_carb:
+                if raw_carb_mult < 1.4:
+                    carb_mult = 1.0
+                elif raw_carb_mult < 2.4:
+                    carb_mult = 2.0
+                elif raw_carb_mult < 3.4:
+                    carb_mult = 3.0
+                else:
+                    carb_mult = 4.0
+            else:
+                carb_mult = _snap_multiplier(raw_carb_mult, max_mult=2.5, min_mult=0.5)
             multipliers[id(carb_anchor)] = carb_mult
             rem_cal_gap -= (carb_mult - 1.0) * carb_c0
 
@@ -2592,7 +2680,7 @@ def classify_food_item(item: dict) -> str:
     name_lower = raw_name.lower()
     ing_lower = (item.get('ingredients') or '').lower()
 
-    if name_lower in STATION_HEADER_NAMES:
+    if name_lower in STATION_HEADER_NAMES or (name_lower.endswith(' bar') and item.get('calories', 0.0) == 0.0 and item.get('protein', 0.0) == 0.0):
         return 'exclude'
 
     if _is_dessert_item(name_lower):
@@ -2735,7 +2823,7 @@ def _meets_minimum_meal_floor(
     if tier == 'high':
         return pro >= 18.0 and cal >= 320.0
 
-    return pro >= 18.0 and cal >= 300.0
+    return pro >= 16.0 and cal >= 260.0
 
 
 def _build_option_b_anchors(pool: list[dict], existing_proteins: list[dict]) -> list[dict]:

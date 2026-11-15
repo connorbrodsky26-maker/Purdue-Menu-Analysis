@@ -596,9 +596,13 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         # Multiplier 1.0 -> no label
         self.assertEqual(generate_portion_label({'name': 'Grilled Chicken Breast', 'serving_size': '1 breast'}, 1.0), "")
 
-        # Countable meat/item -> breasts, pieces, slices, cookies
+        # Countable meat/item -> breasts, drumsticks, wings, thighs, pieces, slices, cookies
         self.assertEqual(generate_portion_label({'name': 'Grilled Chicken Breast', 'serving_size': '1 breast'}, 2.0), "2 breasts")
         self.assertEqual(generate_portion_label({'name': 'Grilled Chicken Breast', 'serving_size': '1 breast'}, 1.5), "1.5 breasts")
+        self.assertEqual(generate_portion_label({'name': 'BoilerQ BBQ Chicken Drumstick', 'serving_size': '1 drumstick'}, 2.0), "2 drumsticks")
+        self.assertEqual(generate_portion_label({'name': 'BoilerQ BBQ Chicken Drumstick', 'serving_size': '1 drumstick'}, 3.0), "3 drumsticks")
+        self.assertEqual(generate_portion_label({'name': 'Crispy Chicken Wings', 'serving_size': '1 wing'}, 3.0), "3 wings")
+        self.assertEqual(generate_portion_label({'name': 'Roasted Chicken Thigh', 'serving_size': '1 thigh'}, 2.0), "2 thighs")
         self.assertEqual(generate_portion_label({'name': 'Pork Chop', 'serving_size': '1 piece'}, 2.0), "2 pieces")
         self.assertEqual(generate_portion_label({'name': 'Pepperoni Pizza', 'serving_size': '1 slice'}, 2.0), "2 slices")
         self.assertEqual(generate_portion_label({'name': 'Chocolate Chip Cookie', 'serving_size': '1 cookie'}, 2.0), "2 cookies")
@@ -715,6 +719,70 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertIn('targets', data)
         self.assertIn('per_meal', data['targets'])
         self.assertGreater(data['targets']['per_meal']['calories'], 0)
+
+    def test_drumstick_realistic_macros_and_discrete_portion_scaling(self):
+        from purdue_menus_full_analysis import FALLBACK_MACROS, ORDERED_KEYWORD_MACROS
+
+        # Drumstick fallback macro check: single roasted drumstick has realistic ~14g protein, never 28g
+        self.assertEqual(FALLBACK_MACROS['chicken drumstick']['protein'], 14.0)
+        self.assertEqual(FALLBACK_MACROS['drumstick']['protein'], 14.0)
+        drumstick_ordered = next(val for kw, val in ORDERED_KEYWORD_MACROS if kw == 'chicken drumstick')
+        self.assertEqual(drumstick_ordered[1], 14.0)
+
+        # Combo with discrete chicken drumstick, carb side, and dessert
+        combo = {
+            'items': [
+                {
+                    'name': 'BoilerQ BBQ Chicken Drumstick',
+                    'food_type': 'protein_entree',
+                    'role': 'Main',
+                    'calories': 135.0,
+                    'protein': 14.0,
+                    'carbs': 2.0,
+                    'fat': 7.5,
+                    'serving_size': '1 drumstick'
+                },
+                {
+                    'name': 'Roasted Red Potatoes',
+                    'food_type': 'carb_side',
+                    'role': 'Base',
+                    'calories': 160.0,
+                    'protein': 3.5,
+                    'carbs': 36.0,
+                    'fat': 0.3,
+                    'serving_size': '0.75 cup'
+                },
+                {
+                    'name': 'Apple Coffeecake',
+                    'food_type': 'dessert',
+                    'role': 'Dessert',
+                    'calories': 280.0,
+                    'protein': 3.5,
+                    'carbs': 42.0,
+                    'fat': 11.0,
+                    'serving_size': '1 slice'
+                }
+            ],
+            'totals': {'calories': 575.0, 'protein': 21.0, 'carbs': 80.0, 'fat': 18.8, 'sugar': 5.0},
+            'macro_split': {'protein_pct': 15, 'carbs_pct': 56, 'fat_pct': 29}
+        }
+
+        # Target 35g protein for this meal
+        targets = {'calories': 750.0, 'protein_target': 35.0}
+        scaled = scale_combo_to_user(combo, targets, tier_key='mid')
+
+        drumstick = next(it for it in scaled['items'] if 'Drumstick' in it['name'])
+        # Discrete drumstick must snap to an integer multiplier (e.g. 2.0), NEVER 1.5 or 2.5
+        self.assertIn(drumstick['multiplier'], (1.0, 2.0, 3.0, 4.0))
+        self.assertEqual(drumstick['multiplier'], 2.0)
+        self.assertEqual(drumstick['protein'], 28.0)  # 14 * 2 = 28g, never 70g!
+        self.assertEqual(drumstick['portion_label'], '2 drumsticks')
+
+        # Dessert must remain locked at 1.0 (never scaled up to satisfy calories)
+        coffeecake = next(it for it in scaled['items'] if 'Coffeecake' in it['name'])
+        self.assertEqual(coffeecake.get('multiplier', 1.0), 1.0)
+        self.assertEqual(coffeecake['portion_label'], "")
+        self.assertFalse(coffeecake.get('is_scaled', False))
 
 
 if __name__ == '__main__':
