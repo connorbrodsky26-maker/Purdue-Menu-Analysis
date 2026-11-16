@@ -1265,7 +1265,7 @@ def hydrate_missing_macros(items: list[dict], inject_permanent_staples: bool = F
         copy_item.setdefault('allergens', [])
         copy_item.setdefault('is_vegetarian', None)
         copy_item.setdefault('is_vegan', None)
-        if (copy_item['calories'] == 0.0 and copy_item['protein'] == 0.0) or copy_item.get('used_fallback'):
+        if copy_item['calories'] == 0.0 and copy_item['protein'] == 0.0:
             name_lower = copy_item['name'].lower().strip()
             if name_lower not in STATION_HEADER_NAMES:
                 for kw, (cal, pro, carb, fat, sug) in ORDERED_KEYWORD_MACROS:
@@ -1395,19 +1395,31 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                 allergens, is_vegetarian, is_vegan = _extract_allergens_and_diet(detail_data)
 
                 if detail_data:
-                    serving_size = (detail_data.get('ServingSize') or '').strip() or 'N/A'
+                    serving_size = (detail_data.get('ServingSize') or '').strip()
+                    serving_unit = (detail_data.get('ServingUnit') or '').strip()
+                    if serving_unit:
+                        serving_size = f'{serving_size} {serving_unit}'.strip()
+                    if not serving_size:
+                        serving_size = 'N/A'
                     ingredients = (detail_data.get('Ingredients') or '').strip() or 'N/A'
 
-                    nutrients = detail_data.get('Nutrients') or []
-                    if nutrients:
-                        has_api_nutrients = True
+                    nutrients = detail_data.get('Nutrition') or detail_data.get('Nutrients') or []
                     for n in nutrients:
-                        n_name = (n.get('Name') or '').lower()
-                        n_val = _parse_numeric_value(n.get('Value'))
-                        if 'calorie' in n_name:
+                        n_name = (n.get('Name') or '').strip().lower()
+                        if n_name == 'serving size':
+                            api_serving = n.get('LabelValue') or n.get('Value')
+                            if api_serving and str(api_serving).strip().upper() not in ('N/A', 'NONE', ''):
+                                serving_size = str(api_serving).strip()
+                        raw_val = n.get('Value')
+                        if raw_val is None:
+                            raw_val = n.get('LabelValue')
+                        n_val = _parse_numeric_value(raw_val)
+                        if 'calorie' in n_name and 'fat' not in n_name:
                             calories = n_val
+                            has_api_nutrients = True
                         elif 'protein' in n_name:
                             protein = n_val
+                            has_api_nutrients = True
                         elif 'carbohydrate' in n_name:
                             carbs = n_val
                         elif n_name in ('total fat', 'fat'):
@@ -1416,7 +1428,7 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                             sugar = max(sugar, n_val)
 
                 used_fallback = False
-                if not has_api_nutrients or str(serving_size).strip().upper() == 'N/A':
+                if not has_api_nutrients or (calories == 0.0 and protein == 0.0 and carbs == 0.0 and fat == 0.0):
                     fallback = _match_fallback_macro(item_name)
                     if fallback:
                         calories = fallback['calories']
@@ -1426,9 +1438,14 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                         sugar = fallback['sugar']
                         if ingredients == 'N/A':
                             ingredients = fallback['ingredients']
-                        if str(serving_size).strip().upper() in ('N/A', '') and fallback.get('serving_size'):
+                        if str(serving_size).strip().upper() in ('N/A', '', 'NONE') and fallback.get('serving_size'):
                             serving_size = fallback['serving_size']
                         used_fallback = True
+                else:
+                    if str(serving_size).strip().upper() in ('N/A', '', 'NONE'):
+                        fallback = _match_fallback_macro(item_name)
+                        if fallback and fallback.get('serving_size'):
+                            serving_size = fallback['serving_size']
 
                 base_record = {
                     'location': location,
@@ -1787,9 +1804,11 @@ def generate_portion_label(item: dict, multiplier: float) -> str:
         else:
             return "1 large bowl"
 
-    # 2. Specific countable items (breasts, patties, eggs, slices, tacos, cookies, links, tenders, corn dogs, meatballs, nuggets, pancakes)
+    # 2. Specific countable items
     count_noun = None
-    if 'corn dog' in combined or 'corndog' in combined:
+    if 'scrambled' in combined:
+        count_noun = None
+    elif 'corn dog' in combined or 'corndog' in combined:
         count_noun = ('corn dog', 'corn dogs')
     elif 'hot dog' in combined or 'hotdog' in combined:
         count_noun = ('hot dog', 'hot dogs')
@@ -1799,7 +1818,7 @@ def generate_portion_label(item: dict, multiplier: float) -> str:
         count_noun = ('nugget', 'nuggets')
     elif 'pancake' in combined:
         count_noun = ('pancake', 'pancakes')
-    elif 'french toast stick' in combined:
+    elif 'french toast stick' in combined or ('stick' in combined and 'french toast' in combined):
         count_noun = ('stick', 'sticks')
     elif 'samosa' in combined:
         count_noun = ('samosa', 'samosas')
@@ -1807,7 +1826,7 @@ def generate_portion_label(item: dict, multiplier: float) -> str:
         count_noun = ('breast', 'breasts')
     elif 'patty' in combined or 'burger' in combined:
         count_noun = ('patty', 'patties')
-    elif 'egg' in combined:
+    elif 'egg' in combined and ('hard' in combined or 'boiled' in combined or 'cooked' in combined):
         count_noun = ('egg', 'eggs')
     elif 'slice' in combined or 'pizza' in combined:
         count_noun = ('slice', 'slices')
@@ -1815,6 +1834,18 @@ def generate_portion_label(item: dict, multiplier: float) -> str:
         count_noun = ('taco', 'tacos')
     elif 'cookie' in combined:
         count_noun = ('cookie', 'cookies')
+    elif 'brownie' in combined:
+        count_noun = ('brownie', 'brownies')
+    elif 'muffin' in combined:
+        count_noun = ('muffin', 'muffins')
+    elif 'roll' in combined or 'dinner roll' in combined:
+        count_noun = ('roll', 'rolls')
+    elif 'bun' in combined:
+        count_noun = ('bun', 'buns')
+    elif 'biscuit' in combined:
+        count_noun = ('biscuit', 'biscuits')
+    elif 'bagel' in combined:
+        count_noun = ('bagel', 'bagels')
     elif 'link' in combined or 'sausage' in combined:
         count_noun = ('link', 'links')
     elif 'tender' in combined:
@@ -1840,10 +1871,10 @@ def generate_portion_label(item: dict, multiplier: float) -> str:
             cnt = int(multiplier)
             return f"{cnt} {plur if cnt > 1 else sing}"
         else:
-            return f"{multiplier} {plur}"
+            return f"{multiplier:g} {plur}"
 
-    # 3. Scooped, cup, ladle, or side items (grains, beans, pasta, potatoes, soups, roasted veggies)
-    is_scoop_or_cup = any(k in combined for k in ('cup', 'scoop', 'ladle', 'oz', 'rice', 'potato', 'grain', 'bean', 'corn', 'soup', 'chili', 'pasta', 'mac')) or 'carb_side' in role or 'veg_side' in role
+    # 3. Scooped, cup, ladle, or side items (grains, beans, pasta, potatoes, soups, scrambled eggs, roasted veggies)
+    is_scoop_or_cup = any(k in combined for k in ('cup', 'scoop', 'ladle', 'oz', 'rice', 'potato', 'grain', 'bean', 'corn', 'soup', 'chili', 'pasta', 'mac', 'scrambled')) or 'carb_side' in role or 'veg_side' in role
     if is_scoop_or_cup:
         if multiplier <= 0.5:
             return "half scoop"
@@ -1858,7 +1889,7 @@ def generate_portion_label(item: dict, multiplier: float) -> str:
         elif multiplier == int(multiplier):
             return f"{int(multiplier)} scoops"
         else:
-            return f"{multiplier} scoops"
+            return f"{multiplier:g} scoops"
 
     # Default fallback
     if multiplier <= 0.5:
@@ -1866,7 +1897,7 @@ def generate_portion_label(item: dict, multiplier: float) -> str:
     elif multiplier == int(multiplier):
         return f"{int(multiplier)} portions"
     else:
-        return f"{multiplier} portions"
+        return f"{multiplier:g} portions"
 
 
 def scale_combo_to_user(combo: dict, per_meal_targets: dict, tier_key: str = 'mid') -> dict:
@@ -1933,11 +1964,14 @@ def scale_combo_to_user(combo: dict, per_meal_targets: dict, tier_key: str = 'mi
         raw_p_mult = pro_mult_raw
 
     pa_name = (protein_anchor.get('name') or '').lower()
-    is_discrete_protein = any(d in pa_name for d in (
-        'drumstick', 'wing', 'thigh', 'hard boiled egg', 'egg', 'taco', 'cookie',
-        'link', 'corn dog', 'corndog', 'hot dog', 'meatball', 'nugget', 'pancake',
-        'french toast stick', 'samosa'
-    ))
+    is_discrete_protein = (
+        any(d in pa_name for d in (
+            'drumstick', 'wing', 'thigh', 'hard boiled egg', 'hard cooked egg', 'taco', 'cookie',
+            'link', 'corn dog', 'corndog', 'hot dog', 'meatball', 'nugget', 'pancake',
+            'french toast stick', 'samosa'
+        ))
+        and 'scrambled' not in pa_name
+    )
     if is_discrete_protein:
         if raw_p_mult < 1.4:
             p_mult = 1.0
@@ -4506,6 +4540,17 @@ def build_optimal_plates(
                     'serving_size': it.get('serving_size', 'N/A'),
                 })
 
+            clean_totals = {
+                'calories': float(round(sum(it['calories'] for it in formatted_items))),
+                'protein': float(round(sum(it['protein'] for it in formatted_items))),
+                'carbs': float(round(sum(it['carbs'] for it in formatted_items))),
+                'fat': float(round(sum(it['fat'] for it in formatted_items))),
+                'sugar': float(round(sum(it.get('sugar', 0.0) for it in formatted_items))),
+            }
+            clean_split = _compute_macro_split(
+                clean_totals['protein'], clean_totals['carbs'], clean_totals['fat']
+            )
+
             formatted_combos.append({
                 'combo_id': f"{location.lower().replace(' ', '_')}_{idx}",
                 'combo_name': combo_name,
@@ -4513,8 +4558,8 @@ def build_optimal_plates(
                 'score': round(score_val, 1),
                 'score_breakdown': breakdown,
                 'items': formatted_items,
-                'totals': totals_obj,
-                'macro_split': macro_split,
+                'totals': clean_totals,
+                'macro_split': clean_split,
                 'is_seed_oil_free': is_seed_oil_free,
                 'is_salad_builder': bool(assembly_instructions),
                 'builder_label': builder_label,
