@@ -549,6 +549,34 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertIn('<!-- Tailor Plates to My Goals (DRI) - Disabled for public release -->', html)
         self.assertIn('<div class="toggle-card" style="display: none !important;">', html)
 
+        # Confirm Number of users today badge is present in header near open courts
+        self.assertIn('Number of users today:', html)
+        self.assertIn('usersTodayCount', html)
+        self.assertIn('users-pill', html)
+
+    def test_daily_user_counter_endpoints(self):
+        from app import app, record_site_visit, get_today_visits
+        initial_count = get_today_visits()
+        self.assertGreaterEqual(initial_count, 0)
+
+        # Record a visit
+        new_count = record_site_visit()
+        self.assertGreater(new_count, initial_count)
+        self.assertEqual(get_today_visits(), new_count)
+
+        # Test visit stats API
+        client = app.test_client()
+        stats_resp = client.get('/api/visit-stats')
+        self.assertEqual(stats_resp.status_code, 200)
+        data = stats_resp.get_json()
+        self.assertTrue(data.get('ok'))
+        self.assertEqual(data.get('users_today'), new_count)
+
+        # Test healthz endpoint
+        health_resp = client.get('/healthz')
+        self.assertEqual(health_resp.status_code, 200)
+        self.assertEqual(health_resp.get_data(as_text=True), 'OK')
+
 
 if __name__ == '__main__':
     unittest.main()

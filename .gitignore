@@ -2,3 +2,5 @@ purdue_menu_cache_*.json
 __pycache__/
 purdue_menus.py
 all_purdue_menus.txt
+feast_visits.json
+feast_feedback.json

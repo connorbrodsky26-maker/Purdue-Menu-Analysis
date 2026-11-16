@@ -132,6 +132,70 @@
       flex-shrink: 0;
     }
 
+    .header-pills-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .users-pill {
+      font-weight: 700;
+      gap: 0.38rem;
+      white-space: nowrap;
+    }
+
+    .users-pill-icon {
+      width: 14px;
+      height: 14px;
+      color: var(--terracotta);
+      flex-shrink: 0;
+    }
+
+    .users-pill strong {
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .users-pill-label-short {
+      display: none;
+    }
+
+    @media (max-width: 680px) {
+      .users-pill-label-full {
+        display: none;
+      }
+      .users-pill-label-short {
+        display: inline;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-inner {
+        padding: 0.55rem 0.65rem;
+        gap: 0.35rem;
+      }
+      .feast-wordmark-svg {
+        height: 32px;
+      }
+      .header-pills-group {
+        gap: 0.3rem;
+      }
+      .live-pill, .users-pill {
+        padding: 0.32rem 0.52rem;
+        font-size: 0.70rem;
+        gap: 0.28rem;
+      }
+      .users-pill-icon {
+        width: 12px;
+        height: 12px;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+      }
+    }
+
     /* Sticky Horizontal Dining Hall Switcher */
     .hall-switcher-wrap {
       width: 100%;
@@ -2352,9 +2416,18 @@
         </svg>
       </div>
 
-      <div class="live-pill" id="liveStatusPill">
-        <span class="live-dot"></span>
-        <span id="liveStatusText">Loading menus...</span>
+      <div class="header-pills-group">
+        <div class="live-pill users-pill" id="usersTodayPill" title="Number of users who opened Feast today">
+          <svg class="users-pill-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+          </svg>
+          <span class="users-pill-text"><span class="users-pill-label-full">Number of users today:</span><span class="users-pill-label-short">Users today:</span> <strong id="usersTodayCount">{{ users_today | default(1) }}</strong></span>
+        </div>
+
+        <div class="live-pill" id="liveStatusPill">
+          <span class="live-dot"></span>
+          <span id="liveStatusText">Loading menus...</span>
+        </div>
       </div>
     </div>
 
@@ -3732,6 +3805,13 @@
         document.getElementById('greetingTitle').textContent = pickMotivation(data.timestamp);
         const count = data.open_locations_count || 0;
         statusTextEl.textContent = count > 0 ? `${count} open now` : 'Courts closed';
+
+        if (typeof data.users_today === 'number') {
+          const usersCountEl = document.getElementById('usersTodayCount');
+          if (usersCountEl) {
+            usersCountEl.textContent = data.users_today;
+          }
+        }
 
         const isPure = data.health_intensity === 'Extreme' || pureHealthMode;
         const currentMode = isPure ? 'Extreme' : activeMode;

@@ -11,7 +11,54 @@ app = Flask(__name__)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 FEEDBACK_FILE = os.path.join(BASE_DIR, 'feast_feedback.json')
+VISITS_FILE = os.path.join(BASE_DIR, 'feast_visits.json')
 PURDUE_TZ = ZoneInfo("America/Indiana/Indianapolis")
+_visits_lock = threading.Lock()
+
+
+def record_site_visit() -> int:
+    """Records a website open/visit for today in Purdue local date and returns today's total count."""
+    today_str = datetime.now(PURDUE_TZ).strftime('%Y-%m-%d')
+    with _visits_lock:
+        data = {}
+        if os.path.exists(VISITS_FILE):
+            try:
+                with open(VISITS_FILE, 'r', encoding='utf-8') as f:
+                    loaded = json.load(f)
+                    if isinstance(loaded, dict):
+                        data = loaded
+            except (OSError, ValueError):
+                data = {}
+
+        current_count = int(data.get(today_str, 0)) + 1
+        data[today_str] = current_count
+
+        if len(data) > 60:
+            for old_key in sorted(data.keys())[:-60]:
+                data.pop(old_key, None)
+
+        try:
+            with open(VISITS_FILE, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2)
+        except OSError:
+            pass
+
+        return current_count
+
+
+def get_today_visits() -> int:
+    """Returns the total number of times the website has been opened today in Purdue time."""
+    today_str = datetime.now(PURDUE_TZ).strftime('%Y-%m-%d')
+    with _visits_lock:
+        if os.path.exists(VISITS_FILE):
+            try:
+                with open(VISITS_FILE, 'r', encoding='utf-8') as f:
+                    loaded = json.load(f)
+                    if isinstance(loaded, dict):
+                        return int(loaded.get(today_str, 0))
+            except (OSError, ValueError):
+                pass
+        return 0
 
 
 def _prewarm_menus_cache():
@@ -53,7 +100,28 @@ def add_cache_control(response):
 @app.route('/')
 def index():
     """Serves the Feast campus dining companion webpage."""
-    return render_template('index.html')
+    users_today = record_site_visit()
+    return render_template('index.html', users_today=users_today)
+
+
+@app.route('/healthz')
+def healthz():
+    """Health check endpoint for monitoring that does not increment user visit counts."""
+    return Response("OK", mimetype="text/plain", status=200)
+
+
+@app.route('/api/visit-stats', methods=['GET', 'POST'])
+def api_visit_stats():
+    """Returns or increments daily visitor counter."""
+    if request.method == 'POST':
+        count = record_site_visit()
+    else:
+        count = get_today_visits()
+    return jsonify({
+        'ok': True,
+        'users_today': count,
+        'date': datetime.now(PURDUE_TZ).strftime('%Y-%m-%d')
+    })
 
 
 @app.route('/favicon.svg')
@@ -197,6 +265,8 @@ def api_recommend():
             dietary_filters=dietary_filters,
             current_time=sim_time,
         )
+        if isinstance(result, dict):
+            result['users_today'] = get_today_visits()
         return jsonify(result)
 
     except ValueError as val_err:
