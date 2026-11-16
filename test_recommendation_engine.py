@@ -584,19 +584,44 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertAlmostEqual(bk_res['per_meal']['calories'], 2250.1 * 0.25, delta=2.0)
         self.assertAlmostEqual(ln_res['per_meal']['calories'], 2250.1 * 0.375, delta=2.0)
 
-        # Bulking adds 350 kcal and uses weight * 0.80 for protein
+        # High Protein adds 350 kcal and uses weight * 1.00 for protein
         bulk_res = calculate_meal_targets(
             sex='M', age=20, weight_lbs=160.0, height_in=70.0,
             activity_level='Moderate', meals_per_day=2, meal_goal='High Protein / Muscle Gain'
         )
         self.assertAlmostEqual(bulk_res['daily']['calories'], 2700.1 + 350.0, delta=2.5)
-        self.assertAlmostEqual(bulk_res['daily']['protein_target'], 160.0 * 0.80, delta=1.0)
+        self.assertAlmostEqual(bulk_res['daily']['protein_target'], 160.0 * 1.00, delta=1.0)
+        self.assertAlmostEqual(bulk_res['per_meal']['protein_target'], 80.0, delta=1.0)
+
+        # Balanced Maintenance uses tdee and weight * 0.80 for protein
+        maint_res = calculate_meal_targets(
+            sex='M', age=20, weight_lbs=160.0, height_in=70.0,
+            activity_level='Moderate', meals_per_day=2, meal_goal='Balanced Maintenance'
+        )
+        self.assertAlmostEqual(maint_res['daily']['calories'], 2700.1, delta=2.5)
+        self.assertAlmostEqual(maint_res['daily']['protein_target'], 160.0 * 0.80, delta=1.0)
+
+        # Athletic Endurance adds 200 kcal and has elevated carbs (58%)
+        endur_res = calculate_meal_targets(
+            sex='M', age=20, weight_lbs=160.0, height_in=70.0,
+            activity_level='Moderate', meals_per_day=2, meal_goal='Athletic Endurance / Energy'
+        )
+        self.assertAlmostEqual(endur_res['daily']['calories'], 2700.1 + 200.0, delta=2.5)
+        self.assertGreater(endur_res['per_meal']['carbs_target'], 180.0)
+
+        # Low-Carb uses tdee and keeps carbs controlled (18%, max 50g)
+        lowcarb_res = calculate_meal_targets(
+            sex='M', age=20, weight_lbs=160.0, height_in=70.0,
+            activity_level='Moderate', meals_per_day=2, meal_goal='Low-Carb / Blood Sugar Focus'
+        )
+        self.assertAlmostEqual(lowcarb_res['daily']['calories'], 2700.1, delta=2.5)
+        self.assertLessEqual(lowcarb_res['per_meal']['carbs_max'], 50.0)
 
     def test_natural_portion_labels(self):
         # Multiplier 1.0 -> no label
         self.assertEqual(generate_portion_label({'name': 'Grilled Chicken Breast', 'serving_size': '1 breast'}, 1.0), "")
 
-        # Countable meat/item -> breasts, drumsticks, wings, thighs, pieces, slices, cookies
+        # Countable meat/item -> breasts, drumsticks, wings, thighs, pieces, slices, cookies, corn dogs, meatballs, nuggets
         self.assertEqual(generate_portion_label({'name': 'Grilled Chicken Breast', 'serving_size': '1 breast'}, 2.0), "2 breasts")
         self.assertEqual(generate_portion_label({'name': 'Grilled Chicken Breast', 'serving_size': '1 breast'}, 1.5), "1.5 breasts")
         self.assertEqual(generate_portion_label({'name': 'BoilerQ BBQ Chicken Drumstick', 'serving_size': '1 drumstick'}, 2.0), "2 drumsticks")
@@ -606,6 +631,11 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertEqual(generate_portion_label({'name': 'Pork Chop', 'serving_size': '1 piece'}, 2.0), "2 pieces")
         self.assertEqual(generate_portion_label({'name': 'Pepperoni Pizza', 'serving_size': '1 slice'}, 2.0), "2 slices")
         self.assertEqual(generate_portion_label({'name': 'Chocolate Chip Cookie', 'serving_size': '1 cookie'}, 2.0), "2 cookies")
+        self.assertEqual(generate_portion_label({'name': 'Corn Dog', 'serving_size': '1 each'}, 2.0), "2 corn dogs")
+        self.assertEqual(generate_portion_label({'name': 'Swedish Meatballs', 'serving_size': '4 oz'}, 2.0), "2 meatballs")
+        self.assertEqual(generate_portion_label({'name': 'Vegan Chik Nuggets', 'serving_size': '4 nuggets'}, 2.0), "2 nuggets")
+        self.assertEqual(generate_portion_label({'name': 'French Toast Sticks', 'serving_size': '4 sticks'}, 2.0), "2 sticks")
+        self.assertEqual(generate_portion_label({'name': 'Samosa', 'serving_size': '1 piece'}, 2.0), "2 samosas")
 
         # Scooped / grains / sides -> scoops
         self.assertEqual(generate_portion_label({'name': 'Jasmine Rice', 'serving_size': '1 scoop'}, 1.5), "1.5 scoops")
@@ -783,6 +813,82 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertEqual(coffeecake.get('multiplier', 1.0), 1.0)
         self.assertEqual(coffeecake['portion_label'], "")
         self.assertFalse(coffeecake.get('is_scaled', False))
+
+    def test_audited_macro_fallbacks_and_classifications(self):
+        from purdue_menus_full_analysis import _match_fallback_macro, classify_food_item, scale_combo_to_user
+
+        # 1. Corn dog is sandwich entree with 230 kcal, not vegetable
+        cd_fb = _match_fallback_macro('Corn Dog')
+        self.assertIsNotNone(cd_fb)
+        self.assertEqual(cd_fb['calories'], 230.0)
+        self.assertEqual(cd_fb['protein'], 7.0)
+        cd_role = classify_food_item({'name': 'Corn Dog', 'calories': 230.0, 'protein': 7.0, 'carbs': 24.0, 'fat': 12.0})
+        self.assertEqual(cd_role, 'sandwich')
+
+        # 2. Swedish Meatballs is protein entree with 260 kcal and 18g protein
+        sm_fb = _match_fallback_macro('Swedish Meatballs')
+        self.assertIsNotNone(sm_fb)
+        self.assertEqual(sm_fb['calories'], 260.0)
+        self.assertEqual(sm_fb['protein'], 18.0)
+        sm_role = classify_food_item({'name': 'Swedish Meatballs', 'calories': 260.0, 'protein': 18.0, 'carbs': 10.0, 'fat': 16.0})
+        self.assertEqual(sm_role, 'protein_entree')
+
+        # 3. Carne Adobada is protein entree with 240 kcal and 24g protein
+        ca_fb = _match_fallback_macro('Carne Adobada')
+        self.assertIsNotNone(ca_fb)
+        self.assertEqual(ca_fb['calories'], 240.0)
+        self.assertEqual(ca_fb['protein'], 24.0)
+        ca_role = classify_food_item({'name': 'Carne Adobada', 'calories': 240.0, 'protein': 24.0, 'carbs': 3.0, 'fat': 14.0})
+        self.assertEqual(ca_role, 'protein_entree')
+
+        # 4. Sofritas is protein entree with 150 kcal and 10g protein
+        sof_fb = _match_fallback_macro('Sofritas')
+        self.assertIsNotNone(sof_fb)
+        self.assertEqual(sof_fb['calories'], 150.0)
+        self.assertEqual(sof_fb['protein'], 10.0)
+        sof_role = classify_food_item({'name': 'Sofritas', 'calories': 150.0, 'protein': 10.0, 'carbs': 9.0, 'fat': 8.0})
+        self.assertEqual(sof_role, 'protein_entree')
+
+        # 5. French Toast Sticks and Pancakes are breakfast entrees
+        fts_fb = _match_fallback_macro('French Toast Sticks')
+        self.assertIsNotNone(fts_fb)
+        self.assertEqual(fts_fb['calories'], 280.0)
+        fts_role = classify_food_item({'name': 'French Toast Sticks', 'calories': 280.0, 'protein': 5.0, 'carbs': 38.0, 'fat': 12.0})
+        self.assertEqual(fts_role, 'breakfast_entree')
+
+        p_fb = _match_fallback_macro('Pancakes')
+        self.assertIsNotNone(p_fb)
+        self.assertEqual(p_fb['calories'], 220.0)
+        p_role = classify_food_item({'name': 'Pancakes', 'calories': 220.0, 'protein': 5.0, 'carbs': 35.0, 'fat': 7.0})
+        self.assertEqual(p_role, 'breakfast_entree')
+
+        # 6. Peas is vegetable with 65 kcal
+        peas_fb = _match_fallback_macro('Peas')
+        self.assertIsNotNone(peas_fb)
+        self.assertEqual(peas_fb['calories'], 65.0)
+        peas_role = classify_food_item({'name': 'Peas', 'calories': 65.0, 'protein': 4.0, 'carbs': 12.0, 'fat': 0.5})
+        self.assertEqual(peas_role, 'vegetable')
+
+        # 7. Shredded cheese toppings and whipped butter are condiments
+        cheese_role = classify_food_item({'name': 'Shredded Cheddar Cheese', 'calories': 110.0, 'protein': 7.0, 'carbs': 1.0, 'fat': 9.0})
+        self.assertEqual(cheese_role, 'condiment')
+        butter_role = classify_food_item({'name': 'Whipped Butter', 'calories': 70.0, 'protein': 0.1, 'carbs': 0.1, 'fat': 8.0})
+        self.assertEqual(butter_role, 'condiment')
+
+        # 8. Low-Carb scaling constraint: starchy carbs never scale above 1.0
+        combo = {
+            'items': [
+                {'name': 'Carne Adobada', 'food_type': 'protein_entree', 'calories': 240.0, 'protein': 24.0, 'carbs': 3.0, 'fat': 14.0},
+                {'name': 'Spanish Rice', 'food_type': 'carb_side', 'calories': 200.0, 'protein': 4.0, 'carbs': 40.0, 'fat': 2.0},
+                {'name': 'Fresh Baby Spinach', 'food_type': 'salad_base', 'calories': 15.0, 'protein': 2.0, 'carbs': 2.5, 'fat': 0.2}
+            ],
+            'totals': {'calories': 455.0, 'protein': 30.0, 'carbs': 45.5, 'fat': 16.2, 'sugar': 1.0},
+            'macro_split': {'protein_pct': 27, 'carbs_pct': 41, 'fat_pct': 32}
+        }
+        targets = {'calories': 800.0, 'protein_target': 60.0, 'is_low_carb': True}
+        scaled = scale_combo_to_user(combo, targets, tier_key='mid')
+        rice = next(it for it in scaled['items'] if 'Rice' in it['name'])
+        self.assertLessEqual(rice['multiplier'], 1.0)
 
 
 if __name__ == '__main__':
