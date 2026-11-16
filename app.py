@@ -7,6 +7,11 @@ import requests as rq
 from flask import Flask, Response, render_template, request, jsonify, send_from_directory
 from purdue_menus_full_analysis import recommend_meals, _parse_user_time_input
 
+try:
+    import redis
+except ImportError:
+    redis = None
+
 app = Flask(__name__)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -15,10 +20,47 @@ VISITS_FILE = os.path.join(BASE_DIR, 'feast_visits.json')
 PURDUE_TZ = ZoneInfo("America/Indiana/Indianapolis")
 _visits_lock = threading.Lock()
 
+REDIS_URL = os.environ.get('REDIS_URL', '').strip()
+_redis_client = None
+_redis_lock = threading.Lock()
+
+
+def get_redis_connection():
+    """Lazily initializes and returns a thread-safe Redis client if REDIS_URL is configured."""
+    global _redis_client
+    if _redis_client is not None:
+        return _redis_client
+    if not redis or not REDIS_URL:
+        return None
+    with _redis_lock:
+        if _redis_client is not None:
+            return _redis_client
+        try:
+            _redis_client = redis.from_url(
+                REDIS_URL,
+                decode_responses=True,
+                socket_connect_timeout=2.0,
+                socket_timeout=2.0,
+            )
+            return _redis_client
+        except Exception:
+            return None
+
 
 def record_site_visit() -> int:
     """Records a website open/visit for today in Purdue local date and returns today's total count."""
     today_str = datetime.now(PURDUE_TZ).strftime('%Y-%m-%d')
+    r_client = get_redis_connection()
+    if r_client:
+        try:
+            key = f"feast:visits:{today_str}"
+            val = r_client.incr(key)
+            # Retain count for 48 hours so past day automatically expires and clears
+            r_client.expire(key, 172800)
+            return int(val)
+        except Exception:
+            pass
+
     with _visits_lock:
         data = {}
         if os.path.exists(VISITS_FILE):
@@ -49,6 +91,15 @@ def record_site_visit() -> int:
 def get_today_visits() -> int:
     """Returns the total number of times the website has been opened today in Purdue time."""
     today_str = datetime.now(PURDUE_TZ).strftime('%Y-%m-%d')
+    r_client = get_redis_connection()
+    if r_client:
+        try:
+            key = f"feast:visits:{today_str}"
+            val = r_client.get(key)
+            return int(val) if val is not None else 0
+        except Exception:
+            pass
+
     with _visits_lock:
         if os.path.exists(VISITS_FILE):
             try:

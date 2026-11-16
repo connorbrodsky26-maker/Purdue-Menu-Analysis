@@ -577,6 +577,44 @@ class TestFeastRecommendationEngine(unittest.TestCase):
         self.assertEqual(health_resp.status_code, 200)
         self.assertEqual(health_resp.get_data(as_text=True), 'OK')
 
+    def test_redis_persistence_and_daily_ttl(self):
+        """Verify that Redis integration persists counts and sets auto-expiration."""
+        import app as app_module
+        from app import record_site_visit, get_today_visits
+
+        class FakeRedis:
+            def __init__(self):
+                self.store = {}
+                self.ttls = {}
+
+            def incr(self, key):
+                val = self.store.get(key, 0) + 1
+                self.store[key] = val
+                return val
+
+            def get(self, key):
+                return self.store.get(key)
+
+            def expire(self, key, seconds):
+                self.ttls[key] = seconds
+                return True
+
+        fake_r = FakeRedis()
+        orig_client = app_module._redis_client
+        try:
+            app_module._redis_client = fake_r
+            c1 = record_site_visit()
+            self.assertEqual(c1, 1)
+            c2 = record_site_visit()
+            self.assertEqual(c2, 2)
+            self.assertEqual(get_today_visits(), 2)
+
+            # Confirm 48-hour (172800s) TTL was applied
+            today_key = [k for k in fake_r.store.keys() if k.startswith('feast:visits:')][0]
+            self.assertEqual(fake_r.ttls.get(today_key), 172800)
+        finally:
+            app_module._redis_client = orig_client
+
 
 if __name__ == '__main__':
     unittest.main()
