@@ -138,181 +138,10 @@ FALLBACK_MACROS = {
         'calories': 185.0, 'protein': 35.0, 'carbs': 0.0, 'fat': 4.0, 'sugar': 0.0,
         'ingredients': 'Boneless Skinless Chicken Breast, Sea Salt, Black Pepper (4 oz)'
     },
-    'boilerq bbq chicken drumstick': {
-        'calories': 105.0, 'protein': 11.0, 'carbs': 2.0, 'fat': 5.5, 'sugar': 1.0,
-        'ingredients': 'Chicken Drumstick, Princess Dry Rub Seasoning (1 drumstick, approx 35g meat)'
-    },
-    'chicken drumstick': {
-        'calories': 105.0, 'protein': 11.0, 'carbs': 2.0, 'fat': 5.5, 'sugar': 1.0,
-        'ingredients': 'Chicken Drumstick, Seasoning, Oil (1 drumstick, approx 35g meat)'
-    },
-    'drumstick': {
-        'calories': 105.0, 'protein': 11.0, 'carbs': 2.0, 'fat': 5.5, 'sugar': 1.0,
-        'ingredients': 'Chicken Drumstick, Seasoning, Oil (1 drumstick, approx 35g meat)'
-    },
-    'diced chicken for burrito bowl': {
-        'calories': 185.0, 'protein': 35.0, 'carbs': 0.0, 'fat': 4.0, 'sugar': 0.0,
-        'ingredients': 'Diced Seasoned Chicken Breast (approx 4 oz)'
-    },
-    'seasoned green beans': {
-        'calories': 40.0, 'protein': 2.0, 'carbs': 8.0, 'fat': 0.3, 'sugar': 2.0,
-        'ingredients': 'Seasoned Green Beans (0.5 cup)'
-    },
-    'green beans': {
-        'calories': 40.0, 'protein': 2.0, 'carbs': 8.0, 'fat': 0.3, 'sugar': 2.0,
-        'ingredients': 'Steamed Green Beans (0.5 cup)'
-    },
-    'chicken wing': {
-        'calories': 85.0, 'protein': 9.0, 'carbs': 0.0, 'fat': 5.5, 'sugar': 0.0,
-        'ingredients': 'Chicken Wing, Seasoning (1 wing)'
-    },
-    'chicken thigh': {
-        'calories': 200.0, 'protein': 21.0, 'carbs': 0.0, 'fat': 12.0, 'sugar': 0.0,
-        'ingredients': 'Chicken Thigh, Seasoning (1 thigh)'
-    },
-    'crinkle cut fries': {
-        'calories': 220.0, 'protein': 2.8, 'carbs': 28.0, 'fat': 11.0, 'sugar': 0.5,
-        'ingredients': 'Potatoes, Vegetable Oil, Sea Salt (1 serving, approx 3 oz)'
-    },
-    'french fries': {
-        'calories': 220.0, 'protein': 2.8, 'carbs': 28.0, 'fat': 11.0, 'sugar': 0.5,
-        'ingredients': 'Potatoes, Vegetable Oil, Sea Salt (1 serving, approx 3 oz)'
-    },
-    'fries': {
-        'calories': 220.0, 'protein': 2.8, 'carbs': 28.0, 'fat': 11.0, 'sugar': 0.5,
-        'ingredients': 'Potatoes, Vegetable Oil, Sea Salt (1 serving, approx 3 oz)'
-    },
-    'corn dog': {
-        'calories': 230.0, 'protein': 7.0, 'carbs': 24.0, 'fat': 12.0, 'sugar': 5.0,
-        'ingredients': 'Batter Wrapped Hot Dog (1 corn dog, approx 3 oz)'
-    },
-    'corndog': {
-        'calories': 230.0, 'protein': 7.0, 'carbs': 24.0, 'fat': 12.0, 'sugar': 5.0,
-        'ingredients': 'Batter Wrapped Hot Dog (1 corn dog, approx 3 oz)'
-    },
-    'swedish meatballs': {
-        'calories': 260.0, 'protein': 18.0, 'carbs': 10.0, 'fat': 16.0, 'sugar': 2.0,
-        'ingredients': 'Beef and Pork Meatballs in Savory Cream Gravy (4 meatballs, approx 4 oz)'
-    },
-    'swedish meatball': {
-        'calories': 260.0, 'protein': 18.0, 'carbs': 10.0, 'fat': 16.0, 'sugar': 2.0,
-        'ingredients': 'Beef and Pork Meatballs in Savory Cream Gravy (4 meatballs, approx 4 oz)'
-    },
-    'carne adobada': {
-        'calories': 240.0, 'protein': 24.0, 'carbs': 3.0, 'fat': 14.0, 'sugar': 1.0,
-        'ingredients': 'Slow-Braised Spiced Pork in Red Chile Adobo Sauce (approx 4 oz)'
-    },
-    'sofritas': {
-        'calories': 150.0, 'protein': 10.0, 'carbs': 9.0, 'fat': 8.0, 'sugar': 4.0,
-        'ingredients': 'Braised Organic Tofu, Chipotle Chilies, Roasted Poblano, Spices (approx 4 oz)'
-    },
-    'vegan chik nuggets': {
-        'calories': 190.0, 'protein': 13.0, 'carbs': 14.0, 'fat': 9.0, 'sugar': 0.0,
-        'ingredients': 'Crispy Plant-Based Chik Nuggets (4 nuggets)'
-    },
-    'french toast sticks': {
-        'calories': 280.0, 'protein': 5.0, 'carbs': 38.0, 'fat': 12.0, 'sugar': 12.0,
-        'ingredients': 'Crispy French Toast Sticks, Cinnamon Sugar (4 sticks)'
-    },
-    'french toast stick': {
-        'calories': 280.0, 'protein': 5.0, 'carbs': 38.0, 'fat': 12.0, 'sugar': 12.0,
-        'ingredients': 'Crispy French Toast Sticks, Cinnamon Sugar (4 sticks)'
-    },
-    'pancakes': {
-        'calories': 220.0, 'protein': 5.0, 'carbs': 35.0, 'fat': 7.0, 'sugar': 7.0,
-        'ingredients': 'Golden Buttermilk Pancakes (2 pancakes)'
-    },
-    'pancake': {
-        'calories': 220.0, 'protein': 5.0, 'carbs': 35.0, 'fat': 7.0, 'sugar': 7.0,
-        'ingredients': 'Golden Buttermilk Pancakes (2 pancakes)'
-    },
-    'sweet plantains': {
-        'calories': 180.0, 'protein': 1.0, 'carbs': 36.0, 'fat': 4.5, 'sugar': 18.0,
-        'ingredients': 'Fried Ripe Sweet Plantains / Maduros (0.5 cup)'
-    },
-    'samosa': {
-        'calories': 170.0, 'protein': 3.5, 'carbs': 20.0, 'fat': 9.0, 'sugar': 1.0,
-        'ingredients': 'Crispy Spiced Potato & Green Pea Samosa (1 piece)'
-    },
-    'fried pickles': {
-        'calories': 180.0, 'protein': 2.0, 'carbs': 19.0, 'fat': 11.0, 'sugar': 1.0,
-        'ingredients': 'Crispy Breaded Fried Pickles (4 pieces)'
-    },
-    'peas': {
-        'calories': 65.0, 'protein': 4.0, 'carbs': 12.0, 'fat': 0.5, 'sugar': 4.5,
-        'ingredients': 'Steamed Sweet Green Peas (0.5 cup)'
-    },
-    'baby carrots': {
-        'calories': 35.0, 'protein': 0.8, 'carbs': 8.0, 'fat': 0.2, 'sugar': 5.0,
-        'ingredients': 'Fresh Crisp Baby Carrots (approx 3 oz)'
-    },
-    'celery sticks': {
-        'calories': 15.0, 'protein': 0.7, 'carbs': 3.0, 'fat': 0.2, 'sugar': 1.5,
-        'ingredients': 'Fresh Crisp Celery Sticks (approx 3 oz)'
-    },
-    'sauteed seasoned mushrooms': {
-        'calories': 40.0, 'protein': 2.0, 'carbs': 4.0, 'fat': 2.5, 'sugar': 1.5,
-        'ingredients': 'Sauteed Seasoned Button Mushrooms (0.5 cup)'
-    },
-    'chopped green onions': {
-        'calories': 5.0, 'protein': 0.3, 'carbs': 1.0, 'fat': 0.0, 'sugar': 0.4,
-        'ingredients': 'Fresh Chopped Green Onions / Scallions (2 tbsp)'
-    },
-    'shredded cheddar cheese': {
-        'calories': 110.0, 'protein': 7.0, 'carbs': 1.0, 'fat': 9.0, 'sugar': 0.5,
-        'ingredients': 'Shredded Cheddar Cheese (1 oz / 0.25 cup)'
-    },
-    'shredded 3 cheese blend': {
-        'calories': 110.0, 'protein': 7.0, 'carbs': 1.0, 'fat': 9.0, 'sugar': 0.5,
-        'ingredients': 'Shredded Three-Cheese Blend (1 oz / 0.25 cup)'
-    },
-    'grated parmesan cheese': {
-        'calories': 110.0, 'protein': 9.0, 'carbs': 1.0, 'fat': 8.0, 'sugar': 0.0,
-        'ingredients': 'Grated Parmesan Cheese (1 oz / 0.25 cup)'
-    },
-    'vegan shredded mozzarella cheese': {
-        'calories': 80.0, 'protein': 1.0, 'carbs': 7.0, 'fat': 6.0, 'sugar': 0.5,
-        'ingredients': 'Plant-Based Shredded Mozzarella (1 oz / 0.25 cup)'
-    },
-    'shredded cheddar & mont. jack cheese': {
-        'calories': 110.0, 'protein': 7.0, 'carbs': 1.0, 'fat': 9.0, 'sugar': 0.5,
-        'ingredients': 'Shredded Cheddar & Monterey Jack Cheese (1 oz / 0.25 cup)'
-    },
-    'whipped butter': {
-        'calories': 70.0, 'protein': 0.1, 'carbs': 0.1, 'fat': 8.0, 'sugar': 0.0,
-        'ingredients': 'Whipped Table Butter (1 tbsp / 1 pat)'
-    },
-    'cinnamon honey butter': {
-        'calories': 85.0, 'protein': 0.1, 'carbs': 4.0, 'fat': 7.5, 'sugar': 4.0,
-        'ingredients': 'Whipped Butter with Honey & Cinnamon (1 tbsp)'
-    },
-    'chocolate ganache': {
-        'calories': 130.0, 'protein': 1.0, 'carbs': 14.0, 'fat': 8.0, 'sugar': 12.0,
-        'ingredients': 'Rich Chocolate Ganache Topping (2 tbsp)'
-    },
-    'whipped topping': {
-        'calories': 30.0, 'protein': 0.0, 'carbs': 2.0, 'fat': 2.0, 'sugar': 2.0,
-        'ingredients': 'Whipped Cream / Topping (2 tbsp)'
-    },
-    'edc bowl': {
-        'calories': 440.0, 'protein': 26.0, 'carbs': 52.0, 'fat': 14.0, 'sugar': 4.0,
-        'ingredients': 'Everyday Choices Grain, Vegetable & Protein Harvest Bowl'
-    },
-    'vanilla soy milk': {
-        'calories': 100.0, 'protein': 7.0, 'carbs': 9.0, 'fat': 4.0, 'sugar': 6.0,
-        'ingredients': 'Organic Vanilla Soy Milk (1 cup / 8 fl oz)'
-    },
-    'chocolate soy milk': {
-        'calories': 140.0, 'protein': 7.0, 'carbs': 20.0, 'fat': 3.5, 'sugar': 17.0,
-        'ingredients': 'Organic Chocolate Soy Milk (1 cup / 8 fl oz)'
-    },
 }
 
 ORDERED_KEYWORD_MACROS = [
     # 1. Filled Sandwiches, Burgers, Wraps & Burritos
-    ('corn dog', (230.0, 7.0, 24.0, 12.0, 5.0)),
-    ('corndog', (230.0, 7.0, 24.0, 12.0, 5.0)),
-    ('hot dog', (290.0, 10.0, 24.0, 16.0, 4.0)),
     ('chicken sandwich', (440.0, 30.0, 42.0, 16.0, 5.0)),
     ('turkey sandwich', (410.0, 28.0, 42.0, 13.0, 5.0)),
     ('ham sandwich', (420.0, 26.0, 42.0, 15.0, 5.0)),
@@ -350,14 +179,11 @@ ORDERED_KEYWORD_MACROS = [
     ('roll', (130.0, 4.0, 24.0, 2.0, 2.0)),
 
     # 3. Desserts, pastries, and baked sweets
-    ('chocolate ganache', (130.0, 1.0, 14.0, 8.0, 12.0)),
     ('apple pie', (320.0, 2.5, 46.0, 14.0, 24.0)),
     ('peach cobbler', (310.0, 3.0, 48.0, 12.0, 26.0)),
     ('cherry pie', (325.0, 2.5, 47.0, 14.5, 25.0)),
     ('pie', (320.0, 3.0, 45.0, 14.0, 22.0)),
     ('cheesecake', (350.0, 6.0, 32.0, 22.0, 24.0)),
-    ('coffeecake', (280.0, 3.5, 42.0, 11.0, 22.0)),
-    ('coffee cake', (280.0, 3.5, 42.0, 11.0, 22.0)),
     ('cake', (310.0, 3.5, 46.0, 12.0, 28.0)),
     ('brownie', (290.0, 3.5, 38.0, 14.0, 24.0)),
     ('cookie', (210.0, 2.5, 28.0, 10.0, 16.0)),
@@ -367,16 +193,6 @@ ORDERED_KEYWORD_MACROS = [
     ('pudding', (180.0, 3.0, 30.0, 5.0, 20.0)),
 
     # 4. Dips, sauces, condiments, and spreads
-    ('whipped topping', (30.0, 0.0, 2.0, 2.0, 2.0)),
-    ('cinnamon honey butter', (85.0, 0.1, 4.0, 7.5, 4.0)),
-    ('whipped butter', (70.0, 0.1, 0.1, 8.0, 0.0)),
-    ('butter', (100.0, 0.1, 0.0, 11.0, 0.0)),
-    ('shredded cheddar', (110.0, 7.0, 1.0, 9.0, 0.5)),
-    ('shredded mozzarella', (85.0, 6.0, 1.0, 6.5, 0.5)),
-    ('shredded cheese', (110.0, 7.0, 1.0, 9.0, 0.5)),
-    ('parmesan', (110.0, 9.0, 1.0, 8.0, 0.0)),
-    ('cheddar', (110.0, 7.0, 1.0, 9.0, 0.5)),
-    ('mozzarella', (85.0, 6.0, 1.0, 6.5, 0.5)),
     ('queso dip', (220.0, 8.0, 10.0, 16.0, 2.0)),
     ('queso', (210.0, 8.0, 9.0, 16.0, 2.0)),
     ('spinach dip', (230.0, 6.0, 11.0, 18.0, 2.0)),
@@ -393,12 +209,6 @@ ORDERED_KEYWORD_MACROS = [
     ('olive oil', (120.0, 0.0, 0.0, 14.0, 0.0)),
 
     # 5. Composite pasta, bowls, stir-fries, and dressed salads
-    ('edc bowl', (440.0, 26.0, 52.0, 14.0, 4.0)),
-    ('french toast sticks', (280.0, 5.0, 38.0, 12.0, 12.0)),
-    ('french toast', (280.0, 5.0, 38.0, 12.0, 12.0)),
-    ('pancakes', (220.0, 5.0, 35.0, 7.0, 7.0)),
-    ('pancake', (220.0, 5.0, 35.0, 7.0, 7.0)),
-    ('waffle', (240.0, 5.0, 32.0, 10.0, 4.0)),
     ('mac and cheese', (380.0, 15.0, 40.0, 18.0, 5.0)),
     ('macaroni and cheese', (380.0, 15.0, 40.0, 18.0, 5.0)),
     ('lasagna', (390.0, 22.0, 34.0, 18.0, 6.0)),
@@ -426,29 +236,14 @@ ORDERED_KEYWORD_MACROS = [
     ('fruit salad', (85.0, 1.0, 21.0, 0.3, 16.0)),
 
     # 6. Single proteins & dairy anchors
-    ('carne adobada', (240.0, 24.0, 3.0, 14.0, 1.0)),
-    ('swedish meatball', (260.0, 18.0, 10.0, 16.0, 2.0)),
-    ('meatball', (240.0, 16.0, 8.0, 15.0, 2.0)),
-    ('sofritas', (150.0, 10.0, 9.0, 8.0, 4.0)),
-    ('chik nuggets', (190.0, 13.0, 14.0, 9.0, 0.0)),
-    ('chicken nugget', (210.0, 12.0, 14.0, 12.0, 0.0)),
-    ('nugget', (200.0, 12.0, 14.0, 11.0, 0.0)),
-    ('soy milk', (100.0, 7.0, 8.0, 4.0, 5.0)),
     ('scrambled egg', (180.0, 12.0, 2.0, 13.5, 1.0)),
     ('hard boiled egg', (78.0, 6.3, 0.6, 5.3, 0.6)),
     ('egg', (155.0, 12.5, 1.1, 10.6, 1.0)),
     ('grilled chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
     ('chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
-    ('chicken thigh', (200.0, 21.0, 0.0, 12.0, 0.0)),
-    ('chicken drumstick', (105.0, 11.0, 2.0, 5.5, 1.0)),
-    ('drumstick', (105.0, 11.0, 2.0, 5.5, 1.0)),
-    ('diced chicken', (185.0, 35.0, 0.0, 4.0, 0.0)),
-    ('popcorn chicken', (240.0, 14.0, 16.0, 14.0, 0.5)),
-    ('chicken wing', (85.0, 9.0, 0.0, 5.5, 0.0)),
-    ('wing', (85.0, 9.0, 0.0, 5.5, 0.0)),
-    ('chicken tender', (110.0, 11.0, 6.0, 4.5, 0.0)),
-    ('chicken tenders', (110.0, 11.0, 6.0, 4.5, 0.0)),
-    ('tender', (110.0, 11.0, 6.0, 4.5, 0.0)),
+    ('chicken thigh', (225.0, 26.0, 0.0, 13.0, 0.0)),
+    ('chicken drumstick', (215.0, 28.0, 2.0, 9.5, 0.0)),
+    ('drumstick', (215.0, 28.0, 2.0, 9.5, 0.0)),
     ('chickpea chole curry', (260.0, 14.0, 38.0, 5.0, 4.0)),
     ('chole curry', (260.0, 14.0, 38.0, 5.0, 4.0)),
     ('chana masala', (260.0, 14.0, 38.0, 5.0, 4.0)),
@@ -463,7 +258,6 @@ ORDERED_KEYWORD_MACROS = [
     ('hamburger patty', (250.0, 26.0, 1.0, 15.0, 0.0)),
     ('ground beef', (250.0, 26.0, 1.0, 15.0, 0.0)),
     ('beef', (250.0, 26.0, 1.5, 15.0, 0.5)),
-    ('pork tenderloin', (240.0, 25.0, 2.0, 14.0, 0.0)),
     ('pork loin', (220.0, 27.0, 0.0, 11.0, 0.0)),
     ('pork', (240.0, 25.0, 2.0, 14.0, 1.0)),
     ('ham', (180.0, 22.0, 2.0, 9.0, 1.5)),
@@ -480,17 +274,11 @@ ORDERED_KEYWORD_MACROS = [
     ('greek yogurt', (130.0, 15.0, 6.0, 4.0, 5.0)),
 
     # 7. Legumes, grains, and complex carbohydrates
-    ('sweet plantains', (180.0, 1.0, 36.0, 4.5, 18.0)),
-    ('plantain', (180.0, 1.0, 36.0, 4.5, 18.0)),
-    ('samosa', (170.0, 3.5, 20.0, 9.0, 1.0)),
-    ('fried pickle', (180.0, 2.0, 19.0, 11.0, 1.0)),
     ('garbanzo', (135.0, 7.3, 22.5, 2.1, 4.0)),
     ('chickpea', (135.0, 7.3, 22.5, 2.1, 4.0)),
     ('black bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
     ('kidney bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
     ('pinto bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
-    ('green beans', (40.0, 2.0, 8.0, 0.3, 2.0)),
-    ('green bean', (40.0, 2.0, 8.0, 0.3, 2.0)),
     ('bean', (130.0, 7.5, 22.0, 1.0, 1.5)),
     ('lentil', (130.0, 9.0, 22.0, 0.5, 1.5)),
     ('edamame', (120.0, 11.0, 9.0, 5.0, 2.0)),
@@ -503,36 +291,13 @@ ORDERED_KEYWORD_MACROS = [
     ('quinoa', (220.0, 8.0, 39.0, 3.5, 1.5)),
     ('couscous', (180.0, 6.0, 36.0, 0.5, 0.5)),
     ('sweet potato', (165.0, 3.5, 38.0, 0.3, 7.0)),
-    ('crinkle cut fries', (220.0, 2.8, 28.0, 11.0, 0.5)),
-    ('french fries', (220.0, 2.8, 28.0, 11.0, 0.5)),
-    ('fries', (220.0, 2.8, 28.0, 11.0, 0.5)),
-    ('french fry', (220.0, 2.8, 28.0, 11.0, 0.5)),
-    ('tater tots', (210.0, 2.5, 26.0, 11.0, 0.5)),
-    ('tots', (210.0, 2.5, 26.0, 11.0, 0.5)),
-    ('hash brown', (200.0, 2.0, 24.0, 11.0, 0.5)),
-    ('hashbrown', (200.0, 2.0, 24.0, 11.0, 0.5)),
     ('potato', (160.0, 3.5, 36.0, 0.3, 1.5)),
-    ('rotini', (210.0, 7.0, 42.0, 1.2, 1.5)),
-    ('penne', (210.0, 7.0, 42.0, 1.2, 1.5)),
-    ('spaghetti', (210.0, 7.0, 42.0, 1.2, 1.5)),
-    ('fettuccine', (210.0, 7.0, 42.0, 1.2, 1.5)),
     ('pasta', (210.0, 7.0, 42.0, 1.2, 1.5)),
     ('noodle', (210.0, 7.0, 42.0, 1.2, 1.5)),
     ('oatmeal', (160.0, 5.5, 28.0, 3.0, 1.0)),
     ('oat', (160.0, 5.5, 28.0, 3.0, 1.0)),
 
     # 8. Vegetables and whole fruits
-    ('peas', (65.0, 4.0, 12.0, 0.5, 4.5)),
-    ('green peas', (65.0, 4.0, 12.0, 0.5, 4.5)),
-    ('baby carrots', (35.0, 0.8, 8.0, 0.2, 5.0)),
-    ('carrot', (35.0, 0.8, 8.0, 0.2, 5.0)),
-    ('celery sticks', (15.0, 0.7, 3.0, 0.2, 1.5)),
-    ('celery', (15.0, 0.7, 3.0, 0.2, 1.5)),
-    ('sauteed seasoned mushrooms', (40.0, 2.0, 4.0, 2.5, 1.5)),
-    ('mushrooms', (35.0, 2.0, 4.0, 2.0, 1.5)),
-    ('mushroom', (35.0, 2.0, 4.0, 2.0, 1.5)),
-    ('green onions', (5.0, 0.3, 1.0, 0.0, 0.4)),
-    ('green onion', (5.0, 0.3, 1.0, 0.0, 0.4)),
     ('spinach', (15.0, 1.7, 2.2, 0.2, 0.3)),
     ('romaine', (15.0, 1.2, 3.0, 0.2, 1.0)),
     ('mixed greens', (15.0, 1.5, 2.5, 0.2, 0.4)),
@@ -630,15 +395,12 @@ STATION_HEADER_NAMES = {
     'baked potato bar', 'omelet bar', 'waffle bar', 'cereal bar',
     'soup bar', 'toppings bar', 'condiment bar', 'pizza toppers',
     'waffle brinner bar', 'build your own pizza bar', 'bread and condiments',
-    'la fonda station', 'sundae brunch bar', 'sundae bar', 'yogurt bar',
-    'ice cream bar', 'dessert bar', 'burger toppings', 'burrito bar',
-    'oatmeal and pancake toppers'
+    'la fonda station'
 }
 DESSERT_KEYWORDS = [
     'pie', 'cake', 'cookie', 'brownie', 'cobbler', 'pudding',
     'ice cream', 'donut', 'muffin', 'pastry', 'tart', 'cupcake', 'gelato',
-    'italian ice', 'sherbet', 'sorbet', 'coffeecake', 'coffee cake',
-    'crumb cake', 'pound cake', 'crumble', 'crisp'
+    'italian ice', 'sherbet', 'sorbet'
 ]
 
 STANDALONE_CONDIMENT_KEYWORDS = [
@@ -647,11 +409,7 @@ STANDALONE_CONDIMENT_KEYWORDS = [
     'marinara', 'alfredo', 'pesto', 'au jus', 'chutney', 'relish',
     'jam', 'jelly', 'condiment', 'topping', 'powdered sugar', 'sprinkles',
     'crushed red pepper', 'seasoning', 'pancake syrup', 'olive oil',
-    'extra virgin olive oil', 'vinegar', 'balsamic vinegar', 'red wine vinegar',
-    'shredded cheese', 'grated cheese', 'parmesan cheese', 'grated parmesan',
-    'cheddar cheese', 'shredded cheddar', 'mozzarella cheese', 'shredded mozzarella',
-    'cheese blend', 'butter', 'whipped butter', 'green onion', 'green onions',
-    'chopped green onions', 'chocolate ganache', 'whipped topping'
+    'extra virgin olive oil', 'vinegar', 'balsamic vinegar', 'red wine vinegar'
 ]
 DIP_SPREAD_KEYWORDS = [
     'dip', 'queso', 'guacamole', 'hummus', 'tzatziki',
@@ -670,8 +428,7 @@ STANDALONE_BAKERY_KEYWORDS = [
 
 SANDWICH_ENTREE_MARKERS = [
     'sandwich', 'burger', 'cheeseburger', 'panini', 'wrap', 'sub',
-    'hoagie', 'banh mi', 'gyro', 'melt', 'sliders', 'slider',
-    'hot dog', 'hot dogs', 'corn dog', 'corn dogs', 'corndog', 'corndogs'
+    'hoagie', 'banh mi', 'gyro', 'melt', 'sliders', 'slider'
 ]
 
 COMPLETE_ENTREE_MARKERS = [
@@ -697,8 +454,7 @@ BREAKFAST_ENTREE_MARKERS = [
     'hard cooked egg', 'hard cooked eggs', 'hard boiled egg', 'hard boiled eggs',
     'boiled egg', 'boiled eggs', 'poached egg', 'poached eggs', 'fried egg', 'fried eggs',
     'egg white', 'egg whites', 'breakfast burrito', 'breakfast sandwich',
-    'egg sandwich', 'eggs benedict', 'pancake', 'pancakes', 'waffle', 'waffles',
-    'french toast', 'french toast stick', 'french toast sticks', 'breakfast skillet'
+    'egg sandwich', 'eggs benedict', 'pancake', 'waffle', 'french toast', 'breakfast skillet'
 ]
 
 STARCH_SALAD_KEYWORDS = [
@@ -725,11 +481,10 @@ ENTREE_PROTEIN_SALAD_KEYWORDS = [
 
 VEGETABLE_KEYWORDS = [
     'broccoli', 'asparagus', 'brussels', 'cauliflower', 'zucchini', 'carrot',
-    'carrots', 'baby carrot', 'baby carrots', 'green bean', 'green beans',
-    'spinach', 'kale', 'mixed vegetables', 'roasted vegetables', 'steamed vegetables',
-    'peas', 'squash', 'bok choy', 'cabbage', 'edamame', 'bell pepper', 'peppers',
-    'mushrooms', 'celery', 'celery stick', 'celery sticks',
-    'corn on the cob', 'sweet corn', 'corn', 'romaine', 'mixed greens'
+    'carrots', 'green bean', 'green beans', 'spinach', 'kale', 'mixed vegetables',
+    'roasted vegetables', 'steamed vegetables', 'peas', 'squash', 'bok choy',
+    'cabbage', 'edamame', 'bell pepper', 'peppers', 'mushrooms', 'corn on the cob',
+    'sweet corn', 'corn', 'romaine', 'mixed greens'
 ]
 
 VERIFIED_NA_WHOLE_FOODS = [
@@ -864,28 +619,11 @@ def _extract_allergens_and_diet(detail_data: Optional[dict]) -> tuple[list[str],
 
 def _match_fallback_macro(item_name: str) -> Optional[dict]:
     lower_name = item_name.lower().strip()
-    # Station and buffet line headers must never receive fallback food macros
-    if lower_name in STATION_HEADER_NAMES or (
-        any(lower_name.endswith(sfx) for sfx in (' bar', ' topper', ' toppers', ' toppings'))
-        and not any(f in lower_name for f in ('ice cream bar', 'candy bar', 'granola bar', 'protein bar'))
-    ):
-        return None
-
     if lower_name in FALLBACK_MACROS:
         return FALLBACK_MACROS[lower_name]
     for key, macros in FALLBACK_MACROS.items():
-        if re.search(rf'\b{re.escape(key)}(?:s|es)?\b', lower_name):
+        if key in lower_name:
             return macros
-    for kw, (cal, pro, carb, fat, sug) in ORDERED_KEYWORD_MACROS:
-        if re.search(rf'\b{re.escape(kw)}(?:s|es)?\b', lower_name):
-            return {
-                'calories': cal,
-                'protein': pro,
-                'carbs': carb,
-                'fat': fat,
-                'sugar': sug,
-                'ingredients': f'{item_name.title()} (Standard campus dining preparation)'
-            }
     return None
 
 
@@ -1269,7 +1007,7 @@ def hydrate_missing_macros(items: list[dict], inject_permanent_staples: bool = F
             name_lower = copy_item['name'].lower().strip()
             if name_lower not in STATION_HEADER_NAMES:
                 for kw, (cal, pro, carb, fat, sug) in ORDERED_KEYWORD_MACROS:
-                    if re.search(rf'\b{re.escape(kw)}(?:s|es)?\b', name_lower):
+                    if kw in name_lower:
                         copy_item['calories'] = cal
                         copy_item['protein'] = pro
                         copy_item['carbs'] = carb
@@ -1395,31 +1133,19 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                 allergens, is_vegetarian, is_vegan = _extract_allergens_and_diet(detail_data)
 
                 if detail_data:
-                    serving_size = (detail_data.get('ServingSize') or '').strip()
-                    serving_unit = (detail_data.get('ServingUnit') or '').strip()
-                    if serving_unit:
-                        serving_size = f'{serving_size} {serving_unit}'.strip()
-                    if not serving_size:
-                        serving_size = 'N/A'
+                    serving_size = (detail_data.get('ServingSize') or '').strip() or 'N/A'
                     ingredients = (detail_data.get('Ingredients') or '').strip() or 'N/A'
 
-                    nutrients = detail_data.get('Nutrition') or detail_data.get('Nutrients') or []
+                    nutrients = detail_data.get('Nutrients') or []
+                    if nutrients:
+                        has_api_nutrients = True
                     for n in nutrients:
-                        n_name = (n.get('Name') or '').strip().lower()
-                        if n_name == 'serving size':
-                            api_serving = n.get('LabelValue') or n.get('Value')
-                            if api_serving and str(api_serving).strip().upper() not in ('N/A', 'NONE', ''):
-                                serving_size = str(api_serving).strip()
-                        raw_val = n.get('Value')
-                        if raw_val is None:
-                            raw_val = n.get('LabelValue')
-                        n_val = _parse_numeric_value(raw_val)
-                        if 'calorie' in n_name and 'fat' not in n_name:
+                        n_name = (n.get('Name') or '').lower()
+                        n_val = _parse_numeric_value(n.get('Value'))
+                        if 'calorie' in n_name:
                             calories = n_val
-                            has_api_nutrients = True
                         elif 'protein' in n_name:
                             protein = n_val
-                            has_api_nutrients = True
                         elif 'carbohydrate' in n_name:
                             carbs = n_val
                         elif n_name in ('total fat', 'fat'):
@@ -1428,7 +1154,7 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                             sugar = max(sugar, n_val)
 
                 used_fallback = False
-                if not has_api_nutrients or (calories == 0.0 and protein == 0.0 and carbs == 0.0 and fat == 0.0):
+                if not has_api_nutrients or str(serving_size).strip().upper() == 'N/A':
                     fallback = _match_fallback_macro(item_name)
                     if fallback:
                         calories = fallback['calories']
@@ -1438,14 +1164,7 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                         sugar = fallback['sugar']
                         if ingredients == 'N/A':
                             ingredients = fallback['ingredients']
-                        if str(serving_size).strip().upper() in ('N/A', '', 'NONE') and fallback.get('serving_size'):
-                            serving_size = fallback['serving_size']
                         used_fallback = True
-                else:
-                    if str(serving_size).strip().upper() in ('N/A', '', 'NONE'):
-                        fallback = _match_fallback_macro(item_name)
-                        if fallback and fallback.get('serving_size'):
-                            serving_size = fallback['serving_size']
 
                 base_record = {
                     'location': location,
@@ -1466,7 +1185,6 @@ def fetch_detailed_purdue_menu(location: str, target_date: Optional[str] = None)
                     'is_vegetarian': is_vegetarian,
                     'is_vegan': is_vegan,
                     'used_fallback': used_fallback,
-                    'serving_size': serving_size,
                 }
 
                 normalized_items.append(base_record)
@@ -1549,545 +1267,139 @@ def get_daily_menus(
 # ==============================================================================
 
 def calculate_meal_targets(
-    sex: Optional[str] = None,
-    age: Optional[int] = None,
-    weight_lbs: Optional[float] = None,
-    height_in: Optional[float] = None,
-    activity_level: Optional[str] = None,
-    meals_per_day: Optional[int] = None,
+    sex: str,
+    age: int,
+    weight_lbs: float,
+    height_in: float,
+    activity_level: str,
+    meals_per_day: int,
     meal_goal: str = 'Balanced Maintenance',
     health_intensity: str = 'High',
-    meal_period: str = 'Lunch',
-    feet: Optional[int] = None,
-    inches: Optional[int] = None,
 ) -> dict:
-    """
-    Calculates Mifflin-St Jeor DRI daily targets and meal-period-weighted targets:
-    1. Converts user inputs safely with sensible defaults:
-       - weight_kg = weight_lbs * 0.453592 (default 160.0 lbs)
-       - height_cm = (feet * 12 + inches) * 2.54 or height_in * 2.54 (default 68.0 in)
-       - age = 20 (default college age if omitted)
-    2. BMR via Mifflin-St Jeor:
-       - Male: (10 * weight_kg) + (6.25 * height_cm) - (5 * age) + 5
-       - Female: (10 * weight_kg) + (6.25 * height_cm) - (5 * age) - 161
-       - Unspecified/Other: average (-78)
-    3. TDEE:
-       - sedentary: 1.35, moderate: 1.55 (default), active: 1.75
-    4. Goal offset:
-       - lose/cut: tdee - 450 (safeguarded for minors < 18), floored at 1400 kcal
-       - maintain: tdee, floored at 1400 kcal
-       - gain/bulk: tdee + 350, floored at 1400 kcal
-    5. Split daily calories across meals_per_day (default 2):
-       - If meals_per_day == 2: 0.50 per meal
-       - If meals_per_day == 3: 0.25 for Breakfast, 0.375 for Lunch/Late Lunch/Dinner
-       - Otherwise: 1.0 / meals_per_day
-    6. Daily protein:
-       - weight_lbs * 0.95 if cutting, else weight_lbs * 0.80
-       - split by the same meal-period ratio to get target_meal_calories and target_meal_protein
-    """
-    safe_age = int(age) if (age is not None and int(age) > 0) else 20
-    is_minor = safe_age < 18
+    weight_kg = weight_lbs * 0.45359237
+    height_cm = height_in * 2.54
+    is_minor = int(age) < 18
 
-    safe_weight_lbs = float(weight_lbs) if (weight_lbs is not None and float(weight_lbs) > 0) else 160.0
-    weight_kg = safe_weight_lbs * 0.453592
-
-    if feet is not None or inches is not None:
-        tot_inches = (int(feet or 0) * 12) + int(inches or 0)
-        safe_height_in = float(tot_inches) if tot_inches > 0 else 68.0
-    elif height_in is not None and float(height_in) > 0:
-        safe_height_in = float(height_in)
-    else:
-        safe_height_in = 68.0
-
-    height_cm = safe_height_in * 2.54
-
-    sex_norm = str(sex or '').strip().upper()
+    sex_norm = sex.strip().upper()
     if sex_norm.startswith('M'):
-        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * safe_age) + 5.0
+        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * age) + 5.0
         daily_aha_sugar_cap = 36.0
-    elif sex_norm.startswith('F'):
-        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * safe_age) - 161.0
+    else:
+        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * age) - 161.0
         daily_aha_sugar_cap = 25.0
-    else:
-        bmr = (10.0 * weight_kg) + (6.25 * height_cm) - (5.0 * safe_age) - 78.0
-        daily_aha_sugar_cap = 30.0
 
-    act_norm = str(activity_level or '').strip().lower()
-    if 'sedentary' in act_norm:
-        activity_factor = 1.35
-    elif 'active' in act_norm:
-        activity_factor = 1.75
-    else:
-        activity_factor = 1.55
+    activity_multipliers = {
+        'sedentary': 1.2,
+        'moderate': 1.375,
+        'active': 1.55,
+    }
+    multiplier = activity_multipliers.get(activity_level.strip().lower(), 1.375)
+    maintenance_calories = bmr * multiplier
 
-    tdee = bmr * activity_factor
+    goal_norm = meal_goal.strip().lower()
+    safety_note = (
+        'General dining portion estimate only, not medical or clinical nutrition advice.'
+    )
 
-    goal_norm = str(meal_goal or '').strip().lower()
-    is_low_carb = any(k in goal_norm for k in ('low-carb', 'low carb', 'blood sugar', 'keto', 'diabetic'))
-    is_cutting = any(k in goal_norm for k in ('cut', 'lose', 'loss', 'fat loss', 'lean'))
-    is_bulking = any(k in goal_norm for k in ('gain', 'bulk', 'muscle', 'high protein'))
-    is_endurance = any(k in goal_norm for k in ('athletic', 'endurance', 'energy', 'runner'))
+    if 'high protein' in goal_norm or 'muscle' in goal_norm:
+        daily_calories = maintenance_calories * 1.08
+        daily_protein_min = weight_kg * 1.35
+        daily_protein_target = weight_kg * 1.65
+        daily_protein_max = weight_kg * 1.85
+        daily_carbs_min = max((daily_calories * 0.32) / 4.0, 130.0)
+        daily_carbs_target = max((daily_calories * 0.40) / 4.0, 150.0)
+        daily_carbs_max = (daily_calories * 0.50) / 4.0
+        daily_fat_min = (daily_calories * 0.20) / 9.0
+        daily_fat_target = (daily_calories * 0.25) / 9.0
+        daily_fat_max = (daily_calories * 0.32) / 9.0
 
-    safety_note = 'Personalized dining court portion sizing based on Mifflin-St Jeor DRI calculation.'
-    if is_cutting:
+    elif 'lean cut' in goal_norm or 'fat loss' in goal_norm:
         if is_minor:
-            daily_calories = max(1400.0, tdee)
+            daily_calories = maintenance_calories
             safety_note = (
                 'Calorie deficits are disabled for users under 18; showing balanced '
                 'maintenance portions. Consult a healthcare provider for personalized guidance.'
             )
         else:
-            daily_calories = max(1400.0, tdee - 450.0)
-    elif is_bulking:
-        daily_calories = max(1400.0, tdee + 350.0)
-    elif is_endurance:
-        daily_calories = max(1400.0, tdee + 200.0)
+            daily_calories = maintenance_calories * 0.825
+        daily_protein_min = weight_kg * 1.4
+        daily_protein_target = weight_kg * 1.55
+        daily_protein_max = weight_kg * 1.75
+        daily_carbs_min = max((daily_calories * 0.25) / 4.0, 130.0)
+        daily_carbs_target = max((daily_calories * 0.33) / 4.0, 135.0)
+        daily_carbs_max = (daily_calories * 0.42) / 4.0
+        daily_fat_min = (daily_calories * 0.20) / 9.0
+        daily_fat_target = (daily_calories * 0.25) / 9.0
+        daily_fat_max = (daily_calories * 0.32) / 9.0
+
+    elif 'athletic' in goal_norm or 'endurance' in goal_norm:
+        daily_calories = maintenance_calories * 1.05
+        daily_protein_min = weight_kg * 1.15
+        daily_protein_target = weight_kg * 1.35
+        daily_protein_max = weight_kg * 1.55
+        daily_carbs_min = max((daily_calories * 0.43) / 4.0, 160.0)
+        daily_carbs_target = max((daily_calories * 0.48) / 4.0, 180.0)
+        daily_carbs_max = (daily_calories * 0.55) / 4.0
+        daily_fat_min = (daily_calories * 0.20) / 9.0
+        daily_fat_target = (daily_calories * 0.24) / 9.0
+        daily_fat_max = (daily_calories * 0.30) / 9.0
+
+    elif 'low-carb' in goal_norm or 'low carb' in goal_norm or 'blood sugar' in goal_norm:
+        daily_calories = maintenance_calories
+        daily_protein_min = weight_kg * 1.3
+        daily_protein_target = weight_kg * 1.5
+        daily_protein_max = weight_kg * 1.75
+        daily_carbs_min = 90.0 if is_minor else 60.0
+        daily_carbs_target = (daily_calories * (0.28 if is_minor else 0.20)) / 4.0
+        daily_carbs_max = (daily_calories * (0.35 if is_minor else 0.26)) / 4.0
+        daily_fat_min = (daily_calories * 0.28) / 9.0
+        daily_fat_target = (daily_calories * 0.35) / 9.0
+        daily_fat_max = (daily_calories * 0.44) / 9.0
+
     else:
-        daily_calories = max(1400.0, tdee)
+        daily_calories = maintenance_calories
+        daily_protein_min = weight_kg * 0.8
+        daily_protein_target = weight_kg * 1.1
+        daily_protein_max = weight_kg * 1.4
+        daily_carbs_min = 130.0
+        daily_carbs_target = max((daily_calories * 0.40) / 4.0, 145.0)
+        daily_carbs_max = (daily_calories * 0.50) / 4.0
+        daily_fat_min = (daily_calories * 0.20) / 9.0
+        daily_fat_target = (daily_calories * 0.26) / 9.0
+        daily_fat_max = (daily_calories * 0.33) / 9.0
 
-    meals = max(1, int(meals_per_day or 2))
-    mp_norm = str(meal_period or '').strip().lower()
-    if meals == 2:
-        meal_ratio = 0.50
-    elif meals == 3:
-        if 'breakfast' in mp_norm:
-            meal_ratio = 0.25
-        else:
-            meal_ratio = 0.375
+    if health_intensity.strip().lower() in ('high', 'extreme'):
+        daily_sugar_max = min(daily_aha_sugar_cap, 20.0)
     else:
-        meal_ratio = 1.0 / float(meals)
+        daily_sugar_max = daily_aha_sugar_cap
 
-    target_meal_calories = daily_calories * meal_ratio
-
-    # Goal-tailored protein targets
-    if is_bulking:
-        daily_protein = safe_weight_lbs * 1.00
-    elif is_cutting:
-        daily_protein = safe_weight_lbs * 0.95
-    elif is_low_carb:
-        daily_protein = safe_weight_lbs * 0.95
-    elif is_endurance:
-        daily_protein = safe_weight_lbs * 0.80
-    else:
-        daily_protein = safe_weight_lbs * 0.80
-
-    target_meal_protein = daily_protein * meal_ratio
-
-    # Goal-tailored macro distributions
-    if is_low_carb:
-        c_pct = 0.18
-        f_pct = 0.48
-        c_cal = target_meal_calories * c_pct
-        f_cal = target_meal_calories * f_pct
-        carbs_target = max(c_cal / 4.0, 20.0)
-        fat_target = max(f_cal / 9.0, 15.0)
-        carbs_min = 15.0
-        carbs_max = min(50.0, max(25.0, (target_meal_calories * 0.22) / 4.0))
-        fat_min = (target_meal_calories * 0.35) / 9.0
-        fat_max = (target_meal_calories * 0.60) / 9.0
-    elif is_endurance:
-        c_pct = 0.58
-        f_pct = 0.22
-        c_cal = target_meal_calories * c_pct
-        f_cal = target_meal_calories * f_pct
-        carbs_target = max(c_cal / 4.0, 40.0)
-        fat_target = max(f_cal / 9.0, 10.0)
-        carbs_min = (target_meal_calories * 0.45) / 4.0
-        carbs_max = (target_meal_calories * 0.68) / 4.0
-        fat_min = (target_meal_calories * 0.15) / 9.0
-        fat_max = (target_meal_calories * 0.30) / 9.0
-    elif is_cutting:
-        c_pct = 0.38
-        f_pct = 0.26
-        c_cal = target_meal_calories * c_pct
-        f_cal = target_meal_calories * f_pct
-        carbs_target = max(c_cal / 4.0, 25.0)
-        fat_target = max(f_cal / 9.0, 10.0)
-        carbs_min = (target_meal_calories * 0.25) / 4.0
-        carbs_max = (target_meal_calories * 0.45) / 4.0
-        fat_min = (target_meal_calories * 0.18) / 9.0
-        fat_max = (target_meal_calories * 0.35) / 9.0
-    elif is_bulking:
-        c_pct = 0.46
-        f_pct = 0.26
-        c_cal = target_meal_calories * c_pct
-        f_cal = target_meal_calories * f_pct
-        carbs_target = max(c_cal / 4.0, 30.0)
-        fat_target = max(f_cal / 9.0, 10.0)
-        carbs_min = (target_meal_calories * 0.32) / 4.0
-        carbs_max = (target_meal_calories * 0.55) / 4.0
-        fat_min = (target_meal_calories * 0.18) / 9.0
-        fat_max = (target_meal_calories * 0.35) / 9.0
-    else:
-        # Balanced maintenance
-        c_pct = 0.45
-        f_pct = 0.28
-        c_cal = target_meal_calories * c_pct
-        f_cal = target_meal_calories * f_pct
-        carbs_target = max(c_cal / 4.0, 30.0)
-        fat_target = max(f_cal / 9.0, 10.0)
-        carbs_min = (target_meal_calories * 0.30) / 4.0
-        carbs_max = (target_meal_calories * 0.55) / 4.0
-        fat_min = (target_meal_calories * 0.20) / 9.0
-        fat_max = (target_meal_calories * 0.35) / 9.0
-
-    daily_sugar_max = min(daily_aha_sugar_cap, 20.0) if health_intensity.strip().lower() in ('high', 'extreme') else daily_aha_sugar_cap
+    meals = max(1, int(meals_per_day))
 
     return {
         'goal_label': meal_goal,
-        'is_low_carb': is_low_carb,
-        'is_cutting': is_cutting,
-        'is_bulking': is_bulking,
-        'is_endurance': is_endurance,
         'is_minor_safeguarded': is_minor,
         'disclaimer': safety_note,
         'daily': {
-            'bmr': round(bmr, 1),
-            'tdee': round(tdee, 1),
             'calories': round(daily_calories, 1),
-            'protein_target': round(daily_protein, 1),
-            'carbs_target': round((daily_calories * c_pct) / 4.0, 1),
-            'fat_target': round((daily_calories * f_pct) / 9.0, 1),
+            'protein_target': round(daily_protein_target, 1),
+            'carbs_target': round(daily_carbs_target, 1),
+            'fat_target': round(daily_fat_target, 1),
             'sugar_max': round(daily_sugar_max, 1),
         },
         'per_meal': {
-            'calories': round(target_meal_calories, 1),
-            'protein_min': round(target_meal_protein * 0.8, 1),
-            'protein_target': round(target_meal_protein, 1),
-            'protein_max': round(target_meal_protein * 1.3, 1),
-            'carbs_min': round(carbs_min, 1),
-            'carbs_target': round(carbs_target, 1),
-            'carbs_max': round(carbs_max, 1),
-            'fat_min': round(fat_min, 1),
-            'fat_target': round(fat_target, 1),
-            'fat_max': round(fat_max, 1),
-            'sugar_max': round(daily_sugar_max / float(meals), 1),
-            'is_low_carb': is_low_carb,
-            'is_cutting': is_cutting,
-            'is_bulking': is_bulking,
-            'is_endurance': is_endurance,
-            'goal_label': meal_goal,
+            'calories': round(daily_calories / meals, 1),
+            'protein_min': round(daily_protein_min / meals, 1),
+            'protein_target': round(daily_protein_target / meals, 1),
+            'protein_max': round(daily_protein_max / meals, 1),
+            'carbs_min': round(daily_carbs_min / meals, 1),
+            'carbs_target': round(daily_carbs_target / meals, 1),
+            'carbs_max': round(daily_carbs_max / meals, 1),
+            'fat_min': round(daily_fat_min / meals, 1),
+            'fat_target': round(daily_fat_target / meals, 1),
+            'fat_max': round(daily_fat_max / meals, 1),
+            'sugar_max': round(daily_sugar_max / meals, 1),
         },
     }
-
-
-def _snap_multiplier(val: float, max_mult: float = 2.5, min_mult: float = 0.5) -> float:
-    """Snaps a portion multiplier to 0.5 increments within [min_mult, max_mult]."""
-    snapped = round(float(val) * 2.0) / 2.0
-    return max(min_mult, min(max_mult, snapped))
-
-
-def generate_portion_label(item: dict, multiplier: float) -> str:
-    """
-    Generates human dining-court portion labels based on item category and serving unit.
-    Returns empty string if multiplier is 1.0. Never outputs '2x', '1.5x', or raw decimal multipliers.
-    """
-    if abs(multiplier - 1.0) < 0.05:
-        return ""
-
-    name_lower = (item.get('name') or '').lower()
-    ss_lower = (item.get('serving_size') or '').lower()
-    role = (item.get('food_type') or item.get('role') or '').lower()
-    combined = f"{name_lower} {ss_lower}"
-
-    # 1. Leafy greens / Salad Bar Bases
-    is_leafy = any(k in combined for k in ('spinach', 'romaine', 'mesclun', 'greens', 'lettuce', 'spring mix', 'kale', 'salad bar')) or 'salad_base' in role
-    if is_leafy:
-        if multiplier <= 0.5:
-            return "1 small handful"
-        elif multiplier <= 1.5:
-            return "1.5 handfuls"
-        elif multiplier <= 2.0:
-            return "2 handfuls"
-        elif multiplier <= 2.5:
-            return "2.5 handfuls"
-        else:
-            return "1 large bowl"
-
-    # 2. Specific countable items
-    count_noun = None
-    if 'scrambled' in combined:
-        count_noun = None
-    elif 'corn dog' in combined or 'corndog' in combined:
-        count_noun = ('corn dog', 'corn dogs')
-    elif 'hot dog' in combined or 'hotdog' in combined:
-        count_noun = ('hot dog', 'hot dogs')
-    elif 'meatball' in combined:
-        count_noun = ('meatball', 'meatballs')
-    elif 'nugget' in combined:
-        count_noun = ('nugget', 'nuggets')
-    elif 'pancake' in combined:
-        count_noun = ('pancake', 'pancakes')
-    elif 'french toast stick' in combined or ('stick' in combined and 'french toast' in combined):
-        count_noun = ('stick', 'sticks')
-    elif 'samosa' in combined:
-        count_noun = ('samosa', 'samosas')
-    elif 'breast' in combined:
-        count_noun = ('breast', 'breasts')
-    elif 'patty' in combined or 'burger' in combined:
-        count_noun = ('patty', 'patties')
-    elif 'egg' in combined and ('hard' in combined or 'boiled' in combined or 'cooked' in combined):
-        count_noun = ('egg', 'eggs')
-    elif 'slice' in combined or 'pizza' in combined:
-        count_noun = ('slice', 'slices')
-    elif 'taco' in combined:
-        count_noun = ('taco', 'tacos')
-    elif 'cookie' in combined:
-        count_noun = ('cookie', 'cookies')
-    elif 'brownie' in combined:
-        count_noun = ('brownie', 'brownies')
-    elif 'muffin' in combined:
-        count_noun = ('muffin', 'muffins')
-    elif 'roll' in combined or 'dinner roll' in combined:
-        count_noun = ('roll', 'rolls')
-    elif 'bun' in combined:
-        count_noun = ('bun', 'buns')
-    elif 'biscuit' in combined:
-        count_noun = ('biscuit', 'biscuits')
-    elif 'bagel' in combined:
-        count_noun = ('bagel', 'bagels')
-    elif 'link' in combined or 'sausage' in combined:
-        count_noun = ('link', 'links')
-    elif 'tender' in combined:
-        count_noun = ('tender', 'tenders')
-    elif 'drumstick' in combined:
-        count_noun = ('drumstick', 'drumsticks')
-    elif 'wing' in combined:
-        count_noun = ('wing', 'wings')
-    elif 'thigh' in combined:
-        count_noun = ('thigh', 'thighs')
-    elif 'fillet' in combined or 'filet' in combined:
-        count_noun = ('filet', 'filets')
-    elif any(k in ss_lower for k in ('each', 'piece', 'ea', 'pc')):
-        count_noun = ('piece', 'pieces')
-    elif any(k in combined for k in ('chicken breast', 'pork chop', 'steak', 'salmon', 'tilapia', 'sandwich', 'burrito', 'quesadilla')):
-        count_noun = ('piece', 'pieces')
-
-    if count_noun:
-        sing, plur = count_noun
-        if multiplier <= 0.5:
-            return f"half {sing}"
-        elif multiplier == int(multiplier):
-            cnt = int(multiplier)
-            return f"{cnt} {plur if cnt > 1 else sing}"
-        else:
-            return f"{multiplier:g} {plur}"
-
-    # 3. Scooped, cup, ladle, or side items (grains, beans, pasta, potatoes, soups, scrambled eggs, roasted veggies)
-    is_scoop_or_cup = any(k in combined for k in ('cup', 'scoop', 'ladle', 'oz', 'rice', 'potato', 'grain', 'bean', 'corn', 'soup', 'chili', 'pasta', 'mac', 'scrambled')) or 'carb_side' in role or 'veg_side' in role
-    if is_scoop_or_cup:
-        if multiplier <= 0.5:
-            return "half scoop"
-        elif multiplier == 1.5:
-            return "1.5 scoops"
-        elif multiplier == 2.0:
-            return "2 scoops"
-        elif multiplier == 2.5:
-            return "2.5 scoops"
-        elif multiplier >= 3.0:
-            return "1 full bowl"
-        elif multiplier == int(multiplier):
-            return f"{int(multiplier)} scoops"
-        else:
-            return f"{multiplier:g} scoops"
-
-    # Default fallback
-    if multiplier <= 0.5:
-        return "half portion"
-    elif multiplier == int(multiplier):
-        return f"{int(multiplier)} portions"
-    else:
-        return f"{multiplier:g} portions"
-
-
-def scale_combo_to_user(combo: dict, per_meal_targets: dict, tier_key: str = 'mid') -> dict:
-    """
-    Scales a top-3 dining combo to match the user's per-meal calorie & protein targets:
-    - Never applies blind uniform multipliers to the whole plate.
-    - Locks sauces, dressings, cheese toppings, and dense fats at 1.0 serving.
-    - Scales primary protein anchor first to close protein/calorie gap.
-    - If calories still needed, scales clean carb/base side (or secondary protein in Pure Health).
-    - Snaps multipliers to 0.5 increments (0.5, 1.0, 1.5, 2.0, 2.5, max 3.0 for leafy greens/veggies).
-    - Recomputes item macros, portion labels, and parent combo totals.
-    """
-    items = combo.get('items', [])
-    if not items or not per_meal_targets:
-        return combo
-
-    target_cal = float(per_meal_targets.get('calories', 600.0))
-    target_pro = float(per_meal_targets.get('protein_target', 35.0))
-
-    cur_cal = sum(float(it.get('calories', 0.0)) for it in items)
-    cur_pro = sum(float(it.get('protein', 0.0)) for it in items)
-
-    def _is_locked(it: dict) -> bool:
-        r = (it.get('food_type') or it.get('role') or '').lower()
-        n = (it.get('name') or '').lower()
-        if r in ('sauce_dressing', 'fat_topping', 'dessert'):
-            return True
-        if _is_dessert_item(n):
-            return True
-        locked_pattern = r'\b(sauces?|dressings?|vinaigrettes?|oils?|butters?|mayo|mayonnaise|cheeses?|gravy|gravies|syrups?|frostings?|dips?|creamers?|sour cream)\b'
-        if re.search(locked_pattern, n, re.IGNORECASE) and not any(p in n for p in ('mac & cheese', 'macaroni', 'pizza', 'quesadilla', 'cheeseburger', 'cottage cheese')):
-            return True
-        return False
-
-    non_locked = [it for it in items if not _is_locked(it)]
-    if not non_locked:
-        non_locked = list(items)
-
-    protein_candidates = [
-        it for it in non_locked
-        if (it.get('food_type') or '').lower() in ('protein_entree', 'complete_entree', 'breakfast_entree', 'sandwich')
-        or it.get('protein', 0.0) >= 12.0
-    ]
-    if protein_candidates:
-        protein_anchor = max(protein_candidates, key=lambda x: x.get('protein', 0.0))
-    else:
-        protein_anchor = max(non_locked, key=lambda x: x.get('protein', 0.0))
-
-    p0 = float(protein_anchor.get('protein', 0.0))
-    c0 = float(protein_anchor.get('calories', 0.0))
-    other_pro = cur_pro - p0
-    other_cal = cur_cal - c0
-
-    needed_p = max(5.0, target_pro - other_pro)
-    pro_mult_raw = needed_p / max(p0, 1.0) if p0 > 0 else 1.0
-
-    cal_gap = target_cal - cur_cal
-
-    if cal_gap > 220 and pro_mult_raw < 1.4:
-        raw_p_mult = max(pro_mult_raw, 1.5)
-    elif cal_gap < -220 and pro_mult_raw > 0.6:
-        raw_p_mult = min(pro_mult_raw, 0.5)
-    else:
-        raw_p_mult = pro_mult_raw
-
-    pa_name = (protein_anchor.get('name') or '').lower()
-    is_discrete_protein = (
-        any(d in pa_name for d in (
-            'drumstick', 'wing', 'thigh', 'hard boiled egg', 'hard cooked egg', 'taco', 'cookie',
-            'link', 'corn dog', 'corndog', 'hot dog', 'meatball', 'nugget', 'pancake',
-            'french toast stick', 'samosa'
-        ))
-        and 'scrambled' not in pa_name
-    )
-    if is_discrete_protein:
-        if raw_p_mult < 1.4:
-            p_mult = 1.0
-        elif raw_p_mult < 2.4:
-            p_mult = 2.0
-        elif raw_p_mult < 3.4:
-            p_mult = 3.0
-        else:
-            p_mult = 4.0
-    else:
-        p_mult = _snap_multiplier(raw_p_mult, max_mult=2.5, min_mult=0.5)
-
-    multipliers: dict[int, float] = {id(it): 1.0 for it in items}
-    multipliers[id(protein_anchor)] = p_mult
-
-    est_cal = (c0 * p_mult) + other_cal
-    rem_cal_gap = target_cal - est_cal
-
-    remaining_candidates = [it for it in non_locked if id(it) != id(protein_anchor)]
-    if remaining_candidates and (rem_cal_gap > 75 or rem_cal_gap < -80):
-        if tier_key == 'extreme':
-            carb_candidates = [
-                it for it in remaining_candidates
-                if any(k in (it.get('name') or '').lower() for k in ('quinoa', 'rice', 'potato', 'bean', 'garbanzo', 'chickpea', 'lentil', 'edamame', 'tofu', 'egg'))
-                or (it.get('food_type') or '').lower() in ('carb_side', 'grain', 'complex_carb')
-            ]
-        else:
-            carb_candidates = [
-                it for it in remaining_candidates
-                if (it.get('food_type') or '').lower() in ('carb_side', 'grain', 'side', 'complex_carb')
-                or it.get('carbs', 0.0) >= 15.0
-            ]
-
-        if carb_candidates:
-            carb_anchor = max(carb_candidates, key=lambda x: x.get('calories', 0.0))
-        else:
-            carb_anchor = max(remaining_candidates, key=lambda x: x.get('calories', 0.0))
-
-        carb_c0 = float(carb_anchor.get('calories', 0.0))
-        if carb_c0 > 15.0:
-            raw_carb_mult = 1.0 + (rem_cal_gap / carb_c0)
-            ca_name = (carb_anchor.get('name') or '').lower()
-            is_discrete_carb = any(d in ca_name for d in (
-                'cookie', 'taco', 'roll', 'biscuit', 'link', 'slice', 'corn dog',
-                'pancake', 'french toast stick', 'samosa', 'fried pickle'
-            ))
-            if is_discrete_carb:
-                if raw_carb_mult < 1.4:
-                    carb_mult = 1.0
-                elif raw_carb_mult < 2.4:
-                    carb_mult = 2.0
-                elif raw_carb_mult < 3.4:
-                    carb_mult = 3.0
-                else:
-                    carb_mult = 4.0
-            else:
-                carb_mult = _snap_multiplier(raw_carb_mult, max_mult=2.5, min_mult=0.5)
-
-            is_low_carb_mode = bool(per_meal_targets.get('is_low_carb'))
-            is_cutting_mode = bool(per_meal_targets.get('is_cutting'))
-            if is_low_carb_mode:
-                carb_mult = min(carb_mult, 1.0)
-            elif is_cutting_mode:
-                carb_mult = min(carb_mult, 1.5)
-
-            multipliers[id(carb_anchor)] = carb_mult
-            rem_cal_gap -= (carb_mult - 1.0) * carb_c0
-
-    # Leafy greens / veggie check: can scale up to 3.0
-    leafy_candidates = [
-        it for it in remaining_candidates
-        if id(it) not in multipliers or multipliers[id(it)] == 1.0
-    ]
-    for it in leafy_candidates:
-        n_low = (it.get('name') or '').lower()
-        if any(k in n_low for k in ('spinach', 'romaine', 'mesclun', 'lettuce', 'spring mix', 'kale', 'greens')):
-            if rem_cal_gap > 40 or tier_key == 'extreme':
-                multipliers[id(it)] = _snap_multiplier(2.0, max_mult=3.0, min_mult=0.5)
-            break
-
-    # Apply multipliers, compute new item macros and natural portion labels
-    for it in items:
-        m = multipliers.get(id(it), 1.0)
-        it['multiplier'] = m
-        if abs(m - 1.0) > 0.05:
-            it['calories'] = float(round(float(it['calories']) * m))
-            it['protein'] = float(round(float(it['protein']) * m))
-            it['carbs'] = float(round(float(it['carbs']) * m))
-            it['fat'] = float(round(float(it['fat']) * m))
-            it['portion_label'] = generate_portion_label(it, m)
-            it['is_scaled'] = True
-        else:
-            it['calories'] = float(round(float(it['calories'])))
-            it['protein'] = float(round(float(it['protein'])))
-            it['carbs'] = float(round(float(it['carbs'])))
-            it['fat'] = float(round(float(it['fat'])))
-            it['portion_label'] = ""
-            it['is_scaled'] = False
-
-    tot_c = round(sum(it['calories'] for it in items))
-    tot_p = round(sum(it['protein'] for it in items))
-    tot_cb = round(sum(it['carbs'] for it in items))
-    tot_f = round(sum(it['fat'] for it in items))
-    tot_s = round(sum(it.get('sugar', 0.0) for it in items))
-
-    combo['totals'] = {
-        'calories': float(tot_c),
-        'protein': float(tot_p),
-        'carbs': float(tot_cb),
-        'fat': float(tot_f),
-        'sugar': float(tot_s),
-    }
-    combo['macro_split'] = _compute_macro_split(tot_p, tot_cb, tot_f)
-    combo['is_scaled'] = any(it.get('is_scaled') for it in items)
-
-    return combo
 
 
 # ==============================================================================
@@ -3022,7 +2334,7 @@ def classify_food_item(item: dict) -> str:
     name_lower = raw_name.lower()
     ing_lower = (item.get('ingredients') or '').lower()
 
-    if name_lower in STATION_HEADER_NAMES or (name_lower.endswith(' bar') and item.get('calories', 0.0) == 0.0 and item.get('protein', 0.0) == 0.0):
+    if name_lower in STATION_HEADER_NAMES:
         return 'exclude'
 
     if _is_dessert_item(name_lower):
@@ -3032,9 +2344,6 @@ def classify_food_item(item: dict) -> str:
     clean_name = re.sub(r'\s*\([^)]*salad\s+bar[^)]*\)', '', name_lower).strip()
 
     if _is_standalone_condiment(item) or _is_added_oil_or_fat(item) or re.search(r'\b(?:vinegar|oil)s?\b', clean_name):
-        return 'condiment'
-
-    if ('shredded' in clean_name and 'cheese' in clean_name) or ('grated' in clean_name and 'parmesan' in clean_name):
         return 'condiment'
 
     if _is_dip_or_condiment(item):
@@ -3056,7 +2365,7 @@ def classify_food_item(item: dict) -> str:
             return 'breakfast_entree'
         return 'sandwich'
 
-    if any(re.search(rf'\b{re.escape(m)}(?:s|es)?\b', clean_name) for m in BREAKFAST_ENTREE_MARKERS):
+    if any(re.search(rf'\b{re.escape(m)}\b', clean_name) for m in BREAKFAST_ENTREE_MARKERS):
         return 'breakfast_entree'
 
     if any(re.search(rf'\b{re.escape(m)}\b', clean_name) for m in COMPLETE_ENTREE_MARKERS):
@@ -3081,9 +2390,7 @@ def classify_food_item(item: dict) -> str:
     if _is_whole_fruit(clean_name):
         return 'side'
 
-    if any(re.search(rf'\b{re.escape(h)}(?:s|es)?\b', clean_name) for h in [
-        'curry', 'chole', 'chana masala', 'drumstick', 'carne adobada', 'sofritas', 'meatball', 'chik nugget', 'nugget'
-    ]):
+    if any(re.search(rf'\b{re.escape(h)}(?:s|es)?\b', clean_name) for h in ['curry', 'chole', 'chana masala', 'drumstick']):
         return 'protein_entree'
 
     entree_protein_hints = [
@@ -3091,8 +2398,7 @@ def classify_food_item(item: dict) -> str:
         'turkey', 'tofu', 'tempeh', 'seitan', 'egg', 'meatball',
         'carnitas', 'barbacoa', 'tilapia', 'cod', 'ham', 'tuna',
         'paneer', 'cottage cheese', 'greek yogurt', 'drumstick',
-        'curry', 'chole', 'chana masala', 'dal', 'dhal',
-        'carne adobada', 'sofritas', 'chik nuggets', 'nugget'
+        'curry', 'chole', 'chana masala', 'dal', 'dhal'
     ]
     has_protein_word = any(
         re.search(rf'\b{re.escape(h)}(?:s|es)?\b', clean_name)
@@ -3171,7 +2477,7 @@ def _meets_minimum_meal_floor(
     if tier == 'high':
         return pro >= 18.0 and cal >= 320.0
 
-    return pro >= 16.0 and cal >= 260.0
+    return pro >= 18.0 and cal >= 300.0
 
 
 def _build_option_b_anchors(pool: list[dict], existing_proteins: list[dict]) -> list[dict]:
@@ -3929,23 +3235,13 @@ def _score_nutrition_balance(
         fat_err = _range_error(fat, per_meal['fat_min'], per_meal['fat_max'])
 
         goal_norm = meal_goal.strip().lower()
-        if any(k in goal_norm for k in ('high protein', 'muscle')):
+        if 'high protein' in goal_norm or 'lean cut' in goal_norm:
             penalty = (pro_err * 36.0) + (cal_err * 24.0) + (carb_err * 14.0) + (fat_err * 14.0)
-        elif any(k in goal_norm for k in ('lean cut', 'fat loss', 'cut')):
-            penalty = (pro_err * 34.0) + (cal_err * 28.0) + (carb_err * 16.0) + (fat_err * 12.0)
-        elif any(k in goal_norm for k in ('low-carb', 'low carb', 'blood sugar', 'keto')):
-            penalty = (carb_err * 36.0) + (pro_err * 24.0) + (cal_err * 20.0) + (fat_err * 12.0)
-            if carb > per_meal['carbs_max']:
-                penalty += ((carb - per_meal['carbs_max']) / max(per_meal['carbs_max'], 1.0)) * 30.0
-        elif any(k in goal_norm for k in ('endurance', 'athletic', 'energy')):
-            penalty = (cal_err * 30.0) + (carb_err * 26.0) + (pro_err * 22.0) + (fat_err * 14.0)
         else:
             penalty = (cal_err * 26.0) + (pro_err * 26.0) + (carb_err * 18.0) + (fat_err * 18.0)
 
         if pro < per_meal['protein_min']:
             penalty += ((per_meal['protein_min'] - pro) / max(per_meal['protein_min'], 1.0)) * 25.0
-        if sugar > per_meal.get('sugar_max', 25.0):
-            penalty += min((sugar - per_meal.get('sugar_max', 25.0)) * 1.5, 15.0)
 
         return round(max(0.0, min(100.0 - penalty, 100.0)), 1)
 
@@ -4297,14 +3593,15 @@ def build_optimal_plates(
     location_results = []
 
     for location, loc_items in items_by_location.items():
-        # Per-dining-hall evaluation: candidate plate assembly and scoring runs on the exact
-        # same dietary filtering, seed-oil screening, and culinary compatibility as the main feed.
+        # Per-dining-hall evaluation: try strict clean-ingredient mode first;
+        # Healthy ('high') and Pure Health ('extreme') NEVER relax eligibility under any circumstances.
+        # Balanced ('mid') and Yummy ('low') may softly expand if candidates < 3.
         pool, raw_scored_candidates = _evaluate_and_assemble_location_candidates(
             location_items=loc_items,
             health_intensity=health_intensity,
             narrow_breadth=False,
-            per_meal=None,
-            dri_enabled=False,
+            per_meal=per_meal,
+            dri_enabled=dri_enabled,
             meal_goal=meal_goal,
         )
         used_hall_relaxation = False
@@ -4314,8 +3611,8 @@ def build_optimal_plates(
                 location_items=loc_items,
                 health_intensity=health_intensity,
                 narrow_breadth=True,
-                per_meal=None,
-                dri_enabled=False,
+                per_meal=per_meal,
+                dri_enabled=dri_enabled,
                 meal_goal=meal_goal,
             )
             if len(relaxed_candidates) > len(raw_scored_candidates):
@@ -4537,19 +3834,7 @@ def build_optimal_plates(
                     'ingredient_certainty': it['_certainty'],
                     'used_fallback': it['used_fallback'],
                     'reason': it['_health_reason'],
-                    'serving_size': it.get('serving_size', 'N/A'),
                 })
-
-            clean_totals = {
-                'calories': float(round(sum(it['calories'] for it in formatted_items))),
-                'protein': float(round(sum(it['protein'] for it in formatted_items))),
-                'carbs': float(round(sum(it['carbs'] for it in formatted_items))),
-                'fat': float(round(sum(it['fat'] for it in formatted_items))),
-                'sugar': float(round(sum(it.get('sugar', 0.0) for it in formatted_items))),
-            }
-            clean_split = _compute_macro_split(
-                clean_totals['protein'], clean_totals['carbs'], clean_totals['fat']
-            )
 
             formatted_combos.append({
                 'combo_id': f"{location.lower().replace(' ', '_')}_{idx}",
@@ -4558,8 +3843,8 @@ def build_optimal_plates(
                 'score': round(score_val, 1),
                 'score_breakdown': breakdown,
                 'items': formatted_items,
-                'totals': clean_totals,
-                'macro_split': clean_split,
+                'totals': totals_obj,
+                'macro_split': macro_split,
                 'is_seed_oil_free': is_seed_oil_free,
                 'is_salad_builder': bool(assembly_instructions),
                 'builder_label': builder_label,
@@ -4567,11 +3852,6 @@ def build_optimal_plates(
                 'builder_icon': builder_icon,
                 'assembly_instructions': assembly_instructions,
             })
-
-        # Post-Assembly Smart Portion Scaling when dri_enabled
-        if dri_enabled and per_meal:
-            for combo in formatted_combos:
-                scale_combo_to_user(combo, per_meal, tier_key=tier_key)
 
         top_combo = formatted_combos[0]
         location_results.append({
@@ -4638,26 +3918,17 @@ def recommend_meals(
 
     targets = None
     if dri_enabled:
-        mp_guess = 'Lunch'
-        if now:
-            h = now.hour
-            if h < 11:
-                mp_guess = 'Breakfast'
-            elif h < 16:
-                mp_guess = 'Lunch'
-            else:
-                mp_guess = 'Dinner'
-
+        if not all([sex, age, weight_lbs, height_in, activity_level, meals_per_day]):
+            raise ValueError('Please fill in all biometric fields to enable personalized portion sizing.')
         targets = calculate_meal_targets(
-            sex=str(sex) if sex else 'unspecified',
-            age=int(age) if (age is not None and int(age) > 0) else 20,
-            weight_lbs=float(weight_lbs) if (weight_lbs is not None and float(weight_lbs) > 0) else 160.0,
-            height_in=float(height_in) if (height_in is not None and float(height_in) > 0) else 68.0,
-            activity_level=str(activity_level) if activity_level else 'Moderate',
-            meals_per_day=int(meals_per_day) if (meals_per_day is not None and int(meals_per_day) > 0) else 2,
+            sex=str(sex),
+            age=int(age),
+            weight_lbs=float(weight_lbs),
+            height_in=float(height_in),
+            activity_level=str(activity_level),
+            meals_per_day=int(meals_per_day),
             meal_goal=meal_goal,
             health_intensity=health_intensity,
-            meal_period=mp_guess,
         )
 
     if prebuilt_items is not None:
