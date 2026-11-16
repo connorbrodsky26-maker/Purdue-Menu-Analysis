@@ -138,13 +138,29 @@ FALLBACK_MACROS = {
         'calories': 185.0, 'protein': 35.0, 'carbs': 0.0, 'fat': 4.0, 'sugar': 0.0,
         'ingredients': 'Boneless Skinless Chicken Breast, Sea Salt, Black Pepper (4 oz)'
     },
+    'boilerq bbq chicken drumstick': {
+        'calories': 105.0, 'protein': 11.0, 'carbs': 2.0, 'fat': 5.5, 'sugar': 1.0,
+        'ingredients': 'Chicken Drumstick, Princess Dry Rub Seasoning (1 drumstick, approx 35g meat)'
+    },
     'chicken drumstick': {
-        'calories': 135.0, 'protein': 14.0, 'carbs': 2.0, 'fat': 7.5, 'sugar': 1.0,
-        'ingredients': 'Chicken Drumstick, Seasoning, Oil (1 drumstick, approx 45g meat)'
+        'calories': 105.0, 'protein': 11.0, 'carbs': 2.0, 'fat': 5.5, 'sugar': 1.0,
+        'ingredients': 'Chicken Drumstick, Seasoning, Oil (1 drumstick, approx 35g meat)'
     },
     'drumstick': {
-        'calories': 135.0, 'protein': 14.0, 'carbs': 2.0, 'fat': 7.5, 'sugar': 1.0,
-        'ingredients': 'Chicken Drumstick, Seasoning, Oil (1 drumstick, approx 45g meat)'
+        'calories': 105.0, 'protein': 11.0, 'carbs': 2.0, 'fat': 5.5, 'sugar': 1.0,
+        'ingredients': 'Chicken Drumstick, Seasoning, Oil (1 drumstick, approx 35g meat)'
+    },
+    'diced chicken for burrito bowl': {
+        'calories': 185.0, 'protein': 35.0, 'carbs': 0.0, 'fat': 4.0, 'sugar': 0.0,
+        'ingredients': 'Diced Seasoned Chicken Breast (approx 4 oz)'
+    },
+    'seasoned green beans': {
+        'calories': 40.0, 'protein': 2.0, 'carbs': 8.0, 'fat': 0.3, 'sugar': 2.0,
+        'ingredients': 'Seasoned Green Beans (0.5 cup)'
+    },
+    'green beans': {
+        'calories': 40.0, 'protein': 2.0, 'carbs': 8.0, 'fat': 0.3, 'sugar': 2.0,
+        'ingredients': 'Steamed Green Beans (0.5 cup)'
     },
     'chicken wing': {
         'calories': 85.0, 'protein': 9.0, 'carbs': 0.0, 'fat': 5.5, 'sugar': 0.0,
@@ -424,8 +440,10 @@ ORDERED_KEYWORD_MACROS = [
     ('grilled chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
     ('chicken breast', (185.0, 35.0, 0.0, 4.0, 0.0)),
     ('chicken thigh', (200.0, 21.0, 0.0, 12.0, 0.0)),
-    ('chicken drumstick', (135.0, 14.0, 2.0, 7.5, 1.0)),
-    ('drumstick', (135.0, 14.0, 2.0, 7.5, 1.0)),
+    ('chicken drumstick', (105.0, 11.0, 2.0, 5.5, 1.0)),
+    ('drumstick', (105.0, 11.0, 2.0, 5.5, 1.0)),
+    ('diced chicken', (185.0, 35.0, 0.0, 4.0, 0.0)),
+    ('popcorn chicken', (240.0, 14.0, 16.0, 14.0, 0.5)),
     ('chicken wing', (85.0, 9.0, 0.0, 5.5, 0.0)),
     ('wing', (85.0, 9.0, 0.0, 5.5, 0.0)),
     ('chicken tender', (110.0, 11.0, 6.0, 4.5, 0.0)),
@@ -471,6 +489,8 @@ ORDERED_KEYWORD_MACROS = [
     ('black bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
     ('kidney bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
     ('pinto bean', (130.0, 8.0, 23.0, 0.8, 1.0)),
+    ('green beans', (40.0, 2.0, 8.0, 0.3, 2.0)),
+    ('green bean', (40.0, 2.0, 8.0, 0.3, 2.0)),
     ('bean', (130.0, 7.5, 22.0, 1.0, 1.5)),
     ('lentil', (130.0, 9.0, 22.0, 0.5, 1.5)),
     ('edamame', (120.0, 11.0, 9.0, 5.0, 2.0)),
@@ -611,7 +631,8 @@ STATION_HEADER_NAMES = {
     'soup bar', 'toppings bar', 'condiment bar', 'pizza toppers',
     'waffle brinner bar', 'build your own pizza bar', 'bread and condiments',
     'la fonda station', 'sundae brunch bar', 'sundae bar', 'yogurt bar',
-    'ice cream bar', 'dessert bar'
+    'ice cream bar', 'dessert bar', 'burger toppings', 'burrito bar',
+    'oatmeal and pancake toppers'
 }
 DESSERT_KEYWORDS = [
     'pie', 'cake', 'cookie', 'brownie', 'cobbler', 'pudding',
@@ -843,6 +864,13 @@ def _extract_allergens_and_diet(detail_data: Optional[dict]) -> tuple[list[str],
 
 def _match_fallback_macro(item_name: str) -> Optional[dict]:
     lower_name = item_name.lower().strip()
+    # Station and buffet line headers must never receive fallback food macros
+    if lower_name in STATION_HEADER_NAMES or (
+        any(lower_name.endswith(sfx) for sfx in (' bar', ' topper', ' toppers', ' toppings'))
+        and not any(f in lower_name for f in ('ice cream bar', 'candy bar', 'granola bar', 'protein bar'))
+    ):
+        return None
+
     if lower_name in FALLBACK_MACROS:
         return FALLBACK_MACROS[lower_name]
     for key, macros in FALLBACK_MACROS.items():
